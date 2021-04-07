@@ -1,0 +1,24 @@
+
+ CONTENTS
+ ------------------------------
+
+ Take a look at the following examples.
+
+ * eg-01.hex 	    A minimal bootable program written directly in machine code.
+		    The source code is an ASCII file containing the opcodes of
+		    the program in hexadecimal representation. Conversion into
+		    binary form may be accomplished with the aid of auxiliary
+		    program bin2ex [1]. This program contains only the boot
+		    signature and performs no other behavior.
+
+
+ * eg-02.hex	    Bare-metal hardcore Hello World in machine code.
+   		    This is a tough old-school version of the classical
+		    Hello World program. It is a modified version of eg-01.hex
+		    which writes directly the string to the video memory.
+		    A Hello World as you never made before, for the braves.
+		    Use bin2ex auxiliary program to build it.
+
+ 
+
+[1] syseg/src/hex2bin
