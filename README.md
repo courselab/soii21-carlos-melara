@@ -45,3 +45,12 @@ Finally, build the software with
 
 For more detailed instructions, please, refer to file `INSTALL`
 
+## Overview
+
+SYSeg contents. Please, refer to the README file in each directory for 
+detailed information.
+
+- Directory `eg` contains source code examples.
+- Directory `try` contains programming exercises.
+- Directory `src` contains auxiliary tools used by examples and exercises.
+
