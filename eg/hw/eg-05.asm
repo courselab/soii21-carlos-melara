@@ -1,0 +1,34 @@
+	;; Finally, "Hello World!". We're safe now.
+	;; NASM assembly, neater loop version
+
+	bits 16			; Set 16-bit mode
+	
+	org 0x7c00		; Our load address (alternative way)
+
+	mov ah, 0xe		; BIOS tty mode
+
+	mov bx, 0		; May be 0 because org directive.
+loop:				
+	mov al, [string + bx]	; 'Hello' ofsset
+	int 0x10		; Call BIOS video interrupt
+	cmp al, 0x0
+	je end
+	add bx, 0x1		; Point to the next character
+	jmp loop		; Repeat until we find a 0x0
+
+end:				
+	jmp $			; Jump forver (alt to end, or 0x0)
+
+string:				; C-like NULL terminated string
+
+	db 'Hello world', 0xd, 0xa, 0x0
+	
+	times 510 - ($-$$) db 0	; Pad with zeros
+	dw 0xaa55		; Boot signature
+
+		
+	;; Notes
+	;;
+	;; In worship to the seven hacker gods and for the honor of
+	;; source code realm, we hereby humbly offer our sacred 
+	;; "Hello World" sacrifice. May our code remain bugless.

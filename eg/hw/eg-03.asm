@@ -1,6 +1,5 @@
 	;; Boot, say hello, and loop forever
-	;; NASM assembly source code
-	;; Version 03: char by char, manually
+	;; NASM assembly, char by char, manually
 	
 	bits 16			; Set 16-bit mode
 	

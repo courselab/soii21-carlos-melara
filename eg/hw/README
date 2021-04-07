@@ -7,10 +7,10 @@
  * eg-01.hex 	    A minimal bootable program written directly in machine code.
  
 		    The source code is an ASCII file containing the opcodes of
-		    the program in hexadecimal representation. Conversion into
-		    binary form may be accomplished with the aid of auxiliary
-		    program bin2ex [1]. This program contains only the boot
-		    signature and performs no other behavior.
+		    the program in hexadecimal representation. This program
+		    contains only the boot signature and implements no other
+		    behavior. Build with it with a simple hex-to-binary
+		    conversion and run to see if the MBR is detected.
 
 
  * eg-02.hex	    Bare-metal hardcore Hello World in machine code.
@@ -19,19 +19,38 @@
 		    Hello World program. It writes the string directly to the
 		    BIOS video memory, character by character, one at a time.
 		    A Hello World as you have never made before, for the
-		    braves. Use bin2ex auxiliary program to build it.
+		    braves. 
 
- * eg-04.asm	    The same Hello World now in Intel assembly.
+
+ * eg-03.asm	    The same Hello World, but now in Intel assembly.
 
    		    This program implments literally the same algorithm as
 		    eg-02.hex, but written in Intel assembly. Use nasm
 		    assembler to build the binary.
 
+		    Compare eg-02.bin and eg-03.bin with
 
+		    $ make dump IMG=eg-02.bin
+		    $ make diss IMG=eg-03.bin
+
+
+ * eg-04.asm	    A variation of eg-03.asm, using a loop.
+
+  		    Notice that now that we are dealing with offsets, we must
+		    beware of the RAM load address. All labels should be
+		    offset to match the position where BIOS loads the program.
+
+ * eg-05.asm	    A more elegant version of eg-04, just with neater code.
+
+		    Compare eg-04.bin and eg-05.bin with
+
+		    $ make dump IMG=eg-04.bin
+		    $ make diss IMG=eg-05.bin
+   		    
 
 
 
  References
  ------------------------------
  
- [1] syseg/src/hex2bin
+ [1] Auxiliary program: syseg/src/hex2bin
