@@ -21,25 +21,30 @@ AM_CPPFLAGS = @CPP_FLAGS@ -DDATADIR=\"${datarootdir}\"
 AM_CFLAGS =   @C_FLAGS@ 
 AM_LDFLAGS =  @LD_FLAGS@   
 
-bin_PROGRAMS = main.bin 
-
-main_bin_SOURCES = main.c 
-
 # main_bin_CC = @PTHREAD_CC@
 # main_bin_CFLAGS = @PTHREAD_CFLAGS@ 
 
-bin_SCRIPTS = main
+bin_PROGRAMS = hex2bin
 
-main: main.sh
-	cp $< $@
+hex2bin_SOURCES = hex2bin.c debug.h
 
-clean-local:
-	rm -f main
 
-install-exec-hook: 
-	cd $(DESTDIR)/$(bindir) && mv main.bin main
-
-uninstall-hook:
-	rm -f $(DESTDIR)/$(bindir)/main
-
-EXTRA_DIST = main.sh
+# Wrapper execution script
+#
+# bin_PROGRAMS += main.bin 
+# main_bin_SOURCES = main.c 
+# bin_SCRIPTS += main
+#
+# main: main.sh
+# 	cp $< $@
+#
+# clean-local:
+# 	rm -f main
+#
+# install-exec-hook: 
+# 	cd $(DESTDIR)/$(bindir) && mv main.bin main
+#
+# uninstall-hook:
+# 	rm -f $(DESTDIR)/$(bindir)/main
+#
+# EXTRA_DIST += main.sh
