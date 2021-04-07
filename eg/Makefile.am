@@ -1,8 +1,8 @@
-##   Automake.am - Automake script.
+##   Makefile.am - Main Automake script for autohello
 ##
-##   Copyright (c) 2021 - Monaco F. J. <monaco@usp.br>
+##   Copyright (c) 2014 - Monaco F. J. <monaco@usp.br>
 ##
-##   This file is part of SYSeg
+##   This file is part of SYSeg.
 ##
 ##   SYSeg is free software: you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License as published by
@@ -17,29 +17,6 @@
 ##   You should have received a copy of the GNU General Public License
 ##   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AM_CPPFLAGS = @CPP_FLAGS@ -DDATADIR=\"${datarootdir}\"
-AM_CFLAGS =   @C_FLAGS@ 
-AM_LDFLAGS =  @LD_FLAGS@   
+SUBDIRS = 
 
-bin_PROGRAMS = main.bin 
-
-main_bin_SOURCES = main.c 
-
-# main_bin_CC = @PTHREAD_CC@
-# main_bin_CFLAGS = @PTHREAD_CFLAGS@ 
-
-bin_SCRIPTS = main
-
-main: main.sh
-	cp $< $@
-
-clean-local:
-	rm -f main
-
-install-exec-hook: 
-	cd $(DESTDIR)/$(bindir) && mv main.bin main
-
-uninstall-hook:
-	rm -f $(DESTDIR)/$(bindir)/main
-
-EXTRA_DIST = main.sh
+EXTRA_DIST = hw
