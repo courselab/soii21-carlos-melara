@@ -65,7 +65,7 @@ AX_PTHREAD([AC_DEFINE(HAVE_PTHREAD,1,
 dnl Output files
 
 AC_CONFIG_FILES([Makefile
-		src/Makefile]
+		tools/Makefile]
 		eg/Makefile)	
 
 dnl Do it

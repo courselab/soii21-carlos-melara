@@ -52,5 +52,5 @@ detailed information.
 
 - Directory `eg` contains source code examples.
 - Directory `try` contains programming exercises.
-- Directory `src` contains auxiliary tools used by examples and exercises.
+- Directory `tools` contains auxiliary tools used by examples and exercises.
 
