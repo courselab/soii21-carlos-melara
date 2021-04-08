@@ -17,11 +17,11 @@ loop:
 	jmp loop		; Repeat until we find a 0x0
 
 end:				
-	jmp $			; Jump forver (alt to end, or 0x0)
+	jmp end			; Jump forver (alt to end, or 0x0)
 
 string:				; C-like NULL terminated string
 
-	db 'Hello world', 0xd, 0xa, 0x0
+	db 'Hello World', 0x0
 	
 	times 510 - ($-$$) db 0	; Pad with zeros
 	dw 0xaa55		; Boot signature
