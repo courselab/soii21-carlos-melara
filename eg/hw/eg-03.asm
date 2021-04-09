@@ -1,5 +1,5 @@
 	;; Boot, say hello, and loop forever
-	;; NASM assembly, char by char, manually
+	;; NASM assembly, naive char by char, manually
 	
 	bits 16			; Set 16-bit mode
 	

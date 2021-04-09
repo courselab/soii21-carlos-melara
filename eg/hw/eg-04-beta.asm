@@ -3,11 +3,11 @@
 	
 	bits 16			; Set 16-bit mode
 	
-	org 0x7c00		; Our load address (alternative way)
+	LDADDR equ 0x7c00	; BIOS will load the program here in RAM
 
 	mov ah, 0xe		; Configure BIOS tty mode
 
-	mov bx, 0x0		; Load current RAM position
+	mov bx, LDADDR		; Load current RAM position
 loop:	
 	mov al, [string + bx]	; Offset to 'string' + RAM load address
 	int 0x10		; Call BIOS video interrupt

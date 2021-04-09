@@ -1,5 +1,5 @@
-	;; Finally, "Hello World!". We're safe now.
-	;; NASM assembly, neater loop version
+	;; Boot, say hello, and loop forever
+	;; NASM assembly, neater version wit loop
 
 	bits 16			; Set 16-bit mode
 	
@@ -9,7 +9,7 @@
 
 	mov bx, 0		; May be 0 because org directive.
 loop:				
-	mov al, [string + bx]	; 'Hello' ofsset
+	mov al, [msg + bx]	; Ofsset to the message
 	int 0x10		; Call BIOS video interrupt
 	cmp al, 0x0
 	je end
@@ -19,7 +19,7 @@ loop:
 end:				
 	jmp end			; Jump forver (alt to end, or 0x0)
 
-string:				; C-like NULL terminated string
+msg:				; C-like NULL terminated string
 
 	db 'Hello World', 0x0
 	

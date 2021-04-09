@@ -3,13 +3,13 @@
 	
 	bits 16			; Set 16-bit mode
 	
-	LDADDR equ 0x7c00	; BIOS will load the program here in RAM
+	org 0x7c00		; Our load address (alternative way)
 
 	mov ah, 0xe		; Configure BIOS tty mode
 
-	mov bx, LDADDR		; Load current RAM position
+	mov bx, 0x0		; Load current RAM position
 loop:	
-	mov al, [string + bx]	; Offset to 'string' + RAM load address
+	mov al, [msg + bx]	; Offset to 'msg' + RAM load address
 	int 0x10		; Call BIOS video interrupt
 	cmp al, 0x0		; Loop while char is not 0x0
 	je end
@@ -19,7 +19,7 @@ loop:
 end:	
 	jmp $			; Jump forever
 
-string:				; C-like NULL terminated string
+msg:				; C-like NULL terminated string
 	db 'H'
 	db 'e'
 	db 'l'
