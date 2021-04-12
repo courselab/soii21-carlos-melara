@@ -1,11 +1,11 @@
 	## Boot, say hello, and loop forever
 	## AT&T assembly, using 32-bit registers
        
-	
 	.code16               # Set 16-bit code
 	.text
-
-_start:		              # Needed (GAS has no equivalent to NASM $$)
+	.global _start
+	
+_start:		              # Entry point
 
 
 	

@@ -3,9 +3,9 @@
 	
 	.code16               # Set 16-bit code
 	.text		      # Tell linker where is the text (code segment)	
-	.global _start         # So that symbol may be found by the linker
+	.global begin         # So that symbol may be found by the linker
 
-_start:		              # Default entry label
+begin:		              # Needed (GAS has no equivalent to NASM $$)
 	
 	movb  $0xe, %ah	      # BIOS tty mode
 	
@@ -25,7 +25,7 @@ msg:			       # C-like NULL terminated string
 
 	.string    "Hello World"
 	
-	.fill 510 - (. - _start), 1, 0       # Pad with zeros
+	.fill 510 - (. - begin), 1, 0       # Pad with zeros
 	.word 0xaa55			     # Boot signature
 
 
