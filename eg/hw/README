@@ -1,8 +1,23 @@
 
+ OVERVIEW
+ ------------------------------
+
+ In order to experiment with the examples in this section, the following
+ pieces of software are required. The version indication lists those upo
+ which the project was tested. Using a more recent version should be
+ ok, but it is not absolutely guarateed that results may exhibit minor
+ variations. Feedback is always appreciated.
+
+ - GCC 	     	 9.3.0
+ - binutils 	 2.34
+ - nasm		 2.14.02
+
+
  CONTENTS
  ------------------------------
 
  Take a look at the following examples.
+ 
 
  * eg-01.hex 	    A minimal bootable program written directly in machine code.
  
@@ -172,29 +187,24 @@
      subsequent step, GAS will find this directive and honor it by
      producing a 16-bit machine code.
 
-     One may verify this by writing the followin exampe foo.c
+     One may verify this by building the auxiliary extra examples
 
-        int foo (int x)
-        {
-          return x+1;
-        }
+     	 make egx-01-16.o
+	 make egx-01.32.o
 
-     building it with
+     and inspecting the produced assembly codes
 
-         gcc -m32 -S -masm=intel -fno-pic foo.c -o foo-32.s
-         gcc -m16 -S -masm=intel -fno-pic foo.c -o foo-16.s
+     	 diff -y --color egx-01-16.s egx-01.32.s
 
-	 as --32 foo-32.s -o foo-32.bin
-	 as --32 foo-16.s -o foo-16.bin
+     Both should differ only in the line corresponding to the assembler
+     directive for 16-bit code.
 
-     and inspect both assemblys and both objects with
+     On the other hand, the dissaembling of the objects
 
-         objdump -M intel -d foo-32.bin
-         objdump -M intel -d foo-16.bin
+     	 diff --color <(make diss-elf IMG=egx-01-16.o) \
+	              <(make diss-elf IMG=egx-01-32.o)
 
-     Note that both assembly sources differs only in the directive
-     for 16-bit, while the binaries do make use of 32-bit and
-     16-bit, respectively.
+     shows that 16-bit or 32-bin registers are indeed used. 
 
      The reason why GCC does not output 16-bit assembly has to do with
      design decisions and priorities of the project. 

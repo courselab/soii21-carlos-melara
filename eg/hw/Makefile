@@ -101,12 +101,13 @@ run: $(IMG)
 	qemu-system-i386 -drive format=raw,file=$< -net none
 
 
+# Inspect
+
 diss: $(IMG)
 	objdump -M intel -b binary -m i8086 -D $<
 
 dump: $(IMG)
 	hexdump -C $<
-
 
 .PHONY: clean clean-extra
 
@@ -133,4 +134,18 @@ stick: $(IMG)
 	@if test -z "$(STICK)"; then \
 	echo "*** ATTENTION: make IMG=foo.bin SITCK=/dev/X"; exit 1; fi 
 	dd if=$< of=$(STICK)
+
+# Auxiliary extra examples
+
+egx-01-16.s : %-16.s : %.c
+	gcc -m16 -S -masm=intel -fno-pic $< -o $@
+
+egx-01-32.s : %-32.s : %.c
+	gcc -m32 -S -masm=intel -fno-pic $< -o $@
+
+egx-01-16.o egx-01-32.o : %.o : %.s
+	as --32 $< -o $@
+
+diss-elf : $(IMG)
+	objdump -M intel -d $<
 
