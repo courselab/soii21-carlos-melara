@@ -19,17 +19,17 @@
 
 AUXDIR = ../../tools#
 
-all : eg-01.bin eg-02.bin eg-03.bin eg-04-beta.bin eg-04.bin eg-05.bin eg-06-beta.1.bin eg-06-beta.2.bin eg-06.bin eg-06.bin eg-07.bin eg-08.bin
+all : eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin 
 
 
 # Machine code in hex
 
-eg-01.bin eg-02.bin : %.bin : %.hex
+eg-01.bin : %.bin : %.hex
 	$(AUXDIR)/hex2bin $< $@
 
 # NASM assembly
 
-eg-03.bin eg-04-beta.bin eg-04.bin eg-05.bin: %.bin : %.asm
+eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin: %.bin : %.asm
 	nasm $< -f bin -o $@
 ##
 ## GAS assembly
@@ -40,20 +40,20 @@ eg-03.bin eg-04-beta.bin eg-04.bin eg-05.bin: %.bin : %.asm
 # We need to tell the linker where to locate the .text section with -T
 # and inform which is our entry point with -e
 
-eg-06-beta.1.bin : %.bin : %.S
+eg-05-beta.1.bin : %.bin : %.S
 	as --32 $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e 0x7c00  $*.o -o $@
 
 # We can identify the entry point through a label
 
-eg-06-beta.2.bin : %.bin : %.S
+eg-05-beta.2.bin : %.bin : %.S
 	as --32 $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e begin  $*.o -o $@
 
 
 ifndef ALT
 
-eg-06.bin : %.bin : %.S
+eg-05.bin : %.bin : %.S
 	as --32 $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext=0x7c00  $*.o -o $@
 endif
@@ -67,7 +67,7 @@ eg-06.bin : %.bin : %.S
 	gcc -m32 -Wl,--oformat=binary -march=i386 -nostdlib -ffreestanding  $< -o $@
 endif
 
-eg-07.bin : %.bin : %.S
+eg-06.bin : %.bin : %.S
 #	gcc -m32 -Wl,--oformat=binary -march=i386 -nostdlib -ffreestanding -Wl,-Ttext=0x7c00 -Wl,--entry=0x7c00 $< -o $@
 	as --32 $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext 0x7c00 $*.o -o $@
@@ -75,7 +75,7 @@ eg-07.bin : %.bin : %.S
 ## GCC with inline
 ##
 ifndef ALT
-eg-08.bin : %.bin : %.c
+eg-07.bin : %.bin : %.c
 #
 # The following works
 #
@@ -93,7 +93,7 @@ endif
 
 
 ifeq ($(ALT),2)
-eg-08.bin : %.bin : %.c
+eg-07.bin : %.bin : %.c
 	gcc -m16 -O0 -Wall -fno-pic -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary -o $*.bin
@@ -110,7 +110,7 @@ eg-08.bin : %.bin : %.c
 endif
 
 
-eg-09.bin : %.bin : %.c
+eg-08.bin : %.bin : %.c
 	gcc -m16 -O0 -Wall -fno-pic -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 $*.o -T $*.ld --orphan-handling=discard  -o $@

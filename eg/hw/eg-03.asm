@@ -1,58 +1,48 @@
 	;; Boot, say hello, and loop forever
-	;; NASM assembly, naive char by char, manually
+	;; NASM assembly, using a loop 
 	
 	bits 16			; Set 16-bit mode
 	
-	mov ah, 0xe		; set BIOS teletype mode
+	org 0x7c00		; Our load address (alternative way)
 
-	mov al, 'H'		; Load 'H' ascii code
-	int 0x10		; Issue BIOS interrupt
+	mov ah, 0xe		; Configure BIOS tty mode
 
-	mov al, 'e'		; Load 'H' ascii code; 
-	int 0x10		; Issue BIOS interrupt
+	mov bx, 0x0		; Load current RAM position
+loop:	
+	mov al, [msg + bx]	; Offset to 'msg' + RAM load address
+	int 0x10		; Call BIOS video interrupt
+	cmp al, 0x0		; Loop while char is not 0x0
+	je end
+	add bx, 0x1		; Point to the next character
+	jmp loop		; Repeat until we find a 0x0
 
-	mov al, 'l'		; Load 'H' ascii code
-	int 0x10		; Issue BIOS interrupt
+end:	
+	jmp $			; Jump forever
 
-	mov al, 'l'		; Load 'H' ascii code
-	int 0x10		; Issue BIOS interrupt
-
-	mov al, 'o'		; Load 'H' ascii code
-	int 0x10		; Issue BIOS interrupt
-
-	mov al, ' '		; Load ' ' ascii code
-	int 0x10		; Issue BIOS interrupt
-
-	mov al, 'W'		; Load 'W' ascii code
-	int 0x10		; Issue BIOS interrupt
-
-	mov al, 'o'		; Load 'o' ascii code
-	int 0x10		; Issue BIOS interrupt
-
-	mov al, 'r'		; Load 'r' ascii code
-	int 0x10		; Issue BIOS interrupt
-
-	mov al, 'l'		; Load 'l' ascii code
-	int 0x10		; Issue BIOS interrupt
-
-	mov al, 'd'		; Load 'd' ascii code
-	int 0x10		; Issue BIOS interrupt
-
-	jmp $			; Loop forever (shorter version)
-
+msg:				; C-like NULL terminated string
+	db 'H'
+	db 'e'
+	db 'l'
+	db 'l'
+	db 'o'
+	db ' '
+	db 'W'
+	db 'o'
+	db 'r'
+	db 'l'
+	db 'd'
+	db 0x0
+	
 	times 510 - ($-$$) db 0	; Pad with zeros
 	dw 0xaa55		; Boot signature
 
-
-
+		
 	;; Notes
 	;;
-	;; BIOS interruption 0x10 causes the process flow to jump to the
-	;; interruption vector table area, where there is a pre-loaded BIOS
-	;; routine capable of output characters at the video device.
-	;;
-	;; This interruption handler routine reads the byte at the 8-bit
-	;; register and send to the video controller. The video operation
-	;; mode (e.g. ascii character) is controlled by register ah.
-	;; After completing the operation, execution flow is returned to
-	;; the next line after 'int' instruction.
+	;; This should produce the same result than mbr-03.asm.
+	;; This time, we use a loop to write 'Hello' string, which is naturally
+	;; more efficient than manually writing character by character.
+	;; On the other hand, we have to take into account the fact that BIOS
+	;; will load the program at the specific address 0x7c00. We don't have
+	;; and operating system taking care of translating relative memory
+	;; address into physical RAM address. Welcome to real world.
