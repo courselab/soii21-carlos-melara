@@ -1,4 +1,4 @@
-/* hex2bin.c - Convert a file from hexadecima ascii to binary.
+/* syseg.c - SYSeg information.
  
    Copyright (c) 2015, Monaco F. J. <monaco@usp.br>
 
@@ -27,10 +27,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "../config.h"
 #include "debug.h"
 
-#define PROGRAM "hex2bin"
-#define VERSION "0.1.0"
+#define PROGRAM "syseg"
 
 /* Program usage information. */
 
@@ -38,13 +38,10 @@ void usage()
 {
 #define msg(s)   fprintf (stderr, s "\n");
   msg("");
-  msg("Usage   " PROGRAM " [option] | <input-file> [<output-file>]");
-  msg("");
-  msg("          <input-file>             if not given, reads from stdin");
-  msg("          <output-file>            if not given, writes to stdout (in ascii)");
+  msg("Usage   " PROGRAM " [option]");
   msg("");
   msg("          options:   --help        this help");
-  msg("                     --version     software version");
+  msg("                     --version     syseg version");
   msg("");
 }
 
@@ -52,13 +49,16 @@ void usage()
 
 int main (int argc, char **argv)
 {
-  FILE *fpin, *fpout;
-  int val;
   
-  fpin = stdin;
-  fpout = stdout;
-
   /* Process options. */
+
+
+  if (argc == 1)
+    {
+      printf ("%s\n", PACKAGE_STRING);
+      exit(EXIT_SUCCESS);
+    }      
+
   
   if (argc > 1)
     {
@@ -69,41 +69,10 @@ int main (int argc, char **argv)
 	}
       if (!strcmp (argv[1], "--version"))
 	{
-	  printf ("Version: %s %s\n", PROGRAM, VERSION);
+	  printf ("%s\n", PACKAGE_STRING);
 	  exit(EXIT_SUCCESS);
 	}
-
-
-      if (argc > 1)
-	{
-	  fpin = fopen(argv[1], "r");
-	  sysfatal(!fpin);
-	}
-      
-      if (argc > 2)
-	{
-	  fpout = fopen(argv[2], "w");
-	  sysfatal(!fpout);
-	}
     }
-  
-
-  /* This the part of the program which does the actual job. */
-  
-  if (fpout == stdout)
-    while ( fscanf (fpin, "%2x", &val) >= 0)
-      printf ("%d ", val);
-  else
-    while ( fscanf (fpin, "%2x", &val) >= 0)
-      fputc (val, fpout);
-
-
-  /* Cleanup upon leaving. */
-  
-  if(fpin != stdin)
-    fclose (stdin);
-  if(fpout != stdout)
-    fclose (stdin);
 
   return EXIT_SUCCESS;
 }

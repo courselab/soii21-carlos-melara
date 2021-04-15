@@ -24,10 +24,11 @@ AM_LDFLAGS =  @LD_FLAGS@
 # main_bin_CC = @PTHREAD_CC@
 # main_bin_CFLAGS = @PTHREAD_CFLAGS@ 
 
-bin_PROGRAMS = hex2bin
+bin_PROGRAMS = hex2bin syseg
 
 hex2bin_SOURCES = hex2bin.c debug.h
 
+syseg_SOUCES = syseg.c debug.h
 
 # Wrapper execution script
 #
