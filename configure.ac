@@ -20,7 +20,7 @@ dnl
 
 dnl Initialize Autoconf, Automake and Libtool
 
-AC_INIT([SYSeg], [0.1.0-alpha], [monaco@usp.br],[syseg]) 
+AC_INIT([SYSeg], [0.1.0], [monaco@usp.br],[syseg]) 
 AC_PREREQ([2.65])                              
 AC_CONFIG_AUX_DIR([build-aux])                 
 AC_CONFIG_MACRO_DIR([m4])                      
