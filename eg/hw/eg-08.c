@@ -2,10 +2,9 @@
 extern const char here[];
 
 
-__asm__(".code16");         /* Set 16-bit code */
+/* Reminder: 16bit object code (see note 1). */
 
-
-/* This will be our entry point */
+/* This will be our entry point.*/
 
 void __attribute__ ((naked)) _start()           
 {
@@ -39,21 +38,16 @@ __asm__(".byte 0x55, 0xaa");                /* Boot signature  */
 
 
 
-/*  Notes.
+/* Notes. 
 
-    The specification
+   1) In oder to produce 16-bit program, we may either use the inline assembly
 
-       __attribute__((section(".text#")))
+      __asm__ (".code16");
 
-   for the array 'here' cause the compiler to place the string within
-   the segment .text (code segment). 
+      at the beginning of the file, or else pass the command line option
+      -m16 to gcc, which is absolutely equivalent here. Remember, this 
+      directive needs to be present in the assembly so that the assembly
+      know what to do.
 
-   Hack clues: 
+*/
 
-        Actually, __attribute__((section(.text))) causes gcc to output 
-
-	.section .text,"a"
-
-	Using .text# is a dirty workaround to comment out the trailing ",a".
-
- */

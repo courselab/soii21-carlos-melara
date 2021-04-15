@@ -19,7 +19,7 @@
 
 AUXDIR = ../../tools#
 
-all : eg-01.bin eg-02.bin eg-03.bin eg-04-beta.bin eg-04.bin eg-05.bin eg-06-beta.1.bin eg-06-beta.2.bin eg-06.bin eg-06+1.bin eg-07.bin eg-08.bin
+all : eg-01.bin eg-02.bin eg-03.bin eg-04-beta.bin eg-04.bin eg-05.bin eg-06-beta.1.bin eg-06-beta.2.bin eg-06.bin eg-06.bin eg-07.bin eg-08.bin
 
 
 # Machine code in hex
@@ -50,18 +50,22 @@ eg-06-beta.2.bin : %.bin : %.S
 	as --32 $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e begin  $*.o -o $@
 
+
+ifndef ALT
+
 eg-06.bin : %.bin : %.S
 	as --32 $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext=0x7c00  $*.o -o $@
+endif
+
 
 # Doing everything at one with gcc
 # Apparently, we don't need to pass -Ttext=org to the linker (does GCC do it?)
 
-eg-06+1.bin : %+1.bin : %.S
-#	gcc -m32 -Wl,--oformat=binary -march=i386 -nostdlib -ffreestanding -Wl,-Ttext=0x7c00  $< -o $@
+ifeq ($(ALT), 1)
+eg-06.bin : %.bin : %.S
 	gcc -m32 -Wl,--oformat=binary -march=i386 -nostdlib -ffreestanding  $< -o $@
-
-
+endif
 
 eg-07.bin : %.bin : %.S
 #	gcc -m32 -Wl,--oformat=binary -march=i386 -nostdlib -ffreestanding -Wl,-Ttext=0x7c00 -Wl,--entry=0x7c00 $< -o $@
@@ -70,7 +74,7 @@ eg-07.bin : %.bin : %.S
 ##
 ## GCC with inline
 ##
-
+ifndef ALT
 eg-08.bin : %.bin : %.c
 #
 # The following works
@@ -81,18 +85,41 @@ eg-08.bin : %.bin : %.c
 # The following does not work
 #
 #	gcc -m32 -Wl,--oformat=binary -fno-pic -fno-pie -march=i386 -nostdlib -ffreestanding -fno-pic -Wl,-Ttext=0x7c00 $< -o $@
-	gcc -O0 -Wall -m32 -fno-pic -S $< -o $*.s
+	gcc -m16 -O0 -Wall -fno-pic -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -Ttext=0x7c00 $*.o -o $*.elf
 	objcopy -j.text -Obinary $*.elf  $@
+endif
 
-# Avoid objcopy
 
-eg-08+1.bin : %+1.bin : %.c
-	gcc -O0 -Wall -m32 -fno-pic -S $< -o $*.s
+ifeq ($(ALT),2)
+eg-08.bin : %.bin : %.c
+	gcc -m16 -O0 -Wall -fno-pic -S $< -o $*.s
 	as --32 $*.s -o $*.o
-	ld -melf_i386 -Ttext=0x7c00 $*.o -T script.ld -o $@
+	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary -o $*.bin
+endif
 
+
+# Use liner script to produce a flat binary with only code from .text
+
+ifeq ($(ALT),1)
+eg-08.bin : %.bin : %.c
+	gcc -m16 -O0 -Wall -fno-pic -S $< -o $*.s
+	as --32 $*.s -o $*.o
+	ld -melf_i386 $*.o -Ttext=0x7c00 -T $*.ld --orphan-handling=discard  -o $@
+endif
+
+
+eg-09.bin : %.bin : %.c
+	gcc -m16 -O0 -Wall -fno-pic -S $< -o $*.s
+	as --32 $*.s -o $*.o
+	ld -melf_i386 $*.o -T $*.ld --orphan-handling=discard  -o $@
+
+
+# eg-10.bin : %.bin : %.c
+# 	gcc -O0 -Wall -m32 -fno-pic -S $< -o $*.s
+# 	as --32 $*.s -o $*.o
+# 	ld -melf_i386 $*.o -T $*.ld -o $@
 
 
 # Run on emulator
@@ -100,16 +127,20 @@ eg-08+1.bin : %+1.bin : %.c
 run: $(IMG)
 	qemu-system-i386 -drive format=raw,file=$< -net none
 
-
 # Inspect
 
 diss: $(IMG)
-	objdump -M intel -b binary -m i8086 -D $<
+	@objdump -f $< > /dev/null 2>&1; \
+	if [ $$? -eq "1" ]  ; then \
+	  objdump -M intel -b binary -m i8086 -D $< ; \
+	else \
+	  objdump -M intel  -d $< ; \
+	fi
 
 dump: $(IMG)
 	hexdump -C $<
 
-.PHONY: clean clean-extra
+.PHONY: clean clean-extra help
 
 clean:
 	rm -f *.bin *.elf *.o *.s
@@ -146,6 +177,13 @@ egx-01-32.s : %-32.s : %.c
 egx-01-16.o egx-01-32.o : %.o : %.s
 	as --32 $< -o $@
 
-diss-elf : $(IMG)
-	objdump -M intel -d $<
+# Help
 
+help:
+	echo "Rules:"
+	echo
+	echo "  all		   builds everything"
+	echo "  clean		   clean built and temporary files"
+	echo "  img.bin	  	   build target img.bin"
+	echo "  diss IMG=img.bin   disassembly flat binary img.bin"
+	echo "  dump IMG=img.bin   dump img.bin contents"
