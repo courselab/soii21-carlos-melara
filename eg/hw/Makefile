@@ -82,7 +82,7 @@ endif
 
 
 ##
-## GCC with inline
+## GCC with inline ### TODO: outputing more than 512 bytes
 ##
 ifndef ALT
 eg-07.bin : %.bin : %.c
