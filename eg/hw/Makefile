@@ -82,44 +82,43 @@ endif
 
 
 ##
-## GCC with inline ### TODO: outputing more than 512 bytes
+## GCC with inline 
 ##
+
 ifndef ALT
 eg-07.bin : %.bin : %.c
-	gcc -m16 -O0 -Wall -fno-pic -S $< -o $*.s
+	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -S $< -o $*.s
 	as --32 $*.s -o $*.o
-	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary --orphan-handling=discard -nostarfiles --build-id=none -s -nodefaultlibs -o $*.bin
+	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary --orphan-handling=discard  -o $@
 endif
-
 
 ifeq ($(ALT),1)
 eg-07.bin : %.bin : %.c
-	gcc -m16 -Wl,--oformat=binary -march=i386 -nostdlib  -Wl,-Ttext=0x7c00 -fno-pic -fno-pie --freestanding  $< -o $@
+	gcc -m16 -O0 -Wall -fno-pic  -S $< -o $*.s
+	as --32 $*.s -o $*.o
+	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
+endif
+
+# One-line gcc command
+
+ifeq ($(ALT),2)
+eg-07.bin : %.bin : %.c
+	# gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -nostdlib \
+	# -Wl,-Ttext=0x7c00 -Wl,--oformat=binary -Wl,--orphan-handling=discard   $< -o $@
+	gcc -m16 -O0 -Wall -fno-pic -nostdlib -T $*.ld -Wl,--orphan-handling=discard   $< -o $@
 endif
 
 # Use liner script to produce a flat binary with only code from .text
 
-ifeq ($(ALT),1)
-eg-08.bin : %.bin : %.c
-	gcc -m16 -O0 -Wall -fno-pic -S $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 $*.o -Ttext=0x7c00 -T $*.ld --orphan-handling=discard  -o $@
-endif
 
-
-
-
+# Using linker script to define entry, flat binary and boot signature.
 
 eg-08.bin : %.bin : %.c
-	gcc -m16 -O0 -Wall -fno-pic -S $< -o $*.s
+	gcc -m16 -O0 -Wall -fno-pic  -S $< -o $*.s
 	as --32 $*.s -o $*.o
-	ld -melf_i386 $*.o -T $*.ld --orphan-handling=discard  -o $@
+	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
 
 
-# eg-10.bin : %.bin : %.c
-# 	gcc -O0 -Wall -m32 -fno-pic -S $< -o $*.s
-# 	as --32 $*.s -o $*.o
-# 	ld -melf_i386 $*.o -T $*.ld -o $@
 
 
 # Run on emulator
