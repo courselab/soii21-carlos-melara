@@ -2,7 +2,7 @@
 	## AT&T assembly, translated from NASM
 	
 	.code16               # Set 16-bit code
-	.text		      # Tell linker where is the text (code segment)	
+
 	.global begin         # So that symbol may be found by the linker
 
 begin:		              # Needed (GAS has no equivalent to NASM $$)

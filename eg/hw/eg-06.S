@@ -2,7 +2,7 @@
 	## AT&T assembly, using 32-bit registers
        
 	.code16               # Set 16-bit code
-	.text
+
 	.global _start
 	
 _start:		              # Entry point

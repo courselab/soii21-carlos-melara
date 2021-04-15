@@ -19,8 +19,9 @@
 
 AUXDIR = ../../tools#
 
-all : eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin 
+bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin 
 
+all : $(bin)
 
 # Machine code in hex
 
@@ -60,45 +61,41 @@ endif
 
 
 # Doing everything at one with gcc
-# Apparently, we don't need to pass -Ttext=org to the linker (does GCC do it?)
-
+# 
 ifeq ($(ALT), 1)
-eg-06.bin : %.bin : %.S
-	gcc -m32 -Wl,--oformat=binary -march=i386 -nostdlib -ffreestanding  $< -o $@
+eg-05.bin : %.bin : %.S
+	gcc -m16 -Wl,--oformat=binary -march=i386 -nostdlib -Ttext=0x7c00 $< -o $@
 endif
 
+ifndef ALT
 eg-06.bin : %.bin : %.S
 #	gcc -m32 -Wl,--oformat=binary -march=i386 -nostdlib -ffreestanding -Wl,-Ttext=0x7c00 -Wl,--entry=0x7c00 $< -o $@
 	as --32 $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext 0x7c00 $*.o -o $@
+endif
+
+ifeq ($(ALT),1)
+eg-06.bin : %.bin : %.S
+	gcc -m16 -Wl,--oformat=binary -march=i386 -nostdlib -Wl,-Ttext=0x7c00 $< -o $@
+endif
+
+
+
 ##
 ## GCC with inline
 ##
 ifndef ALT
 eg-07.bin : %.bin : %.c
-#
-# The following works
-#
-#	 gcc -Wall -O0 -ffreestanding -fno-pic -m16 -nostdlib -estart -Wl,-Ttext=0x7c00 $< -o $*.elf
-#	 objcopy -j.text -Obinary  $*.elf $@
-#
-# The following does not work
-#
-#	gcc -m32 -Wl,--oformat=binary -fno-pic -fno-pie -march=i386 -nostdlib -ffreestanding -fno-pic -Wl,-Ttext=0x7c00 $< -o $@
 	gcc -m16 -O0 -Wall -fno-pic -S $< -o $*.s
 	as --32 $*.s -o $*.o
-	ld -melf_i386 -Ttext=0x7c00 $*.o -o $*.elf
-	objcopy -j.text -Obinary $*.elf  $@
+	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary --orphan-handling=discard -nostarfiles --build-id=none -s -nodefaultlibs -o $*.bin
 endif
 
 
-ifeq ($(ALT),2)
+ifeq ($(ALT),1)
 eg-07.bin : %.bin : %.c
-	gcc -m16 -O0 -Wall -fno-pic -S $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary -o $*.bin
+	gcc -m16 -Wl,--oformat=binary -march=i386 -nostdlib  -Wl,-Ttext=0x7c00 -fno-pic -fno-pie --freestanding  $< -o $@
 endif
-
 
 # Use liner script to produce a flat binary with only code from .text
 
@@ -108,6 +105,9 @@ eg-08.bin : %.bin : %.c
 	as --32 $*.s -o $*.o
 	ld -melf_i386 $*.o -Ttext=0x7c00 -T $*.ld --orphan-handling=discard  -o $@
 endif
+
+
+
 
 
 eg-08.bin : %.bin : %.c

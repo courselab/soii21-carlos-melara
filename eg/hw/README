@@ -34,8 +34,8 @@
    make help			usage information
 
 
- Some examples allow an alternative build recipe which can be selected
- by passing the command-line variable ALT=<number> to make. 
+ Some examples allow alternative build recipes which can be selected
+ by passing the command-line variable ALT=<number> to make. See bellow. 
 
  Files
 
@@ -192,7 +192,14 @@
 		    producing 16-bit assembly code. It works very well for
 		    32-bit and 64-bit but not with 16-bit. To better
 		    understand it, see note 3 ahead.
-  
+
+		    Alternative:
+
+		    Issuing the build rule with the command-line variable
+		    ALT=1 selects an alternative recipe using a single GCC 
+		    invocation (GCC then invokes assembler and linker with
+		    appropriate arguments).
+
 * eg-07.c	    Like eg-07.S, but translated into C.
 
    		    We use basic inline assembly.
