@@ -26,7 +26,10 @@ all : $(bin)
 # Machine code in hex
 
 eg-01.bin : %.bin : %.hex
-	$(AUXDIR)/hex2bin $< $@
+	@if ! test -f $(AUXDIR)/hex2bin; then \
+	echo "Have you read syseg/README?" ; exit 1; fi
+	$(AUXDIR)/hex2bin $< $@ 
+
 
 # NASM assembly
 
@@ -179,10 +182,11 @@ egx-01-16.o egx-01-32.o : %.o : %.s
 # Help
 
 help:
-	echo "Rules:"
-	echo
-	echo "  all		   builds everything"
-	echo "  clean		   clean built and temporary files"
-	echo "  img.bin	  	   build target img.bin"
-	echo "  diss IMG=img.bin   disassembly flat binary img.bin"
-	echo "  dump IMG=img.bin   dump img.bin contents"
+	@echo " SYSeg: build rules for eg/hw:"
+	@echo
+	@echo "  all		     builds everything"
+	@echo "  clean		     clean built and temporary files"
+	@echo "  img.bin	     build target img.bin"
+	@echo "  diss IMG=img.bin   disassembly flat binary img.bin"
+	@echo "  dump IMG=img.bin   dump img.bin contents"
+	@echo
