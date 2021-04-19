@@ -18,7 +18,7 @@ loop:
 
 halt:
 	hlt			; Halt
-	jmp $			; Safeguard
+	jmp halt		; Safeguard
 
 msg:				; C-like NULL terminated string
 	db 'H'

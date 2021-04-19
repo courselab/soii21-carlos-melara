@@ -207,7 +207,7 @@
 		    invocation (GCC then invokes assembler and linker with
 		    appropriate arguments).
 
-* eg-07.c	    Like eg-07.S, but translated into C.
+* eg-07.c	    Like eg-06.S, but translated into C.
 
    		    We use basic inline assembly.
 
