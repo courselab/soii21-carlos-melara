@@ -20,13 +20,14 @@ loop:			      # Write the string
 	
 	andl  $0xff, %eax
 	cmp   $0x0, %eax
-	je    end
+	je    halt
 	add   $0x1, %ebx       # Point to the next character
 
 	jmp   loop	       # Repeat until we find a 0x0
 	
-end:				
-	jmp   end	       # Jump forever (alt to 0x0, or .)
+halt:
+	hlt                    # Halt
+	jmp   halt	       # Safeguard
 
 msg:			       # C-like NULL terminated string
 
@@ -34,3 +35,9 @@ msg:			       # C-like NULL terminated string
 	
 	.fill 510 - (. - _start), 1, 0       # Pad with zeros
 	.word 0xaa55			     # Boot signature
+
+
+	# Notes
+	#
+	# The same program, but using 32-bit registers.
+

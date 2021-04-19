@@ -12,12 +12,13 @@ loop:
 	mov al, [msg + bx]	; Ofsset to the message
 	int 0x10		; Call BIOS video interrupt
 	cmp al, 0x0
-	je end
+	je halt
 	add bx, 0x1		; Point to the next character
 	jmp loop		; Repeat until we find a 0x0
 
-end:				
-	jmp end			; Jump forver (alt to end, or 0x0)
+halt:
+	hlt			; Halt
+	jmp halt		; Safeguard
 
 msg:				; C-like NULL terminated string
 
@@ -27,8 +28,3 @@ msg:				; C-like NULL terminated string
 	dw 0xaa55		; Boot signature
 
 		
-	;; Notes
-	;;
-	;; In worship to the seven hacker gods and for the honor of
-	;; source code realm, we hereby humbly offer our sacred 
-	;; "Hello World" sacrifice. May our code remain bugless.

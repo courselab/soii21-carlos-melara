@@ -12,12 +12,13 @@ loop:
 	mov al, [msg + bx]	; Offset to 'msg' + RAM load address
 	int 0x10		; Call BIOS video interrupt
 	cmp al, 0x0		; Loop while char is not 0x0
-	je end
+	je halt
 	add bx, 0x1		; Point to the next character
 	jmp loop		; Repeat until we find a 0x0
 
-end:	
-	jmp $			; Jump forever
+halt:
+	hlt			; Halt
+	jmp $			; Safeguard
 
 msg:				; C-like NULL terminated string
 	db 'H'
@@ -42,7 +43,15 @@ msg:				; C-like NULL terminated string
 	;; This should produce the same result than mbr-03.asm.
 	;; This time, we use a loop to write 'Hello' string, which is naturally
 	;; more efficient than manually writing character by character.
-	;; On the other hand, we have to take into account the fact that BIOS
-	;; will load the program at the specific address 0x7c00. We don't have
-	;; and operating system taking care of translating relative memory
-	;; address into physical RAM address. Welcome to real world.
+	;;
+	;; Notice, however that differently from the case of jmp instruction,
+	;; which deals with a relative offset, we use msg as a label to an
+	;; arbitrary position. This time, there is no way to rewrite msg
+	;; using $ --- the assembler has no way to gues the address of the
+	;; string. We therefore need to take into account the fact that
+	;; BIOS will load the program at the specific address 0x7c00.
+	;; 
+	;; We don't have any operating system taking care of translating
+	;; relative memory address into physical RAM address.
+	;;
+	;; Welcome to real world.

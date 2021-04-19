@@ -14,12 +14,13 @@ loop:			      # Write the string
 	movb  msg(%bx), %al
 	int   $0x10	
 	cmp   $0x0, %al	
-	je    end
+	je    halt
 	add   $0x1, %bx	       # Point to the next character
 	jmp   loop	       # Repeat until we find a 0x0
 	
-end:				
-	jmp   end	       # Jump forever (alt to 0x0, or .)
+halt:
+	hlt		       # Halt
+	jmp   halt	       # Safeguard
 
 msg:			       # C-like NULL terminated string
 
@@ -31,8 +32,8 @@ msg:			       # C-like NULL terminated string
 
 	# Notes
 	#
-	# This intentionally a literal translation of mbr-05.asm
-	# into AT&T GASM assembly. This may not be the neater approach
-	# to it. In the next examples we taks advantages of GASM features.
+	# This is a intentionally literal translation of mbr-04.asm
+	# into AT&T Gas assembly. It may not be the neater approach ;
+	# in the next examples we taks advantages of GASM features. 
 
 	
