@@ -43,6 +43,11 @@ Finally, build the software with
  $ make
  ```
 
+**Note** that, as mentioned, this procedure is intended to build the auxiliary tools.
+The examples and programming exercises themselves will not be built as result.
+To that end, one need to acess the directories containing the respective source
+code and follow the instructions indicated in the README file.
+
 For more detailed instructions, please, refer to file `INSTALL`
 
 ## Overview
@@ -53,4 +58,10 @@ detailed information.
 - Directory `eg` contains source code examples.
 - Directory `try` contains programming exercises.
 - Directory `tools` contains auxiliary tools used by examples and exercises.
+
+Each subdirectory contains a README file with detailed information about its
+contents and specific instructions on how to proceed.  **Tip**: if the file name
+reads README, please, do as it advices.
+
+
 
