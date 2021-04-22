@@ -30,7 +30,7 @@ void __attribute__ ((naked)) _start()
 
 }
 
-const char here[] __attribute__((section(".text#"))) = "Hello world";
+const char here[] = "Hello world";
 
 
 

@@ -19,7 +19,7 @@
 
 AUXDIR = ../../tools#
 
-bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin 
+bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-08.bin
 
 all : $(bin)
 
@@ -89,14 +89,14 @@ endif
 ##
 
 ifndef ALT
-eg-07.bin : %.bin : %.c
+eg-07.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary --orphan-handling=discard  -o $@
 endif
 
 ifeq ($(ALT),1)
-eg-07.bin : %.bin : %.c
+eg-07.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic  -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
@@ -105,22 +105,28 @@ endif
 # One-line gcc command
 
 ifeq ($(ALT),2)
-eg-07.bin : %.bin : %.c
-	# gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -nostdlib \
-	# -Wl,-Ttext=0x7c00 -Wl,--oformat=binary -Wl,--orphan-handling=discard   $< -o $@
+eg-07.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic -nostdlib -T $*.ld -Wl,--orphan-handling=discard   $< -o $@
 endif
 
 # Use liner script to produce a flat binary with only code from .text
 
 
-# Using linker script to define entry, flat binary and boot signature.
+# Using linker script to define entry, flat binary and boot signature,
+# and to place the string in the .text section.
 
-eg-08.bin : %.bin : %.c
+eg-08.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic  -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
 
+
+# Next? 
+
+eg-09.bin : %.bin : %.c %.ld
+	gcc -m16 -O0 -Wall -fno-pic  -S $< -o $*.s
+	as --32 $*.s -o $*.o
+	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
 
 
 
