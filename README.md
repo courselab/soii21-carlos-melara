@@ -65,3 +65,13 @@ reads README, please, do as it advices.
 
 
 
+  ACKNOWLEDGMENTS
+  ---------------
+
+  It is both a moral obligation and a personal pleasure to acknowledge and
+  express the due gratitude to my colleague and friend Dr. Renê Souza Pinto
+  for his wise advisory and tireless support. If it were not for Renê's 
+  enviable technical skills and generosity to promptly share his knowledge,
+  as well as his resolute willing to dig into obscure hardware and software
+  issues I keep on presenting him, I would likely be stuck in some endless
+  Stackoverflow wild quest, struggling with arcane code puzzles.

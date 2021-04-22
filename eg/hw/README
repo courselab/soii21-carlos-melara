@@ -14,9 +14,9 @@
  - qemu		 4.2.1		(qemu-system-i386)
 
 
- If you may need
+ If you may also need
 
- - xoriso	1.5.2-1		(if you your BIOS requires it)
+ - xoriso	1.5.2-1		(depending on your computer's BIOS)
 
 
  BUILD DIRECTIONS
@@ -24,19 +24,23 @@
 
  Use
 
-   make name.bin		to build name.bin out of name.ext
+   make name.bin		             build name.bin 
 
-   make run IMG=name.bin	to test name.bin with the emulator
+   make run IMG=name.bin	             test name.bin with the emulator
 
-   make diss IMG=name.bin	to disassemble name.bin
+   make diss IMG=name.bin	             disassemble name.bin
 
-   make dump IMG=name.ext	to dump the raw contents of name.ext
+   make dump IMG=name.ext	             dump the raw contents of name.ext
 
-   make      			to build everything (or make all)
+   make      			             build everything (or make all)
 
-   make clean			to undo make all
+   make clean			             undo make all
 
-   make help			usage information
+   make help			             usage information
+
+   make iso IMG=name.iso	             build a iso9660 image with name.bin
+
+   make stick IMG=name.bin STICK=/dev/sdX    make a bootable USB stick
 
 
  Some examples allow alternative build recipes which can be selected
@@ -68,6 +72,30 @@
 
      ld			indicates a linker script.
 
+
+ Note on booting the real hardware
+
+    Unfortunately, not all BIOSes  handle USB boot devices in the same
+    way (welcome to system level). Some are likely to emulate it as a floppy
+    disk and rely on the original IBM PC boot method we are exploring here.
+    If so, you should be able to prepare your stick using 'make stick'
+    with the command line variable IMG=name.bin. Otherwise, if your computer's
+    BIOS emulates your USP stick as a CD-ROM, you should be better served
+    by passing it the variable IMG=name.iso.  See note (1) by the end.
+
+
+ Words of wisdom
+
+    If you plan to boot the examples in the physical hardware, check which
+    device represents your USB stick. You may use, for instance lsblk utility.
+    Your devices should possibly list as /dev/sdX, with X being a, b, c etc.
+
+    If you have only one storage device, say your HD, it may appear as
+    /dev/sda, and when you plug your USB stick, it'll take the next
+    available letter and appears as /dev/sdb.  
+
+    Be careful. If you misspell your stick as /dev/hda, you may hopelessly
+    grief in pitiful misery for a long time... 
 
  CONTENTS
  ------------------------------
@@ -227,6 +255,30 @@
  * eg-08.c	    Like eg-07.S, but adding the signature via linker script.
 
 
+ Troubleshooting
+ ------------------------------
+
+ You are encouraged to send boot reports and fixes to the software author.
+
+ Some known issues and tentative workarounds are here listed.
+
+ - Issue: my image boots ok with the emulator but not with the hardware.
+
+   If you have prepared your stick with
+
+
+      make stick IMG=name.bin STICK=/dev/sdX
+
+   try then, instead
+
+      make stick IMG=name.iso STICK=/dev/sdX
+
+ - Issue: I used the regular cp command to transfer image.bin to my stick.
+
+   No, it does not work. Utility cp relies on the OS to transfer data
+   to a formatted media. It will choose where to store the data
+   and it will certainly not be to the MBR area. You can either
+   use cat, dd or, if your BIOS needs, xorriso.
 
 
  Notes
@@ -301,8 +353,57 @@
      The reason why GCC does not output 16-bit assembly has to do with
      design decisions and priorities of the project. 
 
+ (4)   Original PC's BIOS used to read the MBR from the first 512 bytes of
+       either the floppy or hard disks. Later on, when CD-ROM technology
+       came about, it brought a different specification for the boot
+       information, described in the iso9960 (the conventional CD file system
+       format). Vendors then updated the BIOSes to detect whether the storage
+       is either a floppy (os HD) or a CD-ROM, and apply the appropriate boot
+       procedure. More recently, when USB flash devices were introduced, the
+       approch adopted by BIOS vendors was not to specify a new boot procedure,
+       but to emulate  some of the former devices. The problem is that this
+       choice is not very consistent: some BIOSes would decect a USB stick as
+       a floppy, whereas other BIOSes would see it as a CD (welcome to the
+       system layer!).
+
+       If your BIOS mimics the original PC, to make a bootable USB stick
+       all you need to do is to copy the MBR code to its first 512 bytes:
+
+
+   	make stick IMG=name.bin STICK=/dev/sdX
+
+
+      On the other hand, if your BIOS insists in detecting your USB stick
+      as a CD-ROM, you'll need to prepare a bootable iso9660 image as
+      described in El-Torito specification [2]. 
+
+      As for that, the GNU xorriso utility may come in handy: it prepares a
+      bootable USP stick which should work in both scenarios. Xorriso copies
+      the MBR code to the first 512 bytes to the USB stick and, in addition,
+      it also transfer a prepared iso9660 to the right location. If you can't
+      get your BIOS to boot and execute the example with the above (floppy)
+      method, then try
+
+       make stick IMG=name.iso STICK=/dev/sdX
+
+
+     We wont cover iso9660 el-torito boot for CD-ROM, as newer x86-based
+     computers now offers the Unified Extensible Firmware Interface meant
+     to replace the BIOS interface of the original PC.  EFI is capable
+     of decoding a format device, allowing the MBR code to be read from a
+     standard file system. Although EFI is gradually turning original PC
+     boot obsolete, however, most present day BIOSes offer a so called
+     "legacy mode BIOS" and its useful to understand more sophisticated
+     technologies, as low-level boot is still often found in legacy
+     hardware and embedded systems.
+
+
+   
+
 
  References
  ------------------------------
  
  [1] Auxiliary program: syseg/src/hex2bin
+
+ [2] El-Torito: https://wiki.osdev.org/El-Torito
