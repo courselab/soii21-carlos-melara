@@ -90,14 +90,14 @@ endif
 
 ifndef ALT
 eg-07.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -S $< -o $*.s
+	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary --orphan-handling=discard  -o $@
 endif
 
 ifeq ($(ALT),1)
 eg-07.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic  -S $< -o $*.s
+	gcc -m16 -O0 -Wall -fno-pic -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
 endif
@@ -106,7 +106,7 @@ endif
 
 ifeq ($(ALT),2)
 eg-07.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic -nostdlib -T $*.ld -Wl,--orphan-handling=discard   $< -o $@
+	gcc -m16 -O0 -Wall -fno-pic -fcf-protection=none -nostdlib -T $*.ld -Wl,--orphan-handling=discard   $< -o $@
 endif
 
 # Use liner script to produce a flat binary with only code from .text
@@ -116,7 +116,7 @@ endif
 # and to place the string in the .text section.
 
 eg-08.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic  -S $< -o $*.s
+	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
 
@@ -124,7 +124,7 @@ eg-08.bin : %.bin : %.c %.ld
 # Next? 
 
 eg-09.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic  -S $< -o $*.s
+	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
 
