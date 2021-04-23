@@ -19,7 +19,7 @@
 
 AUXDIR = ../../tools#
 
-bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin
+bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin  
 
 all : $(bin)
 
@@ -71,7 +71,7 @@ eg-05.bin : %.bin : %.S
 endif
 
 ifndef ALT
-eg-06.bin : %.bin : %.S
+eg-06.bin eg-06-alt.bin: %.bin : %.S
 #	gcc -m32 -Wl,--oformat=binary -march=i386 -nostdlib -ffreestanding -Wl,-Ttext=0x7c00 -Wl,--entry=0x7c00 $< -o $@
 	as --32 $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext 0x7c00 $*.o -o $@
@@ -147,6 +147,9 @@ diss: $(IMG)
 
 dump: $(IMG)
 	hexdump -C $<
+
+diffbin : $(IMG1) $(IMG2)
+	bash -c "meld <(make diss IMG=$(IMG1)) <(make diss IMG=$(IMG2))"
 
 .PHONY: clean clean-extra help
 

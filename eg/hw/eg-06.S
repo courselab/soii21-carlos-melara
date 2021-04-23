@@ -1,25 +1,26 @@
 	## Boot, say hello, and loop forever
 	## AT&T assembly, using 32-bit registers
        
-	.code16               # Set 16-bit code
+	.code16                 # Set 16-bit code
 
 	.global _start
 	
-_start:		              # Entry point
+_start:		                # Entry point
 
 
 	
-	movl  $0x0, %ebx	      
-loop:			      # Write the string
-	movl  msg(%ebx),  %edx
-	andl  $0xff, %edx
-	movl  $0xe00, %eax
-	xorl  %edx, %eax
+	movl  $0x0, %ebx        # Using linker's org flag
+loop:			      
+	movl  msg(%ebx),  %edx  # This is equivalent to
+	andl  $0xff, %edx       #
+	movl  $0xe00, %eax      # movb msg(%bx), %al
+	xorl  %edx, %eax        #
 	
 	int   $0x10
 	
-	andl  $0xff, %eax
-	cmp   $0x0, %eax
+	andl  $0xff, %eax       # Equivalent to
+	cmp   $0x0, %eax        # cmp $0x0, $al
+	
 	je    halt
 	add   $0x1, %ebx       # Point to the next character
 

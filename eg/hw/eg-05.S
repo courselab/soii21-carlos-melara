@@ -9,12 +9,13 @@ _start:		              # Default entry label
 	
 	movb  $0xe, %ah	      # BIOS tty mode
 	
-	movw  $0x0, %bx	      
-loop:			      # Write the string
-	movb  msg(%bx), %al
-	int   $0x10	
-	cmp   $0x0, %al	
-	je    halt
+	movw  $0x0, %bx       # Using linker's org flag	      
+
+loop:			      
+	movb  msg(%bx), %al    # Offset to the message
+	int   $0x10	       # Call bios 
+	cmp   $0x0, %al	       # Loop while char is not 0x0
+	je    halt             # Jump to halt
 	add   $0x1, %bx	       # Point to the next character
 	jmp   loop	       # Repeat until we find a 0x0
 	
