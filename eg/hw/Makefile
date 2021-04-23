@@ -188,6 +188,11 @@ egx-01-32.s : %-32.s : %.c
 egx-01-16.o egx-01-32.o : %.o : %.s
 	as --32 $< -o $@
 
+egx-02.bin : %.bin : %.c
+	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -Wno-unused -S $< -o $*.s
+	as --32 $*.s -o $*.o
+	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e foo $*.o -o $@
+
 # Help
 
 help:

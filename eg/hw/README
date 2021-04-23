@@ -221,13 +221,17 @@
 
 * eg-06.S	    Program eg-06.S modified to manipulate 32-bit registers.
 
-    		    Why that? The main reason is that we want to use GCC
-		    to produce 16-bit assembly, which we can further
-		    process with GAS. However, GCC does not do a good job
-		    producing 16-bit assembly code. It works very well for
-		    32-bit and 64-bit but not with 16-bit. To better
-		    understand it, see note 3 ahead.
 
+		    The mean reason to rewrite eg-05.S using 32-bit registers
+		    is because GCC does not do a good job producing 16-bit
+		    assembly code. In order to mix C and inline assembly
+		    as we'll shall do next, we'd better modify our code
+		    to manipulate 32-bit registers and leave to the assemlber
+		    the duty of produce appropriate 16-bit object code.
+		    
+		    To better understand this limitation, refer to note 3
+		    by the end of this file.
+		    
 		    Alternative:
 
 		    Issuing the build rule with the command-line variable
