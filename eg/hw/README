@@ -235,7 +235,7 @@
 		    invocation (GCC then invokes assembler and linker with
 		    appropriate arguments).
 
-* eg-07.c	    Like eg-06.S, but translated into C.
+* eg-07-beta.c	    Like eg-06.S, but translated into C.
 
    		    We use basic inline assembly.
 
@@ -252,7 +252,14 @@
 		    ALT=1 selects an alternative recipe using a single line
 		    compiler (gcc) invocation.
 
- * eg-08.c	    Like eg-07.S, but adding the signature via linker script.
+		    Note that the string is now allocated in the read-only
+		    section of the object code --- and also the ad hoc
+		    workaround we used.
+
+
+ * eg-07.c	    Like eg-07-beta.c, but handling .rodata with the ld script
+
+ * eg-08.c	    Like eg-08.S
 
 
  Troubleshooting

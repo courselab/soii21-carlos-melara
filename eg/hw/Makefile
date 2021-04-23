@@ -19,7 +19,7 @@
 
 AUXDIR = ../../tools#
 
-bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-08.bin
+bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin
 
 all : $(bin)
 
@@ -89,14 +89,14 @@ endif
 ##
 
 ifndef ALT
-eg-07.bin : %.bin : %.c %.ld
+eg-07-beta.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary --orphan-handling=discard  -o $@
 endif
 
 ifeq ($(ALT),1)
-eg-07.bin : %.bin : %.c %.ld
+eg-07-beta.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
@@ -105,7 +105,7 @@ endif
 # One-line gcc command
 
 ifeq ($(ALT),2)
-eg-07.bin : %.bin : %.c %.ld
+eg-07-beta.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic -fcf-protection=none -nostdlib -T $*.ld -Wl,--orphan-handling=discard   $< -o $@
 endif
 
@@ -115,7 +115,7 @@ endif
 # Using linker script to define entry, flat binary and boot signature,
 # and to place the string in the .text section.
 
-eg-08.bin : %.bin : %.c %.ld
+eg-07.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
@@ -123,7 +123,7 @@ eg-08.bin : %.bin : %.c %.ld
 
 # Next? 
 
-eg-09.bin : %.bin : %.c %.ld
+eg-08.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
@@ -151,7 +151,7 @@ dump: $(IMG)
 .PHONY: clean clean-extra help
 
 clean:
-	rm -f *.bin *.elf *.o *.s
+	rm -f *.bin *.elf *.o *.s *.iso *.img
 	make clean-extra
 
 clean-extra:

@@ -30,8 +30,11 @@ void __attribute__ ((naked)) _start()
 
 }
 
-const char here[] = "Hello world";
+const char here[] __attribute__((section(".text#"))) = "Hello world";
 
+
+__asm__(". = _start + 510");                /* Pad with zeros */
+__asm__(".byte 0x55, 0xaa");                /* Boot signature  */
 
 
 
