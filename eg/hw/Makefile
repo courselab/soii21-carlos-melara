@@ -180,16 +180,18 @@ stick: $(IMG)
 # Auxiliary extra examples
 
 egx-01-16.s : %-16.s : %.c
-	gcc -m16 -S -masm=intel -fno-pic $< -o $@
+	gcc -m16 -S -masm=intel -fno-pic -fcf-protection=none $< -o $@
 
 egx-01-32.s : %-32.s : %.c
-	gcc -m32 -S -masm=intel -fno-pic $< -o $@
+	gcc -m32 -S -masm=intel -fno-pic -fcf-protection=none $< -o $@
 
-egx-01-16.o egx-01-32.o : %.o : %.s
-	as --32 $< -o $@
+egx-01-16.bin egx-01-32.bin : %.bin : %.s
+	as --32 $< -o $*.o
+	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e foo $*.o -o $@
 
 egx-02.bin : %.bin : %.c
 	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -Wno-unused -S $< -o $*.s
+#	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables  -Wno-unused -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e foo $*.o -o $@
 

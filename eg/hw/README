@@ -221,7 +221,6 @@
 
 * eg-06.S	    Program eg-06.S modified to manipulate 32-bit registers.
 
-
 		    The mean reason to rewrite eg-05.S using 32-bit registers
 		    is because GCC does not do a good job producing 16-bit
 		    assembly code. In order to mix C and inline assembly
@@ -260,8 +259,12 @@
 		    section of the object code --- and also the ad hoc
 		    workaround we used.
 
-
  * eg-07.c	    Like eg-07-beta.c, but handling .rodata with the ld script
+
+   		    It is now opportune to verify what has being said in the
+		    comments of eg-05.S, about GCC not being found of 16-bit
+		    assembler. See note 5.
+
 
  * eg-08.c	    Like eg-08.S
 
@@ -344,8 +347,8 @@
 
      One may verify this by building the auxiliary extra examples
 
-     	 make egx-01-16.o
-	 make egx-01.32.o
+     	 make egx-01-16.bin
+ 	 make egx-01.32.bin
 
      and inspecting the produced assembly codes
 
@@ -409,7 +412,9 @@
      hardware and embedded systems.
 
 
-   
+ (5) Consider the auxiliary example code egx-02.c.
+
+     
 
 
  References
