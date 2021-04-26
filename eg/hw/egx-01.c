@@ -1,5 +1,6 @@
 
-int __attribute__ ((naked)) foo (int x)
+
+int __attribute__ ((naked)) foo ()
 {
-  return x+1;
+  return 42;
 }

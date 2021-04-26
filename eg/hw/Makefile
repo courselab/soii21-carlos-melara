@@ -19,7 +19,7 @@
 
 AUXDIR = ../../tools#
 
-bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin  
+bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin    eg-foo.c
 
 all : $(bin)
 
@@ -88,6 +88,13 @@ endif
 ## GCC with inline 
 ##
 
+eg-foo.bin : %.bin : %.c %.ld
+	gcc -m16 -O0 -Wall -fno-pic -fcf-protection=none -S $< -o $*.s
+	as --32 $*.s -o $*.o
+	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
+
+
+
 ifndef ALT
 eg-07-beta.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $*.s
@@ -137,21 +144,44 @@ run: $(IMG)
 
 # Inspect
 
-diss: $(IMG)
+diss diss32:  $(IMG) 
 	@objdump -f $< > /dev/null 2>&1; \
 	if [ $$? -eq "1" ]  ; then \
-	  objdump -M intel -b binary -m i8086 -D $< ; \
+	  objdump -M att -b binary -m i386 -D $< ; \
 	else \
-	  objdump -M intel  -d $< ; \
+	  objdump -M att -m i386 -d $< ; \
 	fi
 
-diss2: $(IMG)
+diss16:  $(IMG) 
 	@objdump -f $< > /dev/null 2>&1; \
 	if [ $$? -eq "1" ]  ; then \
-	  objdump -b binary -m i8086 -D $< ; \
+	  objdump -M att -b binary -m i8086 -D $< ; \
 	else \
-	  objdump -d $< ; \
+	  objdump -M att -m i8086 -d $< ; \
 	fi
+
+# diss diss16 diss32 : diss% : $(IMG) 
+# 	@objdump -f $< > /dev/null 2>&1; \
+# 	if [ $$? -eq "1" ]  ; then \
+# 	   if [ "$*" = "32" ] ; then echo "32" ;\
+# 	     echo "Disassembling 32-bit binary code";\
+# 	     objdump -M intel -b binary -m i386 -D $< ; \
+#            else \
+# 	     echo "Disassembling 16-bit binary code";\
+# 	     objdump -M intel -b binary -m i8086 -D $< ; \
+# 	   fi \
+# 	else \
+# 	   if [ "$*" = "32" ] ; then \
+# 	     echo "Disassembling 32-bit elf code";\
+# 	     objdump -M intel -d $< ; \
+# 	   else\
+# 	     echo "Disassembling 16-bit elf code";\
+# 	     objdump -M intel -m i386 -d $<; \
+# 	   fi \
+# 	fi
+
+
+
 
 dump: $(IMG)
 	hexdump -C $<
@@ -159,7 +189,7 @@ dump: $(IMG)
 diffbin : $(IMG1) $(IMG2)
 	bash -c "meld <(make diss IMG=$(IMG1)) <(make diss IMG=$(IMG2))"
 
-.PHONY: clean clean-extra help
+.PHONY: clean clean-extra help foo
 
 clean:
 	rm -f *.bin *.elf *.o *.s *.iso *.img
@@ -188,10 +218,10 @@ stick: $(IMG)
 # Auxiliary extra examples
 
 egx-01-16.s : %-16.s : %.c
-	gcc -m16 -S -masm=intel -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none $< -o $@
+	gcc -m16 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none $< -o $@
 
 egx-01-32.s : %-32.s : %.c
-	gcc -m32 -S -masm=intel -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none $< -o $@
+	gcc -m32 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none $< -o $@
 
 egx-01-16.bin egx-01-32.bin : %.bin : %.s
 	as --32 $< -o $*.o
@@ -201,6 +231,12 @@ egx-02.bin : %.bin : %.c
 	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -Wno-unused -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e foo $*.o -o $@
+
+egx-03.bin : %.bin : %.c
+	gcc -m32 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none $< -o $*.s
+	as --32 $*.s -o $*.o
+	ld -melf_i386 -T egx-01.ld $*.o -o $@
+
 
 # Help
 

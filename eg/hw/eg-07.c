@@ -20,7 +20,7 @@ void __attribute__ ((naked)) _start()
     {                                                                              
       eax &= 0xffffff00;        /*     prepare for the next line   */              
       eax |= (char) here[ebx];  /*     mov al, BYTE [here + bx]    */              
-      __asm__("int     $0x10"); /*     int 0x10                    */              
+      __asm__("int 0x10"); /*     int 0x10                    */              
       ebx++;                    /*     add bx, 0x1                 */              
                                                                                    
     }                                                                              
