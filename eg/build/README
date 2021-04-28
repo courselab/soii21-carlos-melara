@@ -51,7 +51,7 @@
 
 
 
- * eg-01.c          Very simple program to exemplify the build steps
+ * eg-01.c          Very simple program to exemplify the build steps.
 
    		    Execute
 
@@ -64,6 +64,67 @@
 		      make diss IMG=eg-01.o  to disassemble the object
 		      make diss IMG=eg-01    to disassemble the executable
 
+ * eg-02.c	    A C program containing one single compilation unity.
 
+		    Build and execute the binary, and thencheck the return
+		    status with.
+
+		      echo $?
+
+ * eg-03-alpha.c    Same as eg-02.c, but implementing functions afeter main().
+
+		    Build the binary. You should see a warning about 
+		    implicit function declarations.
+
+ * eg-03.c	    Same as eg-03l-alpha, but with function declarations
+   		    before main().
+
+		    Build the binary and see that the issue is fixed.
+
+ * eg-04.c	    Same as eg-03.c, but with declarations in a separate
+   		    header file.
+
+		    File eg-04.h is provided.
+		    
+		    Build the proprocessing translated unity with
+
+ 		       make eg-04.i
+
+		    and compare with the source eg-02.c to see that the
+		    processor directives have been resolved.
+
+ * eg-05.c	    A program to illustrate the translation units
+
+   		    Source eg-05.c calls an external function, which is
+		    declared in eg-07.h.
+
+		    Build the translation unit eg-05.i with
+
+		       make eg-05.i
+
+		    and inspect its contents with 'cat' to verify the
+		    inclusions were resolved and macros have been expanded.
+
+
+ * eg-06.c	    Like eg-03.c, but split into several translation units
+
+   		    Build eg-06 with
+
+		      make eg-06
+
+		    and see the intermediate build steps which invoque the
+		    preprocessor, compiler, assembler ane kinker.
+
+		    Then build with
+
+		      make eg-06 ALT=1
+
+
+                    and see that this time we build the objects, create
+		    a static library and then build the binary by linking
+		    its object agains the library
+		    
+
+ 
 
 		     
