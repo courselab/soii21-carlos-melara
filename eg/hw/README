@@ -24,34 +24,48 @@
 
  Use
 
-   make foo.bin				     build foo.bin 
+   make foo				     Build foo.
 
-   make run IMG=foo.bin	             	     test foo.bin with the emulator
+   make run IMG=foo	             	     Test foo with the emulator.
 
-   make diss IMG=foo.bin	             disassemble foo.bin
+   make diss IMG=foo 			     Disassemble foo.
 
-   make dump IMG=foo.bar	             dump the raw contents of foo.bar
+   	     	     			     Optionally,
+
+      	     	     			     make diss IMG=foo intel|att 16/32
+
+					     intel or att (default) asm syntax
+					     16 or 32-bit (default) code
+
+   					     Alternative shortcut:
+
+					     make foo/diss intel|att 16|32
+
+
+   make dump IMG=foo			     Show the raw contents of foo.
+
+   	     				     Alternative shortcut:
+
+					     make foo/dump
 
    make      			             build everything (or make all)
 
    make clean			             undo make all
 
-   make help			             usage information
+   make stick IMG=foo STICK=/dev/sdX         make a bootable USB stick
 
-   make iso IMG=foo.iso	             	     build an iso9660 image with foo.bin
-
-   make stick IMG=foo.bin STICK=/dev/sdX    make a bootable USB stick
+   make iso IMG=foo	             	     build an iso9660 image with foo
 
 
  Some examples allow alternative build recipes which can be selected
  by passing the command-line variable ALT=<number> to make. See bellow. 
 
- Files
+ File names:
 
      eg-00.ext		contain the main examples;
      egx-00.ext		contain auxiliary extra examples.
 
- Extension
+ File extensions:
 
      hex		ASCII file containing values
      			in hexadecimal representation;
@@ -71,6 +85,7 @@
      			compiler /linker;
 
      ld			linker script.
+
 
 
  Note on booting the real hardware
@@ -133,8 +148,8 @@
 
 		    Compare eg-01.bin and eg-02.bin with
 
-		      make diss IMG=eg-01.bin
-		      make diss IMG=eg-02.bin
+		      make diss IMG=eg-01.bin intel 16
+		      make diss IMG=eg-02.bin intel 16
 
 		    and see that the resulting object codes match.
 
@@ -158,8 +173,8 @@
 
 		    Compare eg-03.bin and eg-04.bin with
 
-		      make diss IMG=eg-03.bin
-		      make diss IMG=eg-04.bin
+		      make diss IMG=eg-03.bin intel 16
+		      make diss IMG=eg-04.bin intel 16
   		    
 		    and see that the resulting object codes match.
 
@@ -176,13 +191,6 @@
    		    The translation was made as literal as possible so as to
 		    facilitate the comparison with eg-04.asm.
 
-		    Compare eg-03.bin, eg-04.bin and eg-05.bin with
-
-		      make diss IMG=eg-03.bin
-		      make diss IMG=eg-04.bin
-		      make diss IMG=eg-05.bin
-
-		    and see that the object codes match.
 
 		    A noteworthy observation is that the build procedure of
 		    this example involves two steps: assembling and linking.
@@ -238,11 +246,36 @@
 		    appropriate arguments).
 
 
-		    $ make diss IMG=eg-03.bin
-		    $ make diss IMG=eg-04.bin
-		    $ make diss IMG=eg-05.bin
+		    $ make diss IMG=eg-03.bin intel 16
+		    $ make diss IMG=eg-04.bin intel 16
+		    $ make diss IMG=eg-05.bin intel 16
 
 		    and see that they all match.
+
+ * eg-06-alt.S	    Like eg-05.S, but modified to manipulate 16-bit registers.
+
+
+   		    Here we implement the same algorithm as in eg-05.S, but
+		    with an alternative code to read and write in both 8-bit
+		    registers ah and al by means of manipulating the 16-bit
+		    register ax, rather than accessing the 8-bit registers
+		    directly. 
+
+   		    The main reason for doing this, despite the need of some
+		    gimmick with bitwise logic operation and an extra register,
+		    GCC does not do a good job working with 8-bit registers.
+		    As we are taking steps to port our example from assembly
+		    to C, and use GNU toolchain to build it, this limitation
+		    will eventually get in our way when we start to experiment
+		    with C inline assembly.
+
+		    To better understand this issue, refer to note 3
+		    by the end of this file.
+
+		    In order to overcome the limitation, we'd better modify
+		    our code to manipulate only 16-bit registers.		    
+
+		    Build eg-06.bin and inspect it with
 
 
 #### Here
@@ -375,27 +408,27 @@
 
  (2)  One reason we had better switch from nasm (Intel) to gas (AT&T)
       assembly here is because GCC (compiler) and NASM (assembler) do
-      not go that well together. Actually, GCC outputs AT&T syntax
-      by default, but it is indeed capable of outputing Intel assembly
-      if asked, by means of the 'masm' option.  The problem is that the
-      latter comes in specific Intel assembly dialect meant for GAS
+      not go that well together. Actually, while GCC outputs AT&T syntax
+      by default, it is is true that GCC is capable of outputing Intel
+      assembly if asked by means of the 'masm' option.  The problem is that
+      the latter comes in specific Intel assembly dialect meant for GAS
       (GNU Assembler), which is not the same as that understood by NASM
       --- for instance, some directives (such as 'bit 16' vs .code16,
-      times vs .fill etc.), data types ('dw' vs 'word') differ and
-      mnemonics (mov vs moveb, movel etc.) It's therefore not possible
+      times vs .fill etc.), data types ('dw' vs 'word'), and mnemonics
+      (mov vs moveb, movel etc.) differ. It's therefore not possible
       to ask GCC to generate intel assembly from C, and have the latter
-      asesmbler by nasm; we would need to use GAS, instead.
+      asesmbled by nasm; we would need to use GAS, instead anyway.
 
-      As a side note, that is why we do not refer to assembly as a programming
-      language, in the same way refer to the C language but as, as the name
-      suggest, as assembling language. Both the syntax of different assembly
-      standard vary and constitutes therefore different specifications.
-      Moreover, the assembly code is dependent on the processor architecture
-      e.g. i386 vs ARM etc.
+      As a side note, that is why we do not refer to assembly as a
+      "programming language", in the same way we refer to the C language
+      but, as the name implies, as an "assembling language". Diverse
+      assembly standards vary in syntax and thereby constitute different 
+      specifications. Moreover, the assembly code is dependent on the
+      processor architecture e.g. i386 vs ARM etc.
 
-      If we want to see the assembly generated by GCC, even if we ask
+      If we want to read the assembly generated by GCC, even if we ask
       for Intel syntax, we would need to learn a new dialect --- whose
-      difference is not only a matter of syntax, but also of semantics
+      differences are not only a matter of syntax, but also of semantics.
       For instance, the way NASM compiler works with directive 'org'
       is very different from how GAS works in association to the linker
       (ld) to relocate code.  It so happens that it may be arguably more

@@ -144,52 +144,65 @@ run: $(IMG)
 
 # Inspect
 
-diss diss32:  $(IMG) 
+ifeq (,$(findstring intel, $(MAKECMDGOALS)))
+ASM_SYNTAX = att
+else
+ASM_SYNTAX = intel
+endif
+
+ifeq (,$(findstring 16, $(MAKECMDGOALS)))
+ASM_MACHINE = i8086
+else
+ASM_MACHINE = i386
+endif
+
+
+intel att 16 32: 
+	@echo > /dev/null
+
+diss:  $(IMG) 
 	@objdump -f $< > /dev/null 2>&1; \
 	if [ $$? -eq "1" ]  ; then \
-	  objdump -M att -b binary -m i386 -D $< ; \
+	  objdump -M $(ASM_SYNTAX) -b binary -m $(ASM_MACHINE) -D $< ; \
 	else \
-	  objdump -M att -m i386 -d $< ; \
+	  objdump -M $(ASM_SYNTAX) -m $(ASM_MACHINE) -d $< ; \
 	fi
 
-diss16:  $(IMG) 
-	@objdump -f $< > /dev/null 2>&1; \
-	if [ $$? -eq "1" ]  ; then \
-	  objdump -M att -b binary -m i8086 -D $< ; \
-	else \
-	  objdump -M att -m i8086 -d $< ; \
-	fi
+%/diss : %
+	make diss IMG=$< $(filter 16 32 intel att, $(MAKECMDGOALS))
 
-# diss diss16 diss32 : diss% : $(IMG) 
+
+
+# diss32:  $(IMG) 
 # 	@objdump -f $< > /dev/null 2>&1; \
 # 	if [ $$? -eq "1" ]  ; then \
-# 	   if [ "$*" = "32" ] ; then echo "32" ;\
-# 	     echo "Disassembling 32-bit binary code";\
-# 	     objdump -M intel -b binary -m i386 -D $< ; \
-#            else \
-# 	     echo "Disassembling 16-bit binary code";\
-# 	     objdump -M intel -b binary -m i8086 -D $< ; \
-# 	   fi \
+# 	  objdump -M $(ASM_SYNTAX) -b binary -m i8086 -D $< ; \
 # 	else \
-# 	   if [ "$*" = "32" ] ; then \
-# 	     echo "Disassembling 32-bit elf code";\
-# 	     objdump -M intel -d $< ; \
-# 	   else\
-# 	     echo "Disassembling 16-bit elf code";\
-# 	     objdump -M intel -m i386 -d $<; \
-# 	   fi \
+# 	  objdump -M $(ASM_SYNTAX) -m i386 -d $< ; \
 # 	fi
 
+# diss16:  $(IMG) 
+# 	@objdump -f $< > /dev/null 2>&1; \
+# 	if [ $$? -eq "1" ]  ; then \
+# 	  objdump -M $(ASM_SYNTAX) -b binary -m i8086 -D $< ; \
+# 	else \
+# 	  objdump -M $(ASM_SYNTAX) -m i8086 -d $< ; \
+# 	fi
 
 
 
 dump: $(IMG)
 	hexdump -C $<
 
-diffbin : $(IMG1) $(IMG2)
+
+%/dump : %
+	make dump IMG=$< 
+
+
+diffb2 : $(IMG1) $(IMG2)
 	bash -c "meld <(make diss IMG=$(IMG1)) <(make diss IMG=$(IMG2))"
 
-.PHONY: clean clean-extra help foo
+.PHONY: clean clean-extra intel att 16 32 diss /diss
 
 clean:
 	rm -f *.bin *.elf *.o *.s *.iso *.img
@@ -238,14 +251,3 @@ egx-03.bin : %.bin : %.c
 	ld -melf_i386 -T egx-01.ld $*.o -o $@
 
 
-# Help
-
-help:
-	@echo " SYSeg: build rules for eg/hw:"
-	@echo
-	@echo "  all		     builds everything"
-	@echo "  clean		     clean built and temporary files"
-	@echo "  img.bin	     build target img.bin"
-	@echo "  diss IMG=img.bin   disassembly flat binary img.bin"
-	@echo "  dump IMG=img.bin   dump img.bin contents"
-	@echo
