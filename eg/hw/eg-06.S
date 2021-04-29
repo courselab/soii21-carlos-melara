@@ -1,29 +1,26 @@
 	## Boot, say hello, and loop forever
-	## AT&T assembly, using 32-bit registers
-       
-	.code16                 # Set 16-bit code
-
-	.global _start
+	## AT&T assembly, using 16-bit registers
 	
-_start:		                # Entry point
+	.code16               # Set 16-bit code
 
+	.global _start         # So that symbol may be found by the linker
 
+_start:		              # Default entry label
 	
-	movl  $0x0, %ebx        # Using linker's org flag
+	movw  $0x0e00, %ax     # BIOS tty mode
+	
+	movw  $0x0, %bx       # Using linker's org flag	      
+
 loop:			      
-	movl  msg(%ebx),  %edx  # This is equivalent to
-	andl  $0xff, %edx       #
-	movl  $0xe00, %eax      # movb msg(%bx), %al
-	xorl  %edx, %eax        #
+	andw  $0xff00, %ax     # Zero al
+	movw  msg(%bx), %dx    # Load next char into dx
+	andw  $0x00ff, %dx     # Zero dh
+	orw   %dx, %ax         # Copy dl into al
 	
-	int   $0x10
-	
-	andl  $0xff, %eax       # Equivalent to
-	cmp   $0x0, %eax        # cmp $0x0, $al
-	
-	je    halt
-	add   $0x1, %ebx       # Point to the next character
-
+	int   $0x10	       # Call bios 
+	cmp   $0x0, %dx	       # Loop while char is not 0x0
+	je    halt             # Jump to halt
+	add   $0x1, %bx	       # Point to the next character
 	jmp   loop	       # Repeat until we find a 0x0
 	
 halt:
@@ -38,7 +35,6 @@ msg:			       # C-like NULL terminated string
 	.word 0xaa55			     # Boot signature
 
 
-	# Notes
-	#
-	# The same program, but using 32-bit registers.
 
+
+	

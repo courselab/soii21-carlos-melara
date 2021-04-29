@@ -71,7 +71,7 @@ eg-05.bin : %.bin : %.S
 endif
 
 ifndef ALT
-eg-06.bin eg-06-alt.bin: %.bin : %.S
+eg-06.bin: %.bin : %.S
 #	gcc -m32 -Wl,--oformat=binary -march=i386 -nostdlib -ffreestanding -Wl,-Ttext=0x7c00 -Wl,--entry=0x7c00 $< -o $@
 	as --32 $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext 0x7c00 $*.o -o $@
@@ -87,7 +87,6 @@ endif
 ##
 ## GCC with inline 
 ##
-
 
 bits.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $*.s
@@ -115,9 +114,6 @@ ifeq ($(ALT),2)
 eg-07-beta.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic -fcf-protection=none -nostdlib -T $*.ld -Wl,--orphan-handling=discard   $< -o $@
 endif
-
-# Use liner script to produce a flat binary with only code from .text
-
 
 # Using linker script to define entry, flat binary and boot signature,
 # and to place the string in the .text section.
@@ -171,6 +167,8 @@ diss:  $(IMG)
 %/diss : %
 	make diss IMG=$< $(filter 16 32 intel att, $(MAKECMDGOALS))
 
+%/run : %
+	make run IMG=$<
 
 
 # diss32:  $(IMG) 
