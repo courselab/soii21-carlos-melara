@@ -151,9 +151,9 @@ ASM_SYNTAX = intel
 endif
 
 ifeq (,$(findstring 16, $(MAKECMDGOALS)))
-ASM_MACHINE = i8086
-else
 ASM_MACHINE = i386
+else
+ASM_MACHINE = i8086
 endif
 
 
@@ -237,6 +237,10 @@ egx-01-32.s : %-32.s : %.c
 	gcc -m32 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none $< -o $@
 
 egx-01-16.bin egx-01-32.bin : %.bin : %.s
+	as --32 $< -o $*.o
+	ld -melf_i386 -T egx-01.ld $*.o -o $@
+
+foo-gas.bin : %-gas.bin : %.s
 	as --32 $< -o $*.o
 	ld -melf_i386 -T egx-01.ld $*.o -o $@
 
