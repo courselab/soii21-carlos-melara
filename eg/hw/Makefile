@@ -88,11 +88,11 @@ endif
 ## GCC with inline 
 ##
 
-eg-foo.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic -fcf-protection=none -S $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
 
+bits.bin : %.bin : %.c %.ld
+	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $*.s
+	as --32 $*.s -o $*.o
+	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary --orphan-handling=discard  -o $@
 
 
 ifndef ALT
@@ -104,7 +104,7 @@ endif
 
 ifeq ($(ALT),1)
 eg-07-beta.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic -fcf-protection=none -S $< -o $*.s
+	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables  -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
 endif
