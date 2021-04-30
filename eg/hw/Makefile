@@ -19,9 +19,13 @@
 
 AUXDIR = ../../tools#
 
-bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin    eg-foo.c
+bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin    
 
-all : $(bin)
+binx =  egx-01.bin egx-02-32bit-gas.bin egx-02-16bit-gas.bin egx-02-32bit-nasm.bin egx-02-16bit-nasm.bin egx-03.bin egx-04.bin egx-04-16bit.s egx-04-32bit.s egx-04-16bit.bin egx-04-32bit.bin 
+
+
+
+all : $(bin) $(binx)
 
 # Machine code in hex
 
@@ -144,18 +148,31 @@ run: $(IMG)
 
 # Inspect
 
+ifndef ASM
 ifeq (,$(findstring intel, $(MAKECMDGOALS)))
 ASM_SYNTAX = att
 else
 ASM_SYNTAX = intel
 endif
+else
+ASM_SYNTAX= $(ASM)
+endif
 
+ifndef BIT
 ifeq (,$(findstring 16, $(MAKECMDGOALS)))
 ASM_MACHINE = i386
 else
 ASM_MACHINE = i8086
 endif
+else
 
+ifeq ($(BIT),16)
+ASM_MACHINE = i386
+else
+ASM_MACHINE = i8086
+endif
+
+endif
 
 intel att 16 32: 
 	@echo > /dev/null
@@ -169,28 +186,19 @@ diss:  $(IMG)
 	fi
 
 %/diss : %
-	make diss IMG=$< $(filter 16 32 intel att, $(MAKECMDGOALS))
+	make --quiet diss IMG=$< $(filter 16 32 intel att, $(MAKECMDGOALS))
+
+%/i16 : %
+	make --quiet $</diss intel 16
+%/i32 : %
+	make --quiet $</diss intel 32
+%/a16 : %
+	make --quiet $</diss att 16
+%/a32 : %
+	make --quiet $</diss att 32
 
 %/run : %
 	make run IMG=$<
-
-
-# diss32:  $(IMG) 
-# 	@objdump -f $< > /dev/null 2>&1; \
-# 	if [ $$? -eq "1" ]  ; then \
-# 	  objdump -M $(ASM_SYNTAX) -b binary -m i8086 -D $< ; \
-# 	else \
-# 	  objdump -M $(ASM_SYNTAX) -m i386 -d $< ; \
-# 	fi
-
-# diss16:  $(IMG) 
-# 	@objdump -f $< > /dev/null 2>&1; \
-# 	if [ $$? -eq "1" ]  ; then \
-# 	  objdump -M $(ASM_SYNTAX) -b binary -m i8086 -D $< ; \
-# 	else \
-# 	  objdump -M $(ASM_SYNTAX) -m i8086 -d $< ; \
-# 	fi
-
 
 
 dump: $(IMG)
@@ -198,13 +206,13 @@ dump: $(IMG)
 
 
 %/dump : %
-	make dump IMG=$< 
+	make --quiet dump IMG=$< 
 
 
 diffb2 : $(IMG1) $(IMG2)
 	bash -c "meld <(make diss IMG=$(IMG1)) <(make diss IMG=$(IMG2))"
 
-.PHONY: clean clean-extra intel att 16 32 diss /diss
+.PHONY: clean clean-extra intel att 16 32 diss /diss /i16 /i32 /a16 /a32
 
 clean:
 	rm -f *.bin *.elf *.o *.s *.iso *.img
@@ -232,55 +240,39 @@ stick: $(IMG)
 
 # Auxiliary extra examples
 
-egx-01-16.s : %-16.s : %.c
-	gcc -m16 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none $< -o $@
-
-egx-01-32.s : %-32.s : %.c
-	gcc -m32 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none $< -o $@
-
-egx-01-16.bin egx-01-32.bin : %.bin : %.s
-	as --32 $< -o $*.o
-	ld -melf_i386 -T egx-01.ld $*.o -o $@
-
-
-egx-02.bin : %.bin : %.c
-	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -Wno-unused -S $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e foo $*.o -o $@
-
-egx-03.bin : %.bin : %.c
+egx-01.bin : %.bin : %.c
 	gcc -m32 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T egx-01.ld $*.o -o $@
 
-egx-04-32bit-gas.bin egx-04-16bit-gas.bin : %-gas.bin : %.S
+egx-02-32bit-gas.bin egx-02-16bit-gas.bin : %-gas.bin : %.S
 	as --32 $< -o $*.o
-	ld -melf_i386 -T egx-04.ld $*.o -o $@
+	ld -melf_i386 -T egx-02.ld $*.o -o $@
 
-egx-04-32bit-nasm.bin egx-04-16bit-nasm.bin : %-nasm.bin : %.asm
+egx-02-32bit-nasm.bin egx-02-16bit-nasm.bin : %-nasm.bin : %.asm
 	nasm -f bin $< -o $@
 
 
 # Program eg-04.asm in GAS's intel dialict
 
-egx-05.bin : %.bin : %.S
+egx-03.bin : %.bin : %.S
 	as -32 -msyntax=intel -mnaked-reg $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e 0x7c00  $*.o -o $@
 
 # Illustration of GCC limitations in handling 8-bit registers
 
-egx-07.bin : %.bin : %.c
+egx-04.bin : %.bin : %.c
 	gcc -m16 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o -o $@
 
 
-egx-07-16bit.s: %-16bit.s : %.c
+egx-04-16bit.s: %-16bit.s : %.c
 	gcc -m16 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $@
 
-egx-07-32bit.s: %-32bit.s : %.c
+egx-04-32bit.s: %-32bit.s : %.c
 	gcc -m32 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $@
 
-egx-07-16bit.bin egx-07-32bit.bin : %.bin : %.s
+egx-04-16bit.bin egx-04-32bit.bin : %.bin : %.s
 	as --32 $< -o $*.o
-	ld -melf_i386 -T egx-07.ld $*.o -o $@
+	ld -melf_i386 -T egx-04.ld $*.o -o $@

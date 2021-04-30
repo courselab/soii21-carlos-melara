@@ -32,22 +32,11 @@
 
    	     	     			     Optionally,
 
-      	     	     			     make diss IMG=foo intel|att 16/32
-
-					     intel or att (default) asm syntax
-					     16 or 32-bit (default) code
-
-   					     Alternative shortcut:
-
-					     make foo/diss intel|att 16|32
-
+					        NASM = intel | att  (default)
+						BIT  =    16 | 32   (default)
 
    make dump IMG=foo			     Show the raw contents of foo.
-
-   	     				     Alternative shortcut:
-
-					     make foo/dump
-
+   
    make      			             build everything (or make all)
 
    make clean			             undo make all
@@ -55,6 +44,23 @@
    make stick IMG=foo STICK=/dev/sdX         make a bootable USB stick
 
    make iso IMG=foo	             	     build an iso9660 image with foo
+
+   SHORTCUTS
+
+   make foo/diss			     disassembly as 32-bit AT&T
+   make foo/diss intel|att		     disassembly as 32-bit Intel or AT&T
+   make foo/diss 16|32			     disassembly as 16-bit or 32-bit
+   make foo/diss intel\att 16|32	     disassembly as Intel|AT&T 16|32 bit
+   make foo/diss 16|32 intel|att	     disassembly as Intel|AT&T 16|32 bit
+
+   make foo/i16	       			     disassembly as Intel 16-bit
+   make foo/i32	       			     disassembly as Intel 32-bit
+   make foo/a16	       			     disassembly as AT&T  16-bit
+   make foo/a32	       			     disassembly as AT&T  32-bit
+
+   make foo/dump			     show raw contents in hexadecimal
+
+   make foo/run				     test foo with the emulator
 
 
  Some examples allow alternative build recipes which can be selected
@@ -418,7 +424,7 @@
       times vs .fill etc.), data types ('dw' vs 'word'), and mnemonics
       (mov vs moveb, movel etc.) differ.
 
-      A glimpse of those differences may be seen in egx-05.S.
+      A glimpse of those differences may be seen in egx-03.S.
 
       It's therefore not practical to ask GCC to generate intel assembly
       from C, and have the latter asesmbled by nasm; we would need to
@@ -453,7 +459,7 @@
       interpret the contents of the string and output it as is
       in the produced assembly.
 
-      See egx-03.c for an example.
+      See egx-01.c for an example.
 
       The code illustates the user of the qualified 'register' to
       force a variable to allocated in a register rather than in
@@ -477,7 +483,7 @@
       In order to dig into this issue, it's first useful to understand
       how 8, 16 and 32-bit registers are handled by the x86 architecture.
 
-      Consider either example egx-04-32bit.S, in GAS dialect or, alternatively,
+      Consider either example egx-02-32bit.S, in GAS dialect or, alternatively,
       exg-04-32bit.asm, an equivalent in NASM dialect. The result of the
       experiment should be the same.
 
@@ -487,11 +493,11 @@
 
       Build it and inspect the output with
 
-         make diss IMG=egx-04-32bit-nasm.bin
+         make diss IMG=egx-02-32bit-nasm.bin
 
          or
 
-         make diss IMG=egx-04-32bit-gas.bin
+         make diss IMG=egx-02-32bit-gas.bin
 
 
       The output should identical:
@@ -526,13 +532,13 @@
       the same instruction that is used for eax, but with a operand
       size overwrite prefix.
 
-      Now let's do the same thing with egx-04-16bit.asm.
+      Now let's do the same thing with egx-02-16bit.asm.
 
-         make diss IMG=egx-04-32bit-nasm.bin 16
+         make diss IMG=egx-02-32bit-nasm.bin 16
 
          or
 
-         make diss IMG=egx-04-32bit-gas.bin 16
+         make diss IMG=egx-02-32bit-gas.bin 16
 
       The only different from the previous 32bit versions is the directive
       to select 16 bits, but the disassembly shows
@@ -596,7 +602,7 @@
       The same as 'mov $0x3, ax'. Line 12, likewise, will store in eax,
       overriding anything we had put in ah in the previous step.
 
-      If we had written the assembly manually as in egx-04, we would have used
+      If we had written the assembly manually as in egx-02, we would have used
       'mov $0x3, %ah' and this would have resulted in a 0xb4 instruction as before.
 
       But this is not what GCC itself does. Just build both the 16 and 32-bit
@@ -635,7 +641,6 @@
       GCC, we may well go without it.
       
 
- (5) Consider the auxiliary example code egx-02.c.
 
      
 
