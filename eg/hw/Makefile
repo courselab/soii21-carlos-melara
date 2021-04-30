@@ -35,6 +35,10 @@ eg-01.bin : %.bin : %.hex
 
 eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin: %.bin : %.asm
 	nasm $< -f bin -o $@
+
+
+
+
 ##
 ## GAS assembly
 ##
@@ -238,9 +242,6 @@ egx-01-16.bin egx-01-32.bin : %.bin : %.s
 	as --32 $< -o $*.o
 	ld -melf_i386 -T egx-01.ld $*.o -o $@
 
-foo-gas.bin : %-gas.bin : %.s
-	as --32 $< -o $*.o
-	ld -melf_i386 -T egx-01.ld $*.o -o $@
 
 egx-02.bin : %.bin : %.c
 	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -Wno-unused -S $< -o $*.s
@@ -252,4 +253,22 @@ egx-03.bin : %.bin : %.c
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T egx-01.ld $*.o -o $@
 
+egx-04-gas.bin : %-gas.bin : %.s
+	as --32 $< -o $*.o
+	ld -melf_i386 -T $*.ld $*.o -o $@
 
+egx-04-nasm.bin : %-nasm.bin : %.asm
+	nasm -f bin $< -o $@
+
+
+# Program eg-04.asm in GAS's intel dialict
+
+egx-05.bin : %.bin : %.S
+	as -32 -msyntax=intel -mnaked-reg $< -o $*.o
+	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e 0x7c00  $*.o -o $@
+
+
+egx-07.bin : %.bin : %.c
+	gcc -m16 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wunused-but-set-variable $< -o $*.s
+	as --32 $*.s -o $*.o
+	ld -melf_i386 -T $*.ld $*.o -o $@

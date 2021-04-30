@@ -188,12 +188,12 @@
 		    the running example in C language.  To that end, we will
 		    use the powerful and flexible GNU compiler collection.
 		    The thing is, GCC's toolchain speaks AT&T sysntax dialect
-		    and does not understand NASM's dialect.  See note 2 for
-		    further detailing.
+		    and does not understand NASM's dialect.
+
+		    See note 2 for further detailing.
 
    		    The translation was made as literal as possible so as to
 		    facilitate the comparison with eg-04.asm.
-
 
 		    A noteworthy observation is that the build procedure of
 		    this example involves two steps: assembling and linking.
@@ -227,7 +227,7 @@
 		    this information in yet another command-line option.
 
 
-* eg-05-beta.2.S    Same as before, but using global symbol for entry point.
+ * eg-05-beta.2.S   Same as before, but using global symbol for entry point.
 
    		    This example is just to illustrate that the linker can
 		    recognize the entry point as a label, rather than through
@@ -255,25 +255,27 @@
 
 		    and see that they all match.
 
- * eg-06-alt.S	    Like eg-05.S, but modified to manipulate 16-bit registers.
-
+ * eg-06.S	    Like eg-05.S, but modified to manipulate 16-bit registers.
 
    		    Here we implement the same algorithm as in eg-05.S, but
 		    with an alternative code to read and write in both 8-bit
 		    registers ah and al by means of manipulating the 16-bit
-		    register ax, rather than accessing the 8-bit registers
-		    directly. 
+		    register ax, rather than accessing its higher and lower
+		    bytes of directly. 
 
    		    The main reason for doing this, despite the need of some
 		    gimmick with bitwise logic operation and an extra register,
-		    GCC does not do a good job working with 8-bit registers.
-		    As we are taking steps to port our example from assembly
-		    to C, and use GNU toolchain to build it, this limitation
-		    will eventually get in our way when we start to experiment
-		    with C inline assembly.
+		    is because GCC does not do a good job working with 8-bit
+		    registers. As we are taking steps to port our example from
+		    assembly to C, and use GNU toolchain to build it, this
+		    limitation will eventually get in our way when we start
+		    to experiment with C inline assembly.
 
 		    To better understand this issue, refer to note 3
 		    by the end of this file.
+
+# 
+
 
 		    In order to overcome the limitation, we'd better modify
 		    our code to manipulate only 16-bit registers.		    
@@ -407,16 +409,20 @@
 
  (2)  One reason we had better switch from nasm (Intel) to gas (AT&T)
       assembly here is because GCC (compiler) and NASM (assembler) do
-      not go that well together. Actually, while GCC outputs AT&T syntax
-      by default, it is is true that GCC is capable of outputing Intel
+      not go that well together. Actually, although GCC outputs AT&T syntax
+      by default, it is true that GCC is capable of outputing Intel
       assembly if asked by means of the 'masm' option.  The problem is that
       the latter comes in specific Intel assembly dialect meant for GAS
       (GNU Assembler), which is not the same as that understood by NASM
       --- for instance, some directives (such as 'bit 16' vs .code16,
       times vs .fill etc.), data types ('dw' vs 'word'), and mnemonics
-      (mov vs moveb, movel etc.) differ. It's therefore not possible
-      to ask GCC to generate intel assembly from C, and have the latter
-      asesmbled by nasm; we would need to use GAS, instead anyway.
+      (mov vs moveb, movel etc.) differ.
+
+      A glimpse of those differences may be seen in egx-05.S.
+
+      It's therefore not practical to ask GCC to generate intel assembly
+      from C, and have the latter asesmbled by nasm; we would need to
+      use GAS, instead anyway.
 
       As a side note, that is why we do not refer to assembly as a
       "programming language", in the same way we refer to the C language
@@ -434,10 +440,13 @@
       interesting learn the native GCC toolchain assembly dialect and
       proceed therefrom.
 
- (3)  Put short, GCC does not currently produces 16-bit assembly code.
-      Yes, GCC does create 16-bit binaries but to that end, it produces
+
+ (3) 
+
+ (3*) Put short, GCC does not currently produces 16-bit assembly code.
+      Yes, GCC does build 16-bit binaries but to that end, it produces
       an assembly which uses 32-bit registers, and rely on GAS to 
-      fix the assembly into a 16-bit binary.
+      convert the assembly into a 16-bit binary.
 
      One may verify this by building the auxiliary extra examples
 
@@ -464,7 +473,6 @@
      	 return 42
 
      is transformed into the assembly code line
-
 	 
 	 0:	b8 2a 00 00 00       	mov    $0x2a,%eax
 	 
