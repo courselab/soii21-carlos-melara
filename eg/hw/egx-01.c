@@ -1,12 +1,11 @@
-/*  A simple example to illustrate how GCC treats both
-    32 and 16-bit codes. */
+/* egx-04.c - Auxiliary example source. */
 
-int __attribute__ ((naked)) foo ()
+void __attribute__((naked)) foo()
 {
-  return 42;
+  register char bar __asm__("eax");
+
+  bar = 42;
+
+  __asm__("hlt");
+  
 }
-
-/* To improve readability, the attribute 'naked' is used to 
-   prevent GCC from cluttering the object code with elements
-   that are not necessary in a flat binary like ours. */
-
