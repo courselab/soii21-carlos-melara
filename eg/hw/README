@@ -32,7 +32,7 @@
 
    	     	     			     Optionally,
 
-					        NASM = intel | att  (default)
+					        ASM  = intel | att  (default)
 						BIT  =    16 | 32   (default)
 
    make dump IMG=foo			     Show the raw contents of foo.
@@ -44,6 +44,10 @@
    make stick IMG=foo STICK=/dev/sdX         make a bootable USB stick
 
    make iso IMG=foo	             	     build an iso9660 image with foo
+
+   make diff foo bar baz		     Show diff between files
+
+   	     	     			     ASM and BIT variables apply
 
    SHORTCUTS
 

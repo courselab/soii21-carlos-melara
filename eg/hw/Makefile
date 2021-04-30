@@ -23,7 +23,7 @@ bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg
 
 binx =  egx-01.bin egx-02-32bit-gas.bin egx-02-16bit-gas.bin egx-02-32bit-nasm.bin egx-02-16bit-nasm.bin egx-03.bin egx-04.bin egx-04-16bit.s egx-04-32bit.s egx-04-16bit.bin egx-04-32bit.bin 
 
-
+DIFF_TOOL=meld
 
 all : $(bin) $(binx)
 
@@ -209,8 +209,30 @@ dump: $(IMG)
 	make --quiet dump IMG=$< 
 
 
-diffb2 : $(IMG1) $(IMG2)
-	bash -c "meld <(make diss IMG=$(IMG1)) <(make diss IMG=$(IMG2))"
+objdiff bindiff : $(wordlist 2, 4, $(MAKECMDGOALS))
+	if test $(words $^) -lt 3 ; then\
+	  bash -c "$(DIFF_TOOL) <(make $(wordlist 1,1,$^)/diss) <(make $(wordlist 2,2,$^)/diss)";\
+	else\
+	  bash -c "$(DIFF_TOOL) <(make $(wordlist 1,1,$^)/diss) <(make $(wordlist 2,2,$^)/diss) <(make $(wordlist 3,3,$^)/diss)";\
+	fi
+
+srcdiff : $(wordlist 2, 4, $(MAKECMDGOALS))
+	if test $(words $^) -lt 3 ; then\
+	  bash -c "$(DIFF_TOOL) $(wordlist 1,1,$^) $(wordlist 2,2,$^)";\
+	else\
+	  bash -c "$(DIFF_TOOL) $(wordlist 1,1,$^) $(wordlist 2,2,$^) $(wordlist 3,3,$^)";\
+	fi
+
+diff : $(word 2, $(MAKECMDGOALS))
+	@EXT=$(suffix $<);\
+	case $$EXT in \
+	.bin | .o)\
+		make --quiet objdiff $(wordlist 2, 4, $(MAKECMDGOALS))\
+		;;\
+	.asm | .c | .S)\
+		make --quiet srcdiff $(wordlist 2, 4, $(MAKECMDGOALS))\
+		;;\
+	esac
 
 .PHONY: clean clean-extra intel att 16 32 diss /diss /i16 /i32 /a16 /a32
 
