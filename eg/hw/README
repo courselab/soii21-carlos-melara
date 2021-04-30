@@ -190,7 +190,7 @@
 		    The thing is, GCC's toolchain speaks AT&T sysntax dialect
 		    and does not understand NASM's dialect.
 
-		    See note 2 for further detailing.
+		    See note (2) for further detailing.
 
    		    The translation was made as literal as possible so as to
 		    facilitate the comparison with eg-04.asm.
@@ -263,20 +263,20 @@
 		    register ax, rather than accessing its higher and lower
 		    bytes of directly. 
 
-   		    The main reason for doing this, despite the need of some
+		    The main reason for doing this, despite the need of some
 		    gimmick with bitwise logic operation and an extra register,
-		    is because GCC does not do a good job working with 8-bit
-		    registers. As we are taking steps to port our example from
-		    assembly to C, and use GNU toolchain to build it, this
-		    limitation will eventually get in our way when we start
-		    to experiment with C inline assembly.
+		    is because we intend to port our source code from assembly
+		    to C and use GNU toolchain to build it.
 
-		    To better understand this issue, refer to note 3
-		    by the end of this file.
+		    See note (3) for a glimpse on how it would look like.
 
-# 
+		    It so happens that GCC does not do a good job working with
+		    8-bit registers. As we are taking steps to convert our
+		    assembly example into C, limitation will eventually get in
+		    our way when we start to experiment with C inline assembly.
 
-
+		    See note (4) to better understand the issue.
+		    		    
 		    In order to overcome the limitation, we'd better modify
 		    our code to manipulate only 16-bit registers.		    
 
@@ -441,94 +441,199 @@
       proceed therefrom.
 
 
- (3) 
+ (3)  The ISO C standard specifies the support for the insertion of
+      assembly code within the body of a C source code, by means
+      of a feature referred to as inline assembly.
 
- (3*) Put short, GCC does not currently produces 16-bit assembly code.
-      Yes, GCC does build 16-bit binaries but to that end, it produces
-      an assembly which uses 32-bit registers, and rely on GAS to 
-      convert the assembly into a 16-bit binary.
+      GCC supports inline assembly through the declaration
 
-     One may verify this by building the auxiliary extra examples
+      __asm__ ("string");
 
-     	 make egx-01-16.bin
- 	 make egx-01.32.bin
+      where "string" is a piece of assembly code. GCC does not
+      interpret the contents of the string and output it as is
+      in the produced assembly.
 
-     and inspecting the produced assembly codes
+      See egx-03.c for an example.
 
-     	 diff -y --color egx-01-16.s egx-01.32.s
+      The code illustates the user of the qualified 'register' to
+      force a variable to allocated in a register rather than in
+      work memory (RAM) as it's normally done.  This allows us
+      to store a value in the register using the regular variable
+      attribution syntax.
 
-     Both should differ only in the line corresponding to the assembler
-     directive for 16-bit code and leave a directive (.code16gcc) in the
-     assembly file. In the subsequent step, GAS will find this directive
-     and honor it by producing a 16-bit equivalent machine code.
+      Build it and disassembly with
 
-     Now GAS' own quirks comes into play.
+         make diss IMG=eg-03.bin
 
-     Disassemble the 32-bit binary
 
-        make diss IMG=egx-01-32.bin 32
+ (3) Put short, GCC toolchain is not currently proficient in producing
+      propper object code from C inline assembly source code intended
+      to manipulate 8-bit registers directly, that is
 
-     and note that the C-source code line
+      register char ax __asm__("ax");
 
-     	 return 42
+      does not work as expected.
 
-     is transformed into the assembly code line
+      In order to dig into this issue, it's first useful to understand
+      how 8, 16 and 32-bit registers are handled by the x86 architecture.
+
+      Consider either example egx-04-32bit.S, in GAS dialect or, alternatively,
+      exg-04-32bit.asm, an equivalent in NASM dialect. The result of the
+      experiment should be the same.
+
+      The program instructs the assembler to generate code for a 32-bit
+      (x86) CPU. The object code is supposed to store arbitrary values
+      in ah, ax and eax.
+
+      Build it and inspect the output with
+
+         make diss IMG=egx-04-32bit-nasm.bin
+
+         or
+
+         make diss IMG=egx-04-32bit-gas.bin
+
+
+      The output should identical:
+
+         0:	b4 01                	mov    $0x1,%ah
+   	 2:	66 b8 02 00          	mov    $0x2,%ax
+   	 6:	b8 03 00 00 00       	mov    $0x3,%eax
+
+      Line 0 uses opcode 0xb4 to store 1 in ah; the same we've got when
+      we compiled eg-04.asm or eg-05.S. This instruction takes 1 byte
+      as argument.
+
+      Line 6 uses the opcode 0xb8 to store 3 in eax. This instruction takes
+      4 bytes as argument.
+
+      Now look at line 6. It is supposed to store 2 in ax and needs 2 bytes
+      as argument. This would sum up 3 bytes, but the line is 4-bytes long.
+      Staring at the last byte in the line and moving backwards, we can
+      clearly identify the instruction 0xb8, the same as in line 6, and
+      the 2-byte representation of 0x2 in little endian.
+
+      But as we've seen, 0xb8 takes 4-bytes and store in eax. What is
+      happening here? Well, look at the first byte at line 2, the one
+      preceeding the 0xb8 instruction. It is a instruction prefix.
+      More specifically, 0x66 is a "Operand size overwrite" prefix.
+      Its effect is to toggle the normal (non-prefixed) length of the
+      next instruction's argument. In this case, from 32-bit to 16-bit.
+
+      This is how the 32-bit x86 architecture stores a value in a 16-bit
+      register in our example. While for ah and eax the assembler uses
+      different opcodes for the respective operations, for ax it uses
+      the same instruction that is used for eax, but with a operand
+      size overwrite prefix.
+
+      Now let's do the same thing with egx-04-16bit.asm.
+
+         make diss IMG=egx-04-32bit-nasm.bin 16
+
+         or
+
+         make diss IMG=egx-04-32bit-gas.bin 16
+
+      The only different from the previous 32bit versions is the directive
+      to select 16 bits, but the disassembly shows
+      
+
+         0:	b4 01                	mov    $0x1,%ah
+   	 2:	b8 02 00             	mov    $0x2,%ax
+   	 5:	66 b8 03 00 00 00    	mov    $0x3,%eax
+
+      Compare to the previous result:
+
+         0:	b4 01                	mov    $0x1,%ah
+   	 2:	66 b8 02 00          	mov    $0x2,%ax
+   	 6:	b8 03 00 00 00       	mov    $0x3,%eax
+
+      Line 0 has not changed.
+
+      Line 2, however, has. It lost the operand size overwrite prefix, which
+      passed to the line 6.
+
+      This time, we told the assembler we were targeting a 16-bit (8080)
+      CPU. Instruction 0xb4 works as usual. But now the normal (non-prefixed)
+      default argument length of 0xb8 is 2-bytes (16 bits). It's the manipulation
+      of eax (32 bits) that need the operand size overwrite prefix.
+
+      Why x86 code reuses the same instruction to move to ax and eax, by means
+      of prefixes, rather than having a specific instruction for each? This is
+      a design decision. But it's not hard to notice that eax and ax are,
+      after all, portions of the same 64-bit register found in x86_64. It may
+      make sense from the hardware design perspective.
+      
+      Well, so far so good.
+
+      But what is the problem with manipulating 8-bit registers with inline
+      assembly anyway?
+
+      Now GCC's own quirks come into play.
+
+      Consider the example egx-07.c.
+
+      We use inline assembly to force the variables to be allocated into
+      registers (see note 3a).
+
+      Now build and inspect with
+
+         make egx-07-16bit.bin/diss 16
+
+         0:	66 bb 01 00 00 00    	mov    $0x1,%ebx
+   	 6:	66 b8 02 00 00 00    	mov    $0x2,%eax
+   	 c:	66 b8 03 00 00 00    	mov    $0x3,%eax
+  	 12:	66 b8 04 00 00 00    	mov    $0x4,%eax
+  	 18:	90                   	nop
+  	 19:	0f 0b                	ud2    
+
 	 
-	 0:	b8 2a 00 00 00       	mov    $0x2a,%eax
-	 
-     as we should expect for a 32-bit object code.
+      Line 0 uses 0x66 prefix to store the next 4 bytes in bx, discarding
+      the remaining two. Line 6 does the same with for ax.
 
-     Look at the corresponding opcode: 0xb8. It's a mov instruction which
-     takes a 32-bit argument and copies in 32-bit register eax.
+      Now see line c. It should store 1 byte in ah. However it's just another
+      0xb8 move instruction prefixed to store the next two bytes in eax.
+      The same as 'mov $0x3, ax'. Line 12, likewise, will store in eax,
+      overriding anything we had put in ah in the previous step.
 
-     Next, disassemble the 16-bit code with
+      If we had written the assembly manually as in egx-04, we would have used
+      'mov $0x3, %ah' and this would have resulted in a 0xb4 instruction as before.
 
-        make diss IMG=egx-01-16.bin
+      But this is not what GCC itself does. Just build both the 16 and 32-bit
+      versions of the same example
 
-      and see that the same 'return' statement is now read at line 0 as
+      	 make egx-07-32bit.bin
 
-      	  0:	66 b8 2a 00          	mov    $0x2a,%ax
-   	  4:	00 00                	add    %al,(%eax)
+      	 make egx-07-16bit.bin
 
+      And see the generated assembly files
 
-     The same integer 42 is moved to a 16-bit register. So far so good,
-     but look then to the machine code. It is almost the same as the code
-     of the 32-bit version, except by the very first opcode: 0x66.
+        cat egx-07-32.bit.s
+        cat egx-07-16.bit.s
+	
+      or
 
-     This is an instruction prefix. The 0x66 prefix means "operand size
-     override" and its effect, as the name suggest, is to change the size of
-     the next instruction's operand.  Knowing this is actually useful to
-     understand the rest of the disassembling: the 0x66 prefix causes
-     the mov to operate with 16 bits; the remaining two bytes appear
-     in the next line are interpreted by the disassembler as bogus
-     instructions.
+        diff egx-07-32.bit.s egx-07-16.bit.s
+     
 
-     Alternatively,
+      and observe that the only different is the directive .cod116gcc.
 
-        make diss IMG=egx-01-16 16
+      As we can notice, GCC always use the 32-bit registers and rely on GAS
+      to honor the 16-bit directive.
 
-     forces the disassembler to interpret the code as a 16-bit would.
+      We can see the result by comparing
 
-     In this case, the line reads
-
-
-     	  0:	66 b8 2a 00 00 00    	mov    $0x2a,%eax
+      	 make egx-07-16bit.bin/diss 16
+      	 make egx-07-32bit.bin/diss 32
 
 
-     The assember has generated the same object code for both 32
-     and 16 bit. The mov instruction is followd by the 4 bytes
-     it takes in a 32-bit machine. However, the prefix makes the
-     CPU take only the first 2 bytes (little endian) and discard
-     the rest.
-
-     This is different of what we did when we wrote the assembly
-     by hand. We used a plain non-prefixed mov (0xb8) instruction
-     with a 2-byte argument. GCC, on the other hand, preferred
-     to use a 4-byte argument, like in 32-bit mode, and prefix
-     the move so that the excess 2-bytes are dismissed.
-
-     Yes, nowadays x86/x86-64 CPUs actually emulates a 16-bit CPU
-     in real mode (during the boot).
+      The conclusion is that the code is not honoring what the C source says.
+      This is a known issue and not exactly a bug, seen that GCC does not
+      even claim the support to operate with 8-bit register variables. We
+      are pushing it too hard.  There are other C compilers out there
+      which do support this kind of operation, but if we are to explore
+      GCC, we may well go without it.
+      
 
  (5) Consider the auxiliary example code egx-02.c.
 

@@ -253,11 +253,11 @@ egx-03.bin : %.bin : %.c
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T egx-01.ld $*.o -o $@
 
-egx-04-gas.bin : %-gas.bin : %.s
+egx-04-32bit-gas.bin egx-04-16bit-gas.bin : %-gas.bin : %.S
 	as --32 $< -o $*.o
-	ld -melf_i386 -T $*.ld $*.o -o $@
+	ld -melf_i386 -T egx-04.ld $*.o -o $@
 
-egx-04-nasm.bin : %-nasm.bin : %.asm
+egx-04-32bit-nasm.bin egx-04-16bit-nasm.bin : %-nasm.bin : %.asm
 	nasm -f bin $< -o $@
 
 
@@ -267,8 +267,20 @@ egx-05.bin : %.bin : %.S
 	as -32 -msyntax=intel -mnaked-reg $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e 0x7c00  $*.o -o $@
 
+# Illustration of GCC limitations in handling 8-bit registers
 
 egx-07.bin : %.bin : %.c
-	gcc -m16 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wunused-but-set-variable $< -o $*.s
+	gcc -m16 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o -o $@
+
+
+egx-07-16bit.s: %-16bit.s : %.c
+	gcc -m16 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $@
+
+egx-07-32bit.s: %-32bit.s : %.c
+	gcc -m32 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $@
+
+egx-07-16bit.bin egx-07-32bit.bin : %.bin : %.s
+	as --32 $< -o $*.o
+	ld -melf_i386 -T egx-07.ld $*.o -o $@

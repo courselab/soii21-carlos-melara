@@ -1,8 +1,8 @@
 	# A code excerpt to illustrate NASM vs GAS
 	# GAS version
 	
-	.code16
+	.code32
 	
-	movb $0x1, %al
+	movb $0x1, %ah
 	movw $0x2, %ax
 	movl $0x3, %eax
