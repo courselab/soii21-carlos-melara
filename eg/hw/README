@@ -282,26 +282,11 @@
 
 		       make diss IMG=eg-06.bin 32
 
-		    Why we are forcing the disassemble to interpret the object
-		    as a 32-bit code? Because GAS assume this code should
+		    Why are we forcing the disassemble to interpret the object
+		    as a 32-bit code? Because GAS assumes this code should
 		    be interpreted as a i8086 (16-bit) binary intended to run
 		    in a i386 (32-bit) machine (see note 3).
 
-#### Here
-
-
-* eg-06.S	    Program eg-05.S modified to manipulate 32-bit registers.
-
-		    The mein reason to rewrite eg-05.S using 32-bit registers
-		    is because GCC does not do a good job producing 16-bit
-		    assembly code. In order to mix C and inline assembly
-		    as we'll shall do next, we'd better modify our code
-		    to manipulate 32-bit registers and leave to the assemlber
-		    the duty of produce appropriate 16-bit object code.
-		    
-		    To better understand this limitation, refer to note 3
-		    by the end of this file.
-		    
 		    Alternative:
 
 		    Issuing the build rule with the command-line variable
@@ -309,9 +294,15 @@
 		    invocation (GCC then invokes assembler and linker with
 		    appropriate arguments).
 
+
 * eg-07-beta.c	    Like eg-06.S, but translated into C.
 
    		    We use basic inline assembly.
+
+		    Note that the string is now allocated in the read-only
+		    section of the object code --- and also the ad hoc
+		    workaround (aka dirty hack) we used (se comments in
+		    the source file).
 
 		    Alternatives:
 
@@ -326,9 +317,6 @@
 		    ALT=1 selects an alternative recipe using a single line
 		    compiler (gcc) invocation.
 
-		    Note that the string is now allocated in the read-only
-		    section of the object code --- and also the ad hoc
-		    workaround we used.
 
  * eg-07.c	    Like eg-07-beta.c, but handling .rodata with the ld script
 
@@ -336,6 +324,8 @@
 		    comments of eg-05.S, about GCC not being found of 16-bit
 		    assembler. See note 5.
 
+
+# Here
 
  * eg-08.c	    Like eg-08.S
 
