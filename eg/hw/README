@@ -16,7 +16,7 @@
 
  If you may also need
 
- - xoriso	1.5.2-1		(depending on your computer's BIOS)
+ - xorriso	1.5.2-1		(depending on your computer's BIOS)
 
 
  BUILD DIRECTIONS
@@ -114,7 +114,7 @@
     If you have only one storage device, say your HD, it may appear as
     /dev/sda, and when you plug your USB stick, it'll take the next
     available letter and appears as /dev/sdb.  You should be required
-    administrative privileges (sudo) to write directlly into your device.
+    administrative privileges (sudo) to write directly into your device.
 
     Be careful: you're entering system-level. 
 
@@ -193,7 +193,7 @@
 		    Intel to AT&T syntax is because we intend to rewrite
 		    the running example in C language.  To that end, we will
 		    use the powerful and flexible GNU compiler collection.
-		    The thing is, GCC's toolchain speaks AT&T sysntax dialect
+		    The thing is, GCC's toolchain speaks AT&T syntax dialect
 		    and does not understand NASM's dialect.
 
 		    See note (2) for further detailing.
@@ -228,7 +228,7 @@
 
 		    Finally, ld let us specify which will be the entry point
 		    of the executable. This would be important for structured
-		    file formats such as ELF (linux) or PE (windows). For
+		    file formats such as ELF (Linux) or PE (windows). For
 		    us, it's the first byte. Since ld expects it, we pass
 		    this information in yet another command-line option.
 
@@ -309,7 +309,7 @@
 
 		    Note that the string is now allocated in the read-only
 		    section of the object code --- and also the ad hoc
-		    workaround (aka dirty hack) we used (se comments in
+		    workaround (aka dirty hack) we used (see comments in
 		    the source file).
 
 		    Alternatives:
@@ -372,11 +372,11 @@
        came about, it brought a different specification for the boot
        information, described in the iso9960 (the conventional CD file system
        format). Vendors then updated the BIOSes to detect whether the storage
-       is either a floppy (os HD) or a CD-ROM, and apply the appropriate boot
+       is either a floppy (or HD) or a CD-ROM, and apply the appropriate boot
        procedure. More recently, when USB flash devices were introduced, the
-       approch adopted by BIOS vendors was not to specify a new boot procedure,
+       approach adopted by BIOS vendors was not to specify a new boot procedure,
        but to emulate  some of the former devices. The problem is that this
-       choice is not very consistent: some BIOSes would decect a USB stick as
+       choice is not very consistent: some BIOSes would detect a USB stick as
        a floppy, whereas other BIOSes would see it as a CD (welcome to the
        system layer!).
 
@@ -401,7 +401,7 @@
          make stick IMG=foo.iso STICK=/dev/sdX
 
 
-       We wont cover iso9660 el-torito boot for CD-ROM, as newer x86-based
+       We wont cover iso9660 El-Torito boot for CD-ROM, as newer x86-based
        computers now offers the Unified Extensible Firmware Interface meant
        to replace the BIOS interface of the original PC.  EFI is capable
        of decoding a format device, allowing the MBR code to be read from a
@@ -427,7 +427,7 @@
       A glimpse of those differences may be seen in egx-03.S.
 
       It's therefore not practical to ask GCC to generate intel assembly
-      from C, and have the latter asesmbled by nasm; we would need to
+      from C, and have the latter assembled by nasm; we would need to
       use GAS, instead anyway.
 
       As a side note, that is why we do not refer to assembly as a
@@ -461,7 +461,7 @@
 
       See egx-01.c for an example.
 
-      The code illustates the user of the qualified 'register' to
+      The code illustrates the user of the qualified 'register' to
       force a variable to allocated in a register rather than in
       work memory (RAM) as it's normally done.  This allows us
       to store a value in the register using the regular variable
@@ -473,7 +473,7 @@
 
 
  (3) Put short, GCC toolchain is not currently proficient in producing
-      propper object code from C inline assembly source code intended
+      proper object code from C inline assembly source code intended
       to manipulate 8-bit registers directly, that is
 
       register char ax __asm__("ax");
@@ -521,7 +521,7 @@
 
       But as we've seen, 0xb8 takes 4-bytes and store in eax. What is
       happening here? Well, look at the first byte at line 2, the one
-      preceeding the 0xb8 instruction. It is a instruction prefix.
+      preceding the 0xb8 instruction. It is a instruction prefix.
       More specifically, 0x66 is a "Operand size overwrite" prefix.
       Its effect is to toggle the normal (non-prefixed) length of the
       next instruction's argument. In this case, from 32-bit to 16-bit.
@@ -638,7 +638,7 @@
       even claim the support to operate with 8-bit register variables. We
       are pushing it too hard.  There are other C compilers out there
       which do support this kind of operation, but if we are to explore
-      GCC, we may well go without it.
+      GCC, we should avoid manipulating 8-bit register variables.
       
 
 
