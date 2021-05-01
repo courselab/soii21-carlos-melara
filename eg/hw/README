@@ -278,7 +278,7 @@
 		    is because we intend to port our source code from assembly
 		    to C and use GNU toolchain to build it.
 
-		    See note (3) for a glimpse on how it would look like.
+		    See note (3) for a glimpse on how it would look like
 
 		    It so happens that GCC does not do a good job working with
 		    8-bit registers. As we are taking steps to convert our
@@ -332,14 +332,37 @@
 
  * eg-07.c	    Like eg-07-beta.c, but handling .rodata with the ld script
 
-   		    It is now opportune to verify what has being said in the
-		    comments of eg-05.S, about GCC not being found of 16-bit
-		    assembler. See note 5.
+		    Bearing in mind that there is possibly more than one way
+		    to implement the behavior specified by the C source code
+		    into assembly form, it is not guaranteed that both the
+		    handwritten eg-06.s and the GCC-produced eg-07.s codes
+		    will match --- let alone the resulting machine codes
+		    eg-06.bin and eg-07.bin.
+
+		    One may check it by comparing
+
+		    	make eg-06.bin/diss 16
+			make eg-07.bin/diss 16
 
 
+		    A more similar binary code may be obtained by enabling
+		    some optimization
+		    
+		    	make eg-06.bin/diss 16
+			make eg-07-O1.bin/diss 16
+		        
 # Here
 
- * eg-08.c	    Like eg-08.S
+ * eg-08.c	    A complete rewrite of eg-07.c with extended assembly.
+
+   		    Using register variables and basic C inline assembly as
+		    in eg-07.c seems appealing at first glance... but in
+		    a dangerous way. The example did work, but only because
+		    certain rather restrictive conditions hold.
+
+		    To have an intuitive grasp on the potential problem,
+		    refer to note (5).
+
 
 
  Troubleshooting
@@ -476,7 +499,7 @@
          make diss IMG=eg-03.bin
 
 
- (3) Put short, GCC toolchain is not currently proficient in producing
+ (4) Put short, GCC toolchain is not currently proficient in producing
       propper object code from C inline assembly source code intended
       to manipulate 8-bit registers directly, that is
 
@@ -645,8 +668,66 @@
       GCC, we may well go without it.
       
 
+(5)   Consider program egx-05.c.
 
-     
+      If we trust that register variables can be safely manipulated as
+      regular memory-allocated variables, we would expect that by the
+      end of the program we have 0x1 stored in eax and 0x2 stored in ebx.
+      
+      This is 32-bit program. What could possible go wrong.
+
+      To answer the question you may
+
+      	 make egx-05.bin/run
+
+      and then, in qemu, press Ctr-Alt-2 to invoke the debug console.
+      Then type
+
+         print $eax
+	 print $ebx
+
+      to inspect the values stored in the registers: both have 0x2.
+
+      Why is that?  Make
+
+         make eg-05.bin/diss 32
+
+      and go through the diassembly
+
+            0:	b8 01 00 00 00       	mov    $0x1,%eax
+   	    5:	83 c0 01             	add    $0x1,%eax
+   	    8:	89 c3                	mov    %eax,%ebx
+
+
+      Line 0 implements the C source statement
+
+      	   eax = 1;
+
+      In order to implement the next C statement
+
+           ebx = eax + 1;
+
+      line 5 first add 1 to eax, and then move eax to ebx.
+
+      The compiler has absolutely no obligation to fulfill our expectations
+      regarding the assembly it generates. It might well had made
+
+      	   mov $0x01, %eax
+	   mov %eax, %ebx
+	   add $0x1, %ebx
+
+     and we would have 1 in eax, and 2 in ebx. But the compiler is free
+     to choose whatever assembly it feels like, as long as the attributions
+     we specified are correct. The analogy with memory variables is a
+     potentially misleading idea if not reasoned with due care.
+
+     Usually, we use basic inline assembly withing C functions only when
+     assembly is the only code withing the function.
+
+     That said, GCC has support for another form of inline assembly
+     called extended nasm, which allow for mixing C and assembly
+     with the due meticulous care.
+
 
 
  References

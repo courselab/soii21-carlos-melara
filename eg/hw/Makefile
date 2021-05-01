@@ -126,16 +126,29 @@ endif
 # Using linker script to define entry, flat binary and boot signature,
 # and to place the string in the .text section.
 
-eg-07.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
+
+# eg-07.bin : %.bin : %.c %.ld
+# 	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
+# 	as --32 $*.s -o $*.o
+# 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
+
+eg-07.s : %.s : %.c 
+	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $@
+
+eg-07-O1.s : %-O1.s : %.c
+	gcc -m16 -O1 -Wall -fno-pic  -fcf-protection=none -S $< -o $@
+
+
+eg-07.bin eg-07-O1.bin : %.bin : %.s eg-07.ld
+	as --32 $< -o $*.o
+	ld -melf_i386 -T eg-07.ld $*.o --orphan-handling=discard  -o $@
+
 
 
 # Next? 
 
-eg-08.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
+eg-08.bin : %.bin : %.c %.ld %.h
+	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
 
@@ -298,3 +311,8 @@ egx-04-32bit.s: %-32bit.s : %.c
 egx-04-16bit.bin egx-04-32bit.bin : %.bin : %.s
 	as --32 $< -o $*.o
 	ld -melf_i386 -T egx-04.ld $*.o -o $@
+
+egx-05.bin : %.bin : %.c %.ld
+	gcc -m32 -O0 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $*.s
+	as --32 $*.s -o $*.o
+	ld -melf_i386 -T $*.ld $*.o -o $@
