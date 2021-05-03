@@ -19,7 +19,7 @@
 
 AUXDIR = ../../tools#
 
-bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin    
+bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin eg-09.bin
 
 binx =  egx-01.bin egx-02-32bit-gas.bin egx-02-16bit-gas.bin egx-02-32bit-nasm.bin egx-02-16bit-nasm.bin egx-03.bin egx-04.bin egx-04-16bit.s egx-04-32bit.s egx-04-16bit.bin egx-04-32bit.bin 
 
@@ -96,10 +96,10 @@ endif
 ## GCC with inline 
 ##
 
-bits.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary --orphan-handling=discard  -o $@
+# bits.bin : %.bin : %.c %.ld
+# 	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $*.s
+# 	as --32 $*.s -o $*.o
+# 	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary --orphan-handling=discard  -o $@
 
 
 ifndef ALT
@@ -145,12 +145,28 @@ eg-07.bin eg-07-O1.bin : %.bin : %.s eg-07.ld
 
 
 
-# Next? 
+
+
+.precious: *.o
 
 eg-08.bin : %.bin : %.c %.ld %.h
 	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
+
+# eg-09
+
+
+eg-09.o : %.o : %.c %.h 
+	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
+	as --32 $*.s -o $@
+
+eg-09_utils.o : %.o : %.c 
+	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
+	as --32 $*.s -o $@
+
+eg-09.bin: %.bin : %.o %_utils.o %.ld
+	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
 
 
 
@@ -296,7 +312,7 @@ egx-03.bin : %.bin : %.S
 
 # Illustration of GCC limitations in handling 8-bit registers
 
-egx-04.bin : %.bin : %.c
+egx-04.bin egx-06.bin : %.bin : %.c
 	gcc -m16 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o -o $@

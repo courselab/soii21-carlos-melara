@@ -2,7 +2,7 @@
 
 void __attribute__((naked)) foo()
 {
-  register char bar __asm__("eax");
+  register int bar __asm__("eax");
 
   bar = 42;
 

@@ -311,6 +311,9 @@
 
    		    We use basic inline assembly.
 
+		    NOTE: There are some weightly concerns about this technique
+		    to be addressed in the following examples.
+
 		    Note that the string is now allocated in the read-only
 		    section of the object code --- and also the ad hoc
 		    workaround (aka dirty hack) we used (see comments in
@@ -350,10 +353,16 @@
 		    
 		    	make eg-06.bin/diss 16
 			make eg-07-O1.bin/diss 16
-		        
-# Here
 
- * eg-08.c	    A complete rewrite of eg-07.c with extended assembly.
+
+                    An alternative implementation which manipulate only 32-bit
+		    registers may be seen in egx-06.c.
+
+		    NOTE: There are some weightly concerns about this technique
+		    to be addressed in the following examples.
+
+
+* eg-08.c	    A complete rewrite of eg-07.c with safer code.
 
    		    Using register variables and basic C inline assembly as
 		    in eg-07.c seems appealing at first glance... but in
@@ -362,6 +371,27 @@
 
 		    To have an intuitive grasp on the potential problem,
 		    refer to note (5).
+
+		    The example, although (hopefully) working, is error prone
+		    and generally not a good idea.
+
+		    This is rewrite of eg-07.c using simple asm encapsulated
+		    as function-like macros.
+
+		    The macro usage has some limitations which are overcome
+		    in the examples which follow.
+
+ * eg-09.c	    A rewrite of 08.c replacing macros with functions.
+
+   		    The limitations of eg-08.c's macro usage are overcome, yet with
+		    simple inline assembly.
+
+		    One thing to be noticed is that we had to change the
+		    assembly to use register si where we had been using bx.
+
+		    See note (6).
+
+
 
 
 
@@ -729,6 +759,59 @@
      called extended nasm, which allow for mixing C and assembly
      with the due meticulous care.
 
+ (6)  Previously, we would do
+		    
+      		    AT&T syntax			Intel syntax
+
+      		    msg(%bx)			[msg + bx]
+
+
+      to iterate through the characters of the string located at msg, using bx
+      as the index of the array.
+
+      Now, rather than constant labeled position, our string may be anywhere
+      and we pass it to the function as an address stored in %cx. The thing
+      is, we can't do
+
+		    AT&T syntax			Intel syntax
+
+		    %cx(%bx)			[cx + bx]
+		    
+      Why not? Because the i8086 (16-bit precursos of x86) does not allows to.
+      The way to traverse an array here is by using the base-index-scale
+
+		  base address + index array * scale
+
+      E.g.
+
+		   (%bx, %si, 1)
+
+      is the memory position starting from the base address %bx, advancing
+      %si * 1 positions.  The scale may be e.g. 4 if we want to advance
+      %si 32-bit integers.
+
+      So, in our example, can we do
+
+		  (%cx, %bx)
+
+       No.
+
+       In 16-bit real mode x86 allow us We limited choices
+
+	     	   (%bx), (%bp), (%si), (%di),
+
+	           (%bx,%si), (%bx,%di), (%bp,%si) and (%bp,%di)
+
+
+        We than had to modify our code to use %si for iteration and %bx for
+	the base. (Do the respective names "base register" and "source  index 
+	register" for bx and si ring you a bell?)
+
+	Do I really need to know all of this??? 
+
+	Hump... know this you must, for intricate and deceptive the hardware
+	may be... and fighting the darkness you shall, to bring consistency
+	and balance where there would be only chaos and fear.
 
 
  References
