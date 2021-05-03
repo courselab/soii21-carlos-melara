@@ -20,7 +20,7 @@ void __attribute__ ((naked)) _start()
     {                                                                              
       eax &= 0xffffff00;        /*     prepare for the next line   */              
       eax |= (char) here[ebx];  /*     mov al, BYTE [here + bx]    */              
-      __asm__("int     $0x10"); /*     int 0x10                    */              
+      __asm__("int $0x10"); /*     int 0x10                    */              
       ebx++;                    /*     add bx, 0x1                 */              
                                                                                    
     }                                                                              
@@ -30,11 +30,8 @@ void __attribute__ ((naked)) _start()
 
 }
 
-const char here[] __attribute__((section(".text#"))) = "Hello world";
+const char here[] = "Hello world";
 
-
-__asm__(". = _start + 510");                /* Pad with zeros */
-__asm__(".byte 0x55, 0xaa");                /* Boot signature  */
 
 
 
