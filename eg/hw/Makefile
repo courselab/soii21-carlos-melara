@@ -19,7 +19,7 @@
 
 AUXDIR = ../../tools#
 
-bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin eg-09.bin eg-10.bin
+bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin eg-09.bin eg-10.bin eg-11.bin
 
 binx =  egx-01.bin egx-02-32bit-gas.bin egx-02-16bit-gas.bin egx-02-32bit-nasm.bin egx-02-16bit-nasm.bin egx-03.bin egx-04.bin egx-04-16bit.s egx-04-32bit.s egx-04-16bit.bin egx-04-32bit.bin 
 
@@ -141,7 +141,7 @@ eg-08.bin : %.bin : %.c %.ld %.h
 
 
 eg-09.o eg-10.o : %.o : %.c %.h 
-	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
+	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none  -S $< -o $*.s
 	as --32 $*.s -o $@
 
 eg-09_utils.o eg-10_utils.o : %_utils.o : %_utils.c %.h
@@ -151,11 +151,25 @@ eg-09_utils.o eg-10_utils.o : %_utils.o : %_utils.c %.h
 eg-09.bin: %.bin : %.o %_utils.o %.ld
 	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
 
-eg-10.bin: %.bin : %_rt0.o %.o %_utils.o  %.ld
+eg-10.bin eg-11.bin : %.bin : %_rt0.o %.o %_utils.o  %.ld
 	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
 
 eg-10_rt0.o : %.o : %.S
 	as --32 $< -o $@
+
+
+eg-11.o : %.o : %.c %.h 
+	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none -nostdlib --freestanding -S $< -o $*.s
+	as --32 $*.s -o $@
+
+eg-11_utils.o : %_utils.o : %_utils.c %.h
+	gcc -m16 -O0 -I. -Wall -fno-pic -nostdlib --freestanding -fcf-protection=none -S $< -o $*_utils.s
+	as --32 $*_utils.s -o $@
+
+
+eg-11_rt0.o : %.o : %.c
+	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
+	as --32 $*.s -o $@
 
 # Auxiliary extra examples
 

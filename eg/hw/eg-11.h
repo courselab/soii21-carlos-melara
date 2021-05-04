@@ -11,21 +11,13 @@
 
  */
 
-void __attribute__((fastcall, naked))  write_str(const char* s);
+void __attribute__((fastcall, naked))  puts(const char* s);
+
+/* An exit function. */
+
+void __attribute__((fastcall, naked))  exit(const char* s);
 
 
-/* A function-like macro which halts the system. 
- 
-   This function takes no arguments and does not clobber registers.
-
-*/
-
-#define halt() __asm__\
-("\
-  halt:               \n\t\
-	hlt           \n\t\
-	jmp   halt    \n\t\
-")
 
 
 #endif

@@ -413,8 +413,19 @@
 		    GCC is allowed to optmize to modify the output. We
 		    used volatile with extended asm to prevent optmization.
 
+		    We handled the stack pointer in a better way.
 
+ * eg-11.c	    Finally, a program with a familiar C-like look.
 
+   		    We did some changes
+
+		       replaced asm rt0 with a C version
+		       used the linker to set the stack location
+		       changed functions name to look like C
+		       jump to main from rt0
+		       add an exit function
+
+   		    See comments in the file.
 
  Troubleshooting
  ------------------------------
