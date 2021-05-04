@@ -391,8 +391,23 @@
 
 		    See note (6).
 
+ * eg-19.c	    Like eg-09 but using GCC extended assembly.
 
+   		    Extended assembly allow us to
 
+		      reference C variable within asm code;
+		      generate unique labels across the compilation unit;
+		      notify GCC about clobbered registers.
+
+		    Build eg-09.bin and compare
+
+   		       make diff eg-09_utils.s eg-10_utils.s
+
+		       make diff eg-09_utils.bin eg-10_utils.bin
+
+		    See how differently GCC handled the asm. In extended asm
+		    GCC is allowed to optmize to modify the output. We
+		    used volatile with extended asm to prevent optmization.
 
 
  Troubleshooting

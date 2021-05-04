@@ -28,20 +28,6 @@ void __attribute__((fastcall, naked))  write(const char* s);
 ")
 
 
-/* This register tells the CPU where the call instruction should
-   leave the return address. More technically, this is the
-   stack pointer but we'll go deeper into it opportunely. 
-
-   Note:
-
-   The header file is not necessarity the most appropriate place to add 
-   code aimed at the assemlber (that will generate code). This should be 
-   for preprocessor directives. We shall make a better job in the 
-   examples which follow. */
-
-__asm__("movl $0x7e10, %esp");
-
-
 #endif
 
 /* Notes.

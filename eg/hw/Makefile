@@ -140,15 +140,15 @@ eg-08.bin : %.bin : %.c %.ld %.h
 # eg-09
 
 
-eg-09.o : %.o : %.c %.h 
+eg-09.o eg-10.o : %.o : %.c %.h 
 	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $@
 
-eg-09_utils.o : %.o : %.c 
-	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
-	as --32 $*.s -o $@
+eg-09_utils.o eg-10_utils.o : %_utils.o : %_utils.c %.h
+	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*_utils.s
+	as --32 $*_utils.s -o $@
 
-eg-09.bin: %.bin : %.o %_utils.o %.ld
+eg-09.bin eg-10.bin: %.bin : %.o %_utils.o %.ld
 	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
 
 
