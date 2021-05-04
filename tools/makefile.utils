@@ -78,13 +78,17 @@ srcdiff : $(wordlist 2, 4, $(MAKECMDGOALS))
 	fi
 
 diff : $(word 2, $(MAKECMDGOALS))
+	@echo $(wordlist 2, 4, $(MAKECMDGOALS))
 	@EXT=$(suffix $<);\
 	case $$EXT in \
 	.bin | .o)\
 		make --quiet objdiff $(wordlist 2, 4, $(MAKECMDGOALS))\
 		;;\
-	.asm | .c | .S)\
+	.asm | .S.| .s | .i | .c | .h | .hex)\
 		make --quiet srcdiff $(wordlist 2, 4, $(MAKECMDGOALS))\
+		;;\
+	*)\
+		echo "I don't know how to compare filetype $$EXT"\
 		;;\
 	esac
 

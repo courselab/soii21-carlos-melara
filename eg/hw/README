@@ -391,7 +391,11 @@
 
 		    See note (6).
 
- * eg-19.c	    Like eg-09 but using GCC extended assembly.
+		    We alse had to set the location where the call instruction
+		    should leave the return address for the callee.
+
+
+ * eg-10.c	    Like eg-09 but using GCC extended assembly.
 
    		    Extended assembly allow us to
 
@@ -408,6 +412,8 @@
 		    See how differently GCC handled the asm. In extended asm
 		    GCC is allowed to optmize to modify the output. We
 		    used volatile with extended asm to prevent optmization.
+
+
 
 
  Troubleshooting

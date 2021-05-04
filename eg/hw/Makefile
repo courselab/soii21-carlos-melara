@@ -148,10 +148,14 @@ eg-09_utils.o eg-10_utils.o : %_utils.o : %_utils.c %.h
 	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*_utils.s
 	as --32 $*_utils.s -o $@
 
-eg-09.bin eg-10.bin: %.bin : %.o %_utils.o %.ld
+eg-09.bin: %.bin : %.o %_utils.o %.ld
 	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
 
+eg-10.bin: %.bin : %_rt0.o %.o %_utils.o  %.ld
+	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
 
+eg-10_rt0.o : %.o : %.S
+	as --32 $< -o $@
 
 # Auxiliary extra examples
 

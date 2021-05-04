@@ -32,6 +32,8 @@ void __attribute__((fastcall, naked))  write(const char* s);
    leave the return address. More technically, this is the
    stack pointer but we'll go deeper into it opportunely. 
 
+   LOAD_ADDRESS + 512 bytes + 16 bytes = 0x7e10
+
    Note:
 
    The header file is not necessarity the most appropriate place to add 
