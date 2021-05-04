@@ -40,22 +40,38 @@ eg-04.i : %.i : %.c %.h
 eg-05.i : %.i : %.c
 	gcc -E -I. -P $< -o $@
 
+eg-05:
+	@echo "Not a target; see README."
+
 ifndef ALT
 eg-06 : % : %.o %_foo.o %_bar.o
 	gcc -Wall $^ -o $@
+else
+eg-06 : % : %.o lib%.a
+	gcc -Wall $< -o $@ -L. -l$*
 endif
 
-eg-06.o eg-06_foo.o eg-06_main.o : %.o : %.s 
+eg-06.o eg-06_foo.o eg-06_main.o eg-06_baz.o: %.o : %.s 
 	gcc -Wall -c $< -o $@
 
-eg-06.s eg-06_foo.s eg-06_bar.s : %.s : %.i
+eg-06.s eg-06_foo.s eg-06_bar.s eg-06_baz.s : %.s : %.i
 	gcc -S $< -o $@
 
 eg-06.i : %.i : %.c %.h
 	gcc -E -I. -P $< -o $@
 
-eg-06_foo.i  eg-06_bar.i: %.i : %.c 
+eg-06_foo.i  eg-06_bar.i eg-06_baz.i : %.i : %.c 
 	gcc -E -I. -P $< -o $@
+
+ifeq ($(ALT), 1)
+libeg-06.a : eg-06_foo.o eg-06_bar.o
+	ar rs $@ $^
+endif
+
+ifeq ($(ALT),2)
+libeg-06.a : eg-06_foo.o eg-06_bar.o eg-06_baz.o
+	ar rs $@ $^
+endif
 
 eg-07.a :
 	echo AAAAAAAAAA > f1
@@ -70,13 +86,11 @@ libeg-08.a : eg-08_foo.o eg-08_bar.o
 eg-08_foo.o eg-08_bar.o: %.o : %.c
 	gcc -Wall -c -fno-pic -fcf-protection=none -fno-asynchronous-unwind-tables $< -o $@
 
-ifeq ($(ALT) ,1)
-eg-06 : % : %.o libeg-06.a
-	gcc -Wall -L. $< -o $@ -leg-06
-endif
+# ifeq ($(ALT) ,1)
+# eg-06 : % : %.o libeg-06.a
+# 	gcc -Wall -L. $< -o $@ -leg-06
+# endif
 
-libeg-06.a : eg-06_foo.o eg-06_bar.o
-	ar rs $@ $^
 
 # Another build example with static library
 
@@ -100,4 +114,4 @@ diss:  $(IMG)
 .PHONY: clean
 
 clean:
-	rm -f $(bin) *.o *.i *.a main *.s *~ f1 f2
+	rm -f $(bin) *.o *.i *.a main *.s *~ f1 f2 f

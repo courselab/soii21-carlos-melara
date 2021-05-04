@@ -5,8 +5,8 @@
 int main ()
 {
    int a,b;
-   a = foo(10);
-   b = bar(20);
+   a = foo(1);
+   b = bar(2);
    return a+b;
 }
 
