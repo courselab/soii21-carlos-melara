@@ -8,7 +8,7 @@
 
 #define _(...) #__VA_ARGS__ "\n\t"
 
-void __attribute__((fastcall, naked))  write(const char* s)
+void __attribute__((fastcall, naked))  write_str(const char* s)
 {
 __asm__
 (

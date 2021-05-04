@@ -11,7 +11,7 @@
 
  */
 
-void __attribute__((fastcall, naked))  write(const char* s);
+void __attribute__((fastcall, naked))  write_str(const char* s);
 
 
 /* A function-like macro which halts the system. 

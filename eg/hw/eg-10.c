@@ -4,7 +4,7 @@
 void __attribute__((naked)) _start()
 {
   
-  write ("Hello World");
+  write_str ("Hello World");
 
   halt();
 }
