@@ -57,3 +57,4 @@ config.h
 libtool
 .deps/
 
+tools/makefile.utils
