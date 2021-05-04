@@ -424,6 +424,7 @@
 		       changed functions name to look like C
 		       jump to main from rt0
 		       add an exit function
+		       fixed writing routine not to output 0x0
 
    		    See comments in the file.
 

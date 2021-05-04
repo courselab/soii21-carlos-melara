@@ -18,9 +18,9 @@ _(	andw  $0xff00, %%ax         ) /* Zero al.                         */
 _(	movw  (%%bx, %%si), %%dx    ) /* si-th character starting at bx.  */
 _(	andw  $0x00ff, %%dx         ) /* Copy dl                          */
 _(	orw   %%dx, %%ax            ) /* into al.                         */
-_(	int   $0x10	            ) /* Call BIOS.                       */
 _(	cmp   $0x0, %%dx	    ) /* Reiterate if char not null.      */
 _(	je    go%=                  )
+_(	int   $0x10	            ) /* Call BIOS.                       */
 _(	add   $0x1, %%si	    )
 _(	jmp   loop%=	            ) 
 _(go%=:                             )
