@@ -1,3 +1,6 @@
+/* Boot, say hello and halt. 
+   Using macro-like functions.
+*/
 
 #include <eg-08.h>
 
@@ -17,6 +20,10 @@ void __attribute__((naked)) _start()
 const char msg[]  = "Hello world";
 
 
+/* Notes
 
+   Macros write_str() and halt() are defined in eg-08.h.
+
+ */
 
 

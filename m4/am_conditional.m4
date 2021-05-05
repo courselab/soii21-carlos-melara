@@ -10,7 +10,7 @@
 # -------------------------------------
 # Define a conditional.
 AC_DEFUN([AM_CONDITIONALO],
-[daaa AC_PREREQ([2.52])dnl
+[AC_PREREQ([2.52])dnl
  m4_if([$1], [TRUE],  [AC_FATAL([$0: invalid condition: $1])],
        [$1], [FALSE], [AC_FATAL([$0: invalid condition: $1])])dnl
 AC_SUBST([$1_TRUE])dnl

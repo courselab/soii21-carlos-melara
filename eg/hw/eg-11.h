@@ -1,3 +1,5 @@
+/* Header file for eg-11.c */
+
 #ifndef EG_08_H
 #define EG_08_H
 
@@ -23,8 +25,9 @@ void __attribute__((fastcall, naked))  exit(const char* s);
 #endif
 
 /* Notes.
+   
+   Both puts and exit are now functions implemented in eg-10_utils.c.
 
-   Note the combination \n\t to split lines in a multi-line assembly 
-   source code. This is because assemblers read LF-terminated lines
-   and normally indent the next line with a tab character.
+   We should be careful not to clash names with libc.
+
 */

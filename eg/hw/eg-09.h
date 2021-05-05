@@ -1,9 +1,11 @@
+/* Header file for eg-09.c */
+
 #ifndef EG_08_H
 #define EG_08_H
 
 /* A function-which prints pointed by str using BIOS' int 0x10 service. 
 
-   Differently from eg-09.h's macro version, this function accepts 
+   Differently from eg-08.h's macro version, this function accepts 
    either a pointer to labeled string or an anonimous pointer for 
    a quoted literal string.
 
@@ -47,8 +49,6 @@ __asm__("movl $0x7e10, %esp");
 #endif
 
 /* Notes.
-
-   Note the combination \n\t to split lines in a multi-line assembly 
-   source code. This is because assemblers read LF-terminated lines
-   and normally indent the next line with a tab character.
+   
+   Function write_str() is implemented in eg-09_utils.c
 */

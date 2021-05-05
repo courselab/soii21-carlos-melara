@@ -1,4 +1,4 @@
-	;; Boot, say hello, and loop forever
+	;; Boot, say hello, and halt
 	;; NASM assembly, using a loop 
 	
 	bits 16			; Set 16-bit mode
@@ -47,7 +47,7 @@ msg:				; C-like NULL terminated string
 	;; Notice, however that differently from the case of jmp instruction,
 	;; which deals with a relative offset, we use msg as a label to an
 	;; arbitrary position. This time, there is no way to rewrite msg
-	;; using $ --- the assembler has no way to gues the address of the
+	;; using $ --- the assembler has no way to guess the address of the
 	;; string. We therefore need to take into account the fact that
 	;; BIOS will load the program at the specific address 0x7c00.
 	;; 

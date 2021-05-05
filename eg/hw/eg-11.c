@@ -1,3 +1,6 @@
+/* Boot, say hello and halt. 
+   A source code with a familiar C look.
+*/
 
 #include <eg-11.h>
 
@@ -11,3 +14,8 @@ int __attribute__((naked)) main ()
 }
 
 
+/* Notes
+
+   Cool, ain't it?
+
+ */

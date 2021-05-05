@@ -34,8 +34,9 @@ _(      ret                         ) /* Return to the caller. */
 
 
 /* An exit function. We copy the return status to eax before
-   returning to mimmic the standard C function --- although
-   this is pointless, since we are halting the syste. */
+   returning just to mimmic x86 ABI --- although this is
+   is pointless here, as we won't return to anyone and
+   are going to halt the system anyway.*/
 
 void __attribute__((fastcall, naked))  exit (short n)
 {
@@ -54,28 +55,4 @@ __asm__
 
    This code uses GCC extende assembly.
   
-   Register %reg is denoted %%reg
-      
-   The input parameter specifies that the C variable s should be copied into
-   register b, and referenced in the code by str --- we therefore don't need 
-   to mind that s is being received in ecx.
-
-   The line
-
-        movw  %w[str], %%bx
-   
-    references str and the constraint %w tells the assembler that we want to
-    operate on 16-bit register (therefor it should use bx).
-
-    Token %= outputs a symbol which is unique in the entire compilation.
-    This frees us from the risk of using the same label in another asm code
-    in the same compilation unit.
-
-    The last line informs GCC that the registers ax, cx, dx and si are 
-    clobbered by this asm code. That bx is also clobbered GCC already 
-    knows because bx is mentioned in the input/output parameter list.
-
-    In extended asm GCC can modify the code. We used volatile qualifier
-    to prevent optimization.
-
  */

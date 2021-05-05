@@ -1,3 +1,5 @@
+/* Header file for eg-08.c */
+
 #ifndef EG_08_H
 #define EG_08_H
 

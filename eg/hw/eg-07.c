@@ -1,3 +1,6 @@
+/* Boot, say hello and halt. 
+   Improved code using linker script.
+*/
 
 extern const char msg[];
 
@@ -35,7 +38,7 @@ void __attribute__((naked)) _start()
       __asm__("hlt");		/* Halt with safeguard. */
 }
 
-/*  The string, with a hack to allocate it in the same code section. */
+/*  The string. */
 
 const char msg[]  = "Hello world";
 

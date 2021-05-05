@@ -13,3 +13,10 @@ __asm__("movl $__END_STACK__ , %esp");
 
 __asm__("_start:           \n\t\
                  jmp main  ");
+
+
+/* Notes.
+
+   Our rt0 file is not C with inline asm.
+
+ */

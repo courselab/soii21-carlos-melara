@@ -1,4 +1,4 @@
-	;; Boot, say hello, and loop forever
+	;; Boot, say hello, and halt
 	;; NASM assembly, neater version wit loop
 
 	bits 16			; Set 16-bit mode
@@ -27,4 +27,7 @@ msg:				; C-like NULL terminated string
 	times 510 - ($-$$) db 0	; Pad with zeros
 	dw 0xaa55		; Boot signature
 
-		
+
+	;; Notes
+	;;
+	;;  We replaced several db directives with a single one.

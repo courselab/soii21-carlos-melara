@@ -1,3 +1,6 @@
+/* Boot, say hello and halt. 
+   Almost literal translation of eg-06.S using
+   basic inline assembly and register variables. */
 
 extern const char msg[];
 
@@ -44,11 +47,17 @@ __asm__(".byte 0x55, 0xaa");                /* Boot signature  */
 
 /* Notes.
 
-   The compiler will allocate the executable code in the section .text
+   There are several due remarks here.
+
+ - Asm statements inside __asm__() are ouput as are.
+
+ - We declared variables to be allocated in registers.
+
+ - The compiler will allocate the executable code in the section .text
    of the assembly code. By default, it would allocate the string in
    the read-only data (.rodata).  The problem is, the assembler
-   computes offsets relatively to the start of the current section.
-   
+   computes offsets relatively to the start of the current section.   
+
    The attribute in the declaration of msg forces the compiler to allocate
    the string in the designated section.
 
@@ -58,8 +67,12 @@ __asm__(".byte 0x55, 0xaa");                /* Boot signature  */
    we need.  We therefore specify '.text#' as a way to fool GCC:
    it will output '.text#.a'.  But '#' happens to be a comment mark
    for the the assembler, which will read just '.text' as we'd like.
+
+ - Althouth it hopefully works, there are some due concerns about
+   this code. Please, refer to ./README for further details.
    
-   Welcome to system-level hackery.
+ - Does this code look like hackery? It is. 
+   Welcome to system level programming.
 
 */
 

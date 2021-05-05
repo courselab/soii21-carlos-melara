@@ -42,13 +42,13 @@ diss:  $(IMG)
 %/diss : %
 	make --quiet diss IMG=$< $(filter 16 32 intel att, $(MAKECMDGOALS))
 
-%/i16 : %
+%/i16 %/16i : %
 	make --quiet $</diss intel 16
-%/i32 : %
+%/i32 %/32i : %
 	make --quiet $</diss intel 32
-%/a16 : %
+%/a16 %/16 : %
 	make --quiet $</diss att 16
-%/a32 : %
+%/a32 %/32: %
 	make --quiet $</diss att 32
 
 %/run : %

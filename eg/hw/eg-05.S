@@ -1,4 +1,4 @@
-	## Boot, say hello, and loop forever
+	## Boot, say hello, and halt
 	## AT&T assembly, translated from NASM
 	
 	.code16               # Set 16-bit code

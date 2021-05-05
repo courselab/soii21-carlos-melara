@@ -1,4 +1,4 @@
-	## Boot, say hello, and loop forever
+	## Boot, say hello, and halt
 	## AT&T assembly, using 16-bit registers
 	
 	.code16               # Set 16-bit code
@@ -35,6 +35,11 @@ msg:			       # C-like NULL terminated string
 	.word 0xaa55			     # Boot signature
 
 
-
+	# Notes
+	#	
+	# We play some gimmicks with bitwise logic operations
+	# so that we can use only 16-bit registers. The reason
+	# is that GCC is not fine-tuned to work with high and
+	# low 8-bit register. See extended comments in ./REAMDE.
 
 	

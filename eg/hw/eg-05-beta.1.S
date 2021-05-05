@@ -1,4 +1,4 @@
-	## Boot, say hello, and loop forever
+	## Boot, say hello, and halt
 	## AT&T assembly, translated from NASM
 	
 	.code16               # Set 16-bit code
@@ -33,7 +33,7 @@ msg:			       # C-like NULL terminated string
 	# Notes
 	#
 	# This is a intentionally literal translation of mbr-04.asm
-	# into AT&T Gas assembly. It may not be the neater approach ;
-	# in the next examples we taks advantages of GASM features. 
+	# into AT&T Gas assembly.  See extended comments in ./README
+	# for the rationales.
 
 	

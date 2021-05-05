@@ -1,5 +1,27 @@
 
- OVERVIEW
+			BARE-METAL HELLO WORLD
+
+
+ Overview
+ ------------------------------
+
+ This directory contains a series of examplis comprising a step-by step
+ bare-metal implementation of a traditional Hello World program,
+ indented to book and execute in a conventional x86 platform.
+
+ The sequence starts with as simple as a source code written directly
+ in machine code, wich is then rewriten in assembly and incrementally
+ improved until we transform it in a familiar C source code.
+
+ Source code examples include explanatory inline comments and are
+ accompanied with corresponding technical discussions laid in this
+ file, which one should be able to go through in the suggested order.
+ For convenience, a build script (Makefile) is provided which contain
+ rules to build, test, inspect and disassembly the content files.
+ It may be useful to refer to this script to understand how the
+ build tools (compiler, assembler, linker) are used.
+
+ Directions
  ------------------------------
 
  In order to experiment with the examples in this section, the following
@@ -19,8 +41,8 @@
  - xorriso	1.5.2-1		(depending on your computer's BIOS)
 
 
- BUILD DIRECTIONS
- ------------------------------
+ BUILD INSTRUCTIONS
+
 
  Use
 
@@ -68,7 +90,7 @@
 
 
  Some examples allow alternative build recipes which can be selected
- by passing the command-line variable ALT=<number> to make. See bellow. 
+ by passing the command-line variable ALT=<number> to 'make'. See bellow. 
 
  File names:
 
@@ -98,7 +120,7 @@
 
 
 
- Note on booting the real hardware
+ NOTE ON BOOTING THE REAL HARDWARE
 
     Unfortunately, not all BIOSes  handle USB boot devices in the same
     way (welcome to system level). Some are likely to emulate it as a floppy
@@ -109,7 +131,7 @@
     by passing it the variable IMG=foo.iso.  See note (1) by the end.
 
 
- Words of wisdom
+ WORDS OF WISDOM
 
     If you plan to boot the examples in the physical hardware, check which
     device represents your USB stick. You may use, for instance lsblk utility.
@@ -127,10 +149,11 @@
 
     
 
- CONTENTS
+ Contents
  ------------------------------
 
- Take a look at the following examples.
+
+ Take a look at the following examples, preferably in the suggested order.
  
 
 
@@ -156,15 +179,19 @@
 		    syntax. This is the assembly understood by NASM assembler,
 		    used here to build the binary.
 
-		    Compare eg-01.bin and eg-02.bin with
+		    Compare eg-01.bin and eg-02.bin, by disassembling them with
 
-		      make diss IMG=eg-01.bin intel 16
-		      make diss IMG=eg-02.bin intel 16
+		      make eg-01.bin/16i
+		      make eg-02.bin/16i
+
+                    or, alternatively, with the graphical tool
+
+		      make diff eg-01.bin eg-02.bin BIT=16 ASM=intel
 
 		    and see that the resulting object codes match.
 
 		    We are forcing the disassembler to interpret the object
-		    as machine code for a i8086 (16-bit) CPU.
+		    as code for a i8086 (16-bit) CPU, using intel asm syntax.
 
 
  * eg-03-beta.asm   A variation of eg-02.asm, using a loop.
@@ -186,19 +213,19 @@
 
 		    Compare eg-03.bin and eg-04.bin with
 
-		      make diss IMG=eg-03.bin intel 16
-		      make diss IMG=eg-04.bin intel 16
+		      make eg-03.bin/i16 
+		      make eg-04.bin/i16 
   		    
 		    and see that the resulting object codes match.
 
 * eg-05-beta.1.S    Like eg-05.asm, but translated into AT&T assembly syntax.
 
   		    One motivation to convert the assembly source code from
-		    Intel to AT&T syntax is because we intend to rewrite
+		    Intel to AT&T dialect is because we intend to rewrite
 		    the running example in C language.  To that end, we will
 		    use the powerful and flexible GNU compiler collection.
-		    The thing is, GCC's toolchain speaks AT&T syntax dialect
-		    and does not understand NASM's dialect.
+		    The thing is, GCC's toolchain speaks AT&T asm and does not
+		    understand NASM's intel asm.
 
 		    See note (2) for further detailing.
 
@@ -233,8 +260,8 @@
 		    Finally, ld let us specify which will be the entry point
 		    of the executable. This would be important for structured
 		    file formats such as ELF (Linux) or PE (windows). For
-		    us, it's the first byte. Since ld expects it, we pass
-		    this information in yet another command-line option.
+		    us, it's the first byte. However, since ld dos expect it,
+		    we pass this information in yet another command-line option.
 
 
  * eg-05-beta.2.S   Same as before, but using global symbol for entry point.
@@ -246,24 +273,23 @@
  * eg-05.S	    Same as before, but with standard entry point name.
 
    		    This example is to illustrate that the default symbol name
-		    for the entry point is __start. If we stick to it, we do
-		    not need to pass it as an option for to the linker. Later
-		    on, we'll eventually see that the compiler (GCC) is smart
-		    enough so as to do the same.
+		    for the entry point is _start. If we stick to it, we do
+		    not need to pass it as an option for to the linker. 
 
 		    Alternative:
 
 		    Issuing the build rule with the command-line variable
 		    ALT=1 selects an alternative recipe using a single GCC 
-		    invocation (GCC then invokes assembler and linker with
-		    appropriate arguments).
+		    invocation (GCC then invokes the assembler and the linker
+		    with appropriate arguments).
 
+		    Disassemble with 
 
-		    $ make diss IMG=eg-03.bin intel 16
-		    $ make diss IMG=eg-04.bin intel 16
-		    $ make diss IMG=eg-05.bin intel 16
+		      make eg-03.bin/i16 
+		      make eg-04.bin/i16
+		      make eg-05.bin/i16 
 
-		    and see that they all match.
+		    and see that they all binaries match.
 
  * eg-06.S	    Like eg-05.S, but modified to manipulate 16-bit registers.
 
@@ -299,13 +325,6 @@
 		    be interpreted as a i8086 (16-bit) binary intended to run
 		    in a i386 (32-bit) machine (see note 3).
 
-		    Alternative:
-
-		    Issuing the build rule with the command-line variable
-		    ALT=1 selects an alternative recipe using a single GCC 
-		    invocation (GCC then invokes assembler and linker with
-		    appropriate arguments).
-
 
 * eg-07-beta.c	    Like eg-06.S, but translated into C.
 
@@ -314,7 +333,7 @@
 		    NOTE: There are some weightly concerns about this technique
 		    to be addressed in the following examples.
 
-		    Note that the string is now allocated in the read-only
+		    Observe that the string is now allocated in the read-only
 		    section of the object code --- and also the ad hoc
 		    workaround (aka dirty hack) we used (see comments in
 		    the source file).
@@ -329,11 +348,16 @@
 		    the code (.text) section to the output.
 
 		    a) Issuing the build rule with the command-line variable
-		    ALT=1 selects an alternative recipe using a single line
-		    compiler (gcc) invocation.
+		    ALT=2 selects an alternative recipe using a single line
+		    compiler (gcc) invocation. Note that now we need
+		    to use gcc's option -nostdlib.
 
 
  * eg-07.c	    Like eg-07-beta.c, but handling .rodata with the ld script
+
+
+   		    We use a linker script to move .rodata to .text section.
+		    Moreover, we user the linker to add the boot signature.
 
 		    Bearing in mind that there is possibly more than one way
 		    to implement the behavior specified by the C source code
@@ -354,13 +378,8 @@
 		    	make eg-06.bin/diss 16
 			make eg-07-O1.bin/diss 16
 
-
                     An alternative implementation which manipulate only 32-bit
 		    registers may be seen in egx-06.c.
-
-		    NOTE: There are some weightly concerns about this technique
-		    to be addressed in the following examples.
-
 
 * eg-08.c	    A complete rewrite of eg-07.c with safer code.
 
@@ -411,7 +430,7 @@
 
 		    See how differently GCC handled the asm. In extended asm
 		    GCC is allowed to optmize to modify the output. We
-		    used volatile with extended asm to prevent optmization.
+		    used volatile with extended asm to prevent optimization.
 
 		    We handled the stack pointer in a better way.
 
