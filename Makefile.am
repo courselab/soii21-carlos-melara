@@ -22,3 +22,11 @@ ACLOCAL_AMFLAGS = -I m4
 
 # EXTRA_DIST = examples
 
+other_dirs = eg/hw eg/build
+
+.PHONY: clean-local
+
+clean-local:
+	for i in $(other_dirs) ; do if test -f $$i/Makefile ; then $(MAKE) $(AM_MAKEFLAGS) -C $$i clean; fi; done
+
+

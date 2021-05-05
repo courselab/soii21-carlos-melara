@@ -34,6 +34,22 @@ dnl Define language and tools
 AC_PROG_CC 		        dnl Defines CC
 AM_PROG_AR                      dnl Archiver for static lib                     
 
+
+
+AX_CHECK_COMPILE_FLAG(
+	[-fcf-protection],,
+	[AC_MSG_ERROR([-fcf-protection not supported by compiler (gcc too old?)])]
+	)
+
+AX_GCC_FUNC_ATTRIBUTE([naked])
+if test $ax_cv_have_func_attribute_naked = "no"; then
+AC_MSG_ERROR([function attribute 'naked' not supported (gcc too old?)])
+fi
+
+dnl AM_CONDITIONAL ([NAKED], [test x$ax_cv_have_func_attribute = "no"]
+dnl AM_CONDITIONALO ([NAKED],foo, bar) 
+dnl AM_COND_IF ([NAKED], AC_MSG_ERROR([Dammit]))
+
 dnl Initialize libtool
 
 LT_INIT                         
