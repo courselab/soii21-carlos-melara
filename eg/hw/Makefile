@@ -19,11 +19,10 @@
 
 AUXDIR = ../../tools#
 
-bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin eg-09.bin
+bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin eg-09.bin eg-10.bin eg-11.bin
 
 binx =  egx-01.bin egx-02-32bit-gas.bin egx-02-16bit-gas.bin egx-02-32bit-nasm.bin egx-02-16bit-nasm.bin egx-03.bin egx-04.bin egx-04-16bit.s egx-04-32bit.s egx-04-16bit.bin egx-04-32bit.bin 
 
-DIFF_TOOL=meld
 
 all : $(bin) $(binx)
 
@@ -91,17 +90,6 @@ eg-06.bin : %.bin : %.S
 endif
 
 
-
-##
-## GCC with inline 
-##
-
-# bits.bin : %.bin : %.c %.ld
-# 	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $*.s
-# 	as --32 $*.s -o $*.o
-# 	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary --orphan-handling=discard  -o $@
-
-
 ifndef ALT
 eg-07-beta.bin : %.bin : %.c %.ld
 	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $*.s
@@ -126,11 +114,6 @@ endif
 # Using linker script to define entry, flat binary and boot signature,
 # and to place the string in the .text section.
 
-
-# eg-07.bin : %.bin : %.c %.ld
-# 	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
-# 	as --32 $*.s -o $*.o
-# 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
 
 eg-07.s : %.s : %.c 
 	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $@
@@ -157,137 +140,36 @@ eg-08.bin : %.bin : %.c %.ld %.h
 # eg-09
 
 
-eg-09.o : %.o : %.c %.h 
-	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
+eg-09.o eg-10.o : %.o : %.c %.h 
+	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none  -S $< -o $*.s
 	as --32 $*.s -o $@
 
-eg-09_utils.o : %.o : %.c 
-	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
-	as --32 $*.s -o $@
+eg-09_utils.o eg-10_utils.o : %_utils.o : %_utils.c %.h
+	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*_utils.s
+	as --32 $*_utils.s -o $@
 
 eg-09.bin: %.bin : %.o %_utils.o %.ld
 	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
 
+eg-10.bin eg-11.bin : %.bin : %_rt0.o %.o %_utils.o  %.ld
+	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
+
+eg-10_rt0.o : %.o : %.S
+	as --32 $< -o $@
 
 
-# Run on emulator
+eg-11.o : %.o : %.c %.h 
+	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none -nostdlib --freestanding -S $< -o $*.s
+	as --32 $*.s -o $@
 
-run: $(IMG)
-	qemu-system-i386 -drive format=raw,file=$< -net none
-
-# Inspect
-
-ifndef ASM
-ifeq (,$(findstring intel, $(MAKECMDGOALS)))
-ASM_SYNTAX = att
-else
-ASM_SYNTAX = intel
-endif
-else
-ASM_SYNTAX= $(ASM)
-endif
-
-ifndef BIT
-ifeq (,$(findstring 16, $(MAKECMDGOALS)))
-ASM_MACHINE = i386
-else
-ASM_MACHINE = i8086
-endif
-else
-
-ifeq ($(BIT),16)
-ASM_MACHINE = i386
-else
-ASM_MACHINE = i8086
-endif
-
-endif
-
-intel att 16 32: 
-	@echo > /dev/null
-
-diss:  $(IMG) 
-	@objdump -f $< > /dev/null 2>&1; \
-	if [ $$? -eq "1" ]  ; then \
-	  objdump -M $(ASM_SYNTAX) -b binary -m $(ASM_MACHINE) -D $< ; \
-	else \
-	  objdump -M $(ASM_SYNTAX) -m $(ASM_MACHINE) -d $< ; \
-	fi
-
-%/diss : %
-	make --quiet diss IMG=$< $(filter 16 32 intel att, $(MAKECMDGOALS))
-
-%/i16 : %
-	make --quiet $</diss intel 16
-%/i32 : %
-	make --quiet $</diss intel 32
-%/a16 : %
-	make --quiet $</diss att 16
-%/a32 : %
-	make --quiet $</diss att 32
-
-%/run : %
-	make run IMG=$<
+eg-11_utils.o : %_utils.o : %_utils.c %.h
+	gcc -m16 -O0 -I. -Wall -fno-pic -nostdlib --freestanding -fcf-protection=none -S $< -o $*_utils.s
+	as --32 $*_utils.s -o $@
 
 
-dump: $(IMG)
-	hexdump -C $<
-
-
-%/dump : %
-	make --quiet dump IMG=$< 
-
-
-objdiff bindiff : $(wordlist 2, 4, $(MAKECMDGOALS))
-	if test $(words $^) -lt 3 ; then\
-	  bash -c "$(DIFF_TOOL) <(make $(wordlist 1,1,$^)/diss) <(make $(wordlist 2,2,$^)/diss)";\
-	else\
-	  bash -c "$(DIFF_TOOL) <(make $(wordlist 1,1,$^)/diss) <(make $(wordlist 2,2,$^)/diss) <(make $(wordlist 3,3,$^)/diss)";\
-	fi
-
-srcdiff : $(wordlist 2, 4, $(MAKECMDGOALS))
-	if test $(words $^) -lt 3 ; then\
-	  bash -c "$(DIFF_TOOL) $(wordlist 1,1,$^) $(wordlist 2,2,$^)";\
-	else\
-	  bash -c "$(DIFF_TOOL) $(wordlist 1,1,$^) $(wordlist 2,2,$^) $(wordlist 3,3,$^)";\
-	fi
-
-diff : $(word 2, $(MAKECMDGOALS))
-	@EXT=$(suffix $<);\
-	case $$EXT in \
-	.bin | .o)\
-		make --quiet objdiff $(wordlist 2, 4, $(MAKECMDGOALS))\
-		;;\
-	.asm | .c | .S)\
-		make --quiet srcdiff $(wordlist 2, 4, $(MAKECMDGOALS))\
-		;;\
-	esac
-
-.PHONY: clean clean-extra intel att 16 32 diss /diss /i16 /i32 /a16 /a32
-
-clean:
-	rm -f *.bin *.elf *.o *.s *.iso *.img
-	make clean-extra
-
-clean-extra:
-	rm -f *~ \#*
-
-# Create bootable USP stick if BIOS needs it
-
-%.iso : %.img
-	xorriso -as mkisofs -b $< -o $@ -isohybrid-mbr $< -no-emul-boot -boot-load-size 4 ./
-
-%.img : %.bin
-	dd if=/dev/zero of=$@ bs=1024 count=1440
-	dd if=$< of=$@ seek=0 conv=notrunc
-
-run-iso: $(IMG)
-	qemu-system-i386 -drive format=raw,file=$(IMG) -net none
-
-stick: $(IMG)
-	@if test -z "$(STICK)"; then \
-	echo "*** ATTENTION: make IMG=foo.bin SITCK=/dev/X"; exit 1; fi 
-	dd if=$< of=$(STICK)
+eg-11_rt0.o : %.o : %.c
+	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
+	as --32 $*.s -o $@
 
 # Auxiliary extra examples
 
@@ -332,3 +214,42 @@ egx-05.bin : %.bin : %.c %.ld
 	gcc -m32 -O0 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o -o $@
+
+#
+# Test and inspect
+#
+
+include $(AUXDIR)/makefile.utils
+
+.PHONY: clean clean-extra intel att 16 32 diss /diss /i16 /i32 /a16 /a32
+
+#
+# Housekeeping
+#
+
+clean:
+	rm -f *.bin *.elf *.o *.s *.iso *.img
+	make clean-extra
+
+clean-extra:
+	rm -f *~ \#*
+
+#
+# Create bootable USP stick if BIOS needs it
+#
+
+%.iso : %.img
+	xorriso -as mkisofs -b $< -o $@ -isohybrid-mbr $< -no-emul-boot -boot-load-size 4 ./
+
+%.img : %.bin
+	dd if=/dev/zero of=$@ bs=1024 count=1440
+	dd if=$< of=$@ seek=0 conv=notrunc
+
+run-iso: $(IMG)
+	qemu-system-i386 -drive format=raw,file=$(IMG) -net none
+
+stick: $(IMG)
+	@if test -z "$(STICK)"; then \
+	echo "*** ATTENTION: make IMG=foo.bin SITCK=/dev/X"; exit 1; fi 
+	dd if=$< of=$(STICK)
+

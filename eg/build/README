@@ -119,12 +119,35 @@
 
 		      make eg-06 ALT=1
 
-
                     and see that this time we build the objects, create
 		    a static library and then build the binary by linking
 		    its object agains the library
 		    
-
+		    Yet, build with
  
+		      make eg-06 ALT=2
 
-		     
+
+		    This time, libeg-06.a includes another object file, baz.o,
+		    definint the symbol baz.
+
+		    Run
+
+
+		    meld <(make clean && make eg-06 ALT=1 && nm libeg-06.a) \
+		         <(make clean && make eg-06 ALT=2 && nm libeg-06.a)
+
+	            to compare both libraries.  Then, run
+
+		    meld <(make clean && make eg-06 ALT=1 && nm eg-06) \
+		         <(make clean && make eg-06 ALT=2 && nm eg-06)
+		    
+
+                    and see that baz is not included in the binary.
+
+		    Also, compare the disassembly to make it sure
+		    
+		    meld <(make clean && make eg-06 ALT=1 && objdump -d eg-06)\
+		         <(make clean && make eg-06 ALT=2 && objdump -d eg-06)
+
+		    

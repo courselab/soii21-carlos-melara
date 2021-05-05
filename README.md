@@ -5,6 +5,10 @@ resource to illustrate general concepts and techniques of system software design
 
 ## Quick start
 
+Refer to `doc/README.
+
+(please, as the file name suggests, __do__ read it; it will save yout time)
+
 Some examples need auxiliary artifacts which must be built beforehand.
 
  If you have obtained the project source from the __version control repository__,

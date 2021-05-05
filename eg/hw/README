@@ -391,9 +391,42 @@
 
 		    See note (6).
 
+		    We alse had to set the location where the call instruction
+		    should leave the return address for the callee.
 
 
+ * eg-10.c	    Like eg-09 but using GCC extended assembly.
 
+   		    Extended assembly allow us to
+
+		      reference C variable within asm code;
+		      generate unique labels across the compilation unit;
+		      notify GCC about clobbered registers.
+
+		    Build eg-09.bin and compare
+
+   		       make diff eg-09_utils.s eg-10_utils.s
+
+		       make diff eg-09_utils.bin eg-10_utils.bin
+
+		    See how differently GCC handled the asm. In extended asm
+		    GCC is allowed to optmize to modify the output. We
+		    used volatile with extended asm to prevent optmization.
+
+		    We handled the stack pointer in a better way.
+
+ * eg-11.c	    Finally, a program with a familiar C-like look.
+
+   		    We did some changes
+
+		       replaced asm rt0 with a C version
+		       used the linker to set the stack location
+		       changed functions name to look like C
+		       jump to main from rt0
+		       add an exit function
+		       fixed writing routine not to output 0x0
+
+   		    See comments in the file.
 
  Troubleshooting
  ------------------------------
