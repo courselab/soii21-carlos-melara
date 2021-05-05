@@ -19,4 +19,4 @@
 
 SUBDIRS = 
 
-EXTRA_DIST = hw
+EXTRA_DIST = hw build

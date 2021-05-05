@@ -1,0 +1,17 @@
+
+ CONFIGURE SYSeg
+ ------------------------------
+
+ Options you may want to configure.
+
+ Configure diff tool
+ ------------------------------
+
+   SYSeg uses a graphical diff tool to help visual comparison among code artifacts.
+   You may choose which tool you prefer by editing
+
+      DIFF_TOOL = meld
+
+  in syseg/tools/makefile.utils
+
+  

@@ -328,7 +328,7 @@ include $(AUXDIR)/makefile.utils
 #
 
 clean:
-	rm -f *.bin *.elf *.o *.s *.iso *.img
+	rm -f *.bin *.elf *.o *.s *.iso *.img *.i
 	make clean-extra
 
 clean-extra:

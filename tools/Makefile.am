@@ -30,6 +30,8 @@ hex2bin_SOURCES = hex2bin.c debug.h
 
 syseg_SOUCES = syseg.c debug.h
 
+EXTRA_DIST = makefile.utils
+
 # Wrapper execution script
 #
 # bin_PROGRAMS += main.bin 

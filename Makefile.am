@@ -30,3 +30,5 @@ clean-local:
 	for i in $(other_dirs) ; do if test -f $$i/Makefile ; then $(MAKE) $(AM_MAKEFLAGS) -C $$i clean; fi; done
 
 
+dist-hook:
+	make clean
