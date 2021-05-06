@@ -16,9 +16,9 @@ int main ()
 
 /* Notes
 
-   In honor of the utterly sacred ancient traditions and 
-   beholden reverence to ancestral noble master who bravely 
-   coded  before us, we hereby offer our humble Hello World 
-   tribute. My our source be blessed and defeat all bugs.
+   In honor of the utterly sacred ancient traditions and beholden 
+   reverence to ancestral nobles who bravely coded before us, we 
+   hereby offer our humble Hello World tribute. My our source be 
+   blessed and stand against all bugs that dare to come along.
 
  */

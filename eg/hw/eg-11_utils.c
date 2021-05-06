@@ -38,16 +38,16 @@ _(      ret                         ) /* Return to the caller. */
    is pointless here, as we won't return to anyone and
    are going to halt the system anyway.*/
 
-/* void __attribute__((fastcall, naked))  exit (short n) */
-/* { */
-/* __asm__ */
-/*   ( */
-/*    _(          movw %%cx, %%ax  ) */
-/*    _(loop%=:                    ) */
-/*    _(          hlt              ) */
-/*    _(          jmp loop%=       ) */
-/*    :::); */
-/* } */
+void __attribute__((fastcall, naked))  exit (short n)
+{
+__asm__
+  (
+   _(          movw %%cx, %%ax  )
+   _(loop%=:                    )
+   _(          hlt              )
+   _(          jmp loop%=       )
+   :::);
+}
 
 
 

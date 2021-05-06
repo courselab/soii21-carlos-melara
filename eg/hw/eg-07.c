@@ -4,7 +4,6 @@
 
 extern const char msg[];
 
-
 void __attribute__((naked)) _start()
 {
 
@@ -43,4 +42,15 @@ void __attribute__((naked)) _start()
 const char msg[]  = "Hello world";
 
 
+/* Notes.
 
+   The attribute 'naked' is used to prevent GCC from generating extra asm
+   code that we don't need in our example, and can be safely discarded for
+   easy of readability. This extra code is normally important for implementing
+   consistent memory utilization across functions which exchange data using
+   the memory stack (a memory region which programs use to pop and push
+   data when they need). This is not the case of our simple program and we
+   therefore may safely get along without it for now. We should get back 
+   to this topic opportunely.
+
+ */

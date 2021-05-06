@@ -8,14 +8,13 @@ int __attribute__((naked)) main ()
 {
   
   puts ("Hello World!\n\r");
-  puts ("We're good ain't we?");
 
-  return 10;
+  exit (0);
 }
 
 
 /* Notes
 
-   Cool, ain't it?
+   Impressive, ah?
 
  */
