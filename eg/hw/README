@@ -67,7 +67,7 @@
 
    make iso IMG=foo	             	     build an iso9660 image with foo
 
-   make diff foo bar baz		     Show diff between files
+   make diff foo bar baz		     Show graphical diff between files
 
    	     	     			     ASM and BIT variables apply
 
@@ -81,8 +81,8 @@
 
    make foo/i16	       			     disassembly as Intel 16-bit
    make foo/i32	       			     disassembly as Intel 32-bit
-   make foo/a16	       			     disassembly as AT&T  16-bit
-   make foo/a32	       			     disassembly as AT&T  32-bit
+   make foo/a16 or foo/16 		     disassembly as AT&T  16-bit
+   make foo/a32	of foo/32       	     disassembly as AT&T  32-bit
 
    make foo/dump			     show raw contents in hexadecimal
 

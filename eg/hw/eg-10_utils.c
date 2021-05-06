@@ -29,7 +29,7 @@ _(      ret                         ) /* Return to the caller. */
 :				      /* No ouptut parameters. */
 : [str] "b" (s)	                      /* Var. s put in bx, referenced as str.*/
 : "ax", "cx", "dx", "si"	      /* Clobbred registers (bx is input).   */
-);
+ );
 }
 
 /* Notes.
