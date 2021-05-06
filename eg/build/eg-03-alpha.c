@@ -1,4 +1,5 @@
-/* Like eg-02.c but with functions implemented after main(). */
+/* Like eg-02.c but with functions implemented after main().
+   We should expect a warning message from the compiler.*/
 
 int main ()
 {

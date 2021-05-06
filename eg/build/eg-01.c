@@ -1,3 +1,4 @@
+/* Call foo and return. */
 
 #define MAX 10
 

@@ -1,4 +1,4 @@
-
+/* Ilustrates the preprocessing. */
 #include <eg-05.h>
 
 

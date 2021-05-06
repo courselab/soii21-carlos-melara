@@ -1,4 +1,4 @@
-/* Like eg-02.c but with functions implemented after main(). */
+/* Like eg-03-beta.c but with declared headers. */
 
 int foo(int);
 int bar(int);

@@ -1,3 +1,5 @@
+/* Program with multiple compilation units. */
+
 int foo(int x)
 
 {

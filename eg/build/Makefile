@@ -1,4 +1,27 @@
+#   Makefike - Handcrafted make script for eg/build.
+#
+#   Copyright (c) 2021 - Monaco F. J. <monaco@usp.br>
+#
+#   This file is part of SYSeg.
+#
+#   SYSeg is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+AUXDIR =../../tools#
+
+#
+# Main examples and auxiliary examples
+#
 
 bin = eg-01 eg-02 eg-03-alpha eg-03 eg-04 eg-06 eg-06 
 ppi = eg-05.i
@@ -7,16 +30,18 @@ lib = libeg-08.a
 
 all: $(bin) $(ppi) $(arc) $(lib)
 
+BARE= -fno-pic -fno-pie -fno-asynchronous-unwind-tables -fcf-protection=none
+
 # Very simple example to illustrate the build steps
 
 eg-01 : % : %.o %.i
-	gcc -m32 -Wall $< -fno-pic -o $@
+	gcc -m32 -Wall -O0 $< -fno-pic -o $@
 
 eg-01.o : %.o : %.s
 	as -32 $< -o $@
 
 eg-01.s : %.s : %.i
-	gcc -Wall -O0 -m32 -masm=intel -fno-pic -fno-pie -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $@
+	gcc -Wall -O0 -m32 $(BARE) -Wl,--static -S $< -o $@
 
 eg-01.i : %.i : %.c
 	cpp -Wall -P $< -o $@
@@ -105,10 +130,11 @@ eg-08_foo.o eg-08_bar.o: %.o : %.c
 
 # Disassemble
 
-diss:  $(IMG)
-	objdump -M intel -m i386 -d $< ; \
+# diss:  $(IMG)
+# 	objdump -M intel -m i386 -d $< ; \
 
-
+include $(AUXDIR)/makefile.utils
+ 
 
 
 .PHONY: clean

@@ -1,4 +1,4 @@
-/* Like eg-02.c but with functions implemented after main(). */
+/* Like eg-03.c but including header file. */
 
 #include <eg-04.h>
 

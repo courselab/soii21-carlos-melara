@@ -1,3 +1,5 @@
+/* Program with multiple compilation units. */
+
 #include <eg-06.h>
 
 
