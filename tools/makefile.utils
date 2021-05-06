@@ -1,6 +1,35 @@
-# Inspect
+#   Makefike - Handcrafted make script for syseg/tools
+#
+#   Copyright (c) 2021 - Monaco F. J. <monaco@usp.br>
+#
+#   This file is part of SYSeg.
+#
+#   SYSeg is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+##
+## Configuration
+##
+
+
+# Inform your preferred graphical diff tool e.g meld, kdiff3 etc.
 
 DIFF_TOOL=meld
+
+
+##
+## You probably don't need to change beyond this line
+##
 
 ifndef ASM
 ifeq (,$(findstring intel, $(MAKECMDGOALS)))
@@ -63,7 +92,10 @@ dump: $(IMG)
 	make --quiet dump IMG=$< 
 
 
+MISSING_DIFF_TOOL="Can't find $(DIFF_TOOL); please edit syseg/tools/makefile.utils"
+
 objdiff bindiff : $(wordlist 2, 4, $(MAKECMDGOALS))
+	if  test -z `which $(DIFF_TOOL)`; then echo $(MISSING_DIFF_TOOL); exit 1; fi
 	if test $(words $^) -lt 3 ; then\
 	  bash -c "$(DIFF_TOOL) <(make $(wordlist 1,1,$^)/diss) <(make $(wordlist 2,2,$^)/diss)";\
 	else\
@@ -71,6 +103,7 @@ objdiff bindiff : $(wordlist 2, 4, $(MAKECMDGOALS))
 	fi
 
 srcdiff : $(wordlist 2, 4, $(MAKECMDGOALS))
+	if  test -z `which $(DIFF_TOOL)`; then echo $(MISSING_DIFF_TOOL); exit 1; fi
 	if test $(words $^) -lt 3 ; then\
 	  bash -c "$(DIFF_TOOL) $(wordlist 1,1,$^) $(wordlist 2,2,$^)";\
 	else\

@@ -26,7 +26,7 @@
 #include <errno.h>
 #include <string.h>
 
-#define sysfatal(exp) do{if(exp) {fprintf(stderr, "%s : %d : %s", PROGRAM, __LINE__, strerror(errno)); exit(EXIT_FAILURE);}}while(0)
+#define sysfatal(exp) do{if(exp) {fprintf(stderr, "%s : %d : %s\n", PROGRAM, __LINE__, strerror(errno)); exit(EXIT_FAILURE);}}while(0)
 
 
 #endif	/* DEBUG_H */
