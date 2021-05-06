@@ -15,6 +15,6 @@ int __attribute__((naked)) main ()
 
 /* Notes
 
-   Impressive, ah?
+   Cool.
 
  */

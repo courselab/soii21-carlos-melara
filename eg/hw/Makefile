@@ -239,7 +239,7 @@ eg-09.bin: %.bin : %.o %_utils.o %.ld
 
 # Now we initialize the stack in a start-up file (rt0).
 
-eg-10.bin eg-11.bin : %.bin : %_rt0.o %.o %_utils.o  %.ld
+eg-10.bin : %.bin : %_rt0.o %.o %_utils.o  %.ld
 	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
 
 eg-10_rt0.o : %.o : %.S
