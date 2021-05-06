@@ -254,19 +254,24 @@ eg-10_rt0.o : %.o : %.S
 #
 #   --freestanding	witch tells gcc we are not using libc.
 
-eg-11.o : %.o : %.c %.h 
+# Using exit to leave main().
+
+eg-11.o eg-12.o : %.o : %.c %.h 
 	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none -nostdlib --freestanding -S $< -o $*.s
 	as --32 $*.s -o $@
 
-eg-11_utils.o : %_utils.o : %_utils.c %.h
+eg-11_utils.o eg-12_utils.o : %_utils.o : %_utils.c %.h
 	gcc -m16 -O0 -I. -Wall -fno-pic -nostdlib --freestanding -fcf-protection=none -S $< -o $*_utils.s
 	as --32 $*_utils.s -o $@
 
+# Using return to leave main (but we can't use naked attribute).
 
-eg-11_rt0.o : %.o : %.c
+eg-11_rt0.o eg-12_rt0.o : %.o : %.c
 	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
 	as --32 $*.s -o $@
 
+eg-11.bin eg-12.bin : %.bin : %_rt0.o %.o %_utils.o  %.ld
+	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
 
 ##
 ## Auxiliary extra examples

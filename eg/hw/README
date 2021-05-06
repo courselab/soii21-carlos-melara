@@ -328,7 +328,13 @@
 
 * eg-07-beta.c	    Like eg-06.S, but translated into C.
 
-   		    We use basic inline assembly.
+   		    We use basic inline assembly. GCC should copy the asm code
+		    as is to the output asm.
+
+		    We declared the function with attribute 'naked' to prevent
+		    GCC from generating extra asm code which is not relevant
+		    here and may be omitted for readability. See comments
+		    in the source file.
 
 		    NOTE: There are some weightly concerns about this technique
 		    to be addressed in the following examples.
@@ -434,7 +440,7 @@
 
 		    We handled the stack pointer in a better way.
 
- * eg-11.c	    Finally, a program with a familiar C-like look.
+ * eg-11.c	    A program with a familiar C-like look.
 
    		    We did some changes
 
@@ -446,6 +452,17 @@
 		       fixed writing routine not to output 0x0
 
    		    See comments in the file.
+
+  * eg-12.c	    Finally our masterpiece C-looking program.
+
+    		    An even more tranditional C-like program.
+
+		    We now return from main, rather than calling exit.
+
+		    This time we can't use attribute naked in main();
+		    otherwise the compiler removes the 'ret' instruction.
+		    The assembly for eg-11.s is added some extra code that
+		    is not fundamental here, as explained in eg-07.c comments.
 
  Troubleshooting
  ------------------------------
