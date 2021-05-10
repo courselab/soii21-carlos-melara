@@ -1,4 +1,11 @@
 
+ ----------------------------------------------------------------------
+
+ The contents of this directories are not ready for use.
+
+ ----------------------------------------------------------------------
+
+
  * eg-06.S	    Like eg-05.S, but modified to manipulate 16-bit registers.
 
    		    Here we implement the same algorithm as in eg-05.S, but
