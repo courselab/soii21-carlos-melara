@@ -1,15 +1,15 @@
 	;; Boot, say hello, and halt
-	;; NASM assembly, neater version wit loop
+	;; NASM assembly, neater version wit a loop
 
 	bits 16			; Set 16-bit mode
 	
-	org 0x7c00		; Our load address (alternative way)
+	LA equ 0x7c00		; Define a constant (Load Address)
 
 	mov ah, 0xe		; BIOS tty mode
 
-	mov bx, 0		; May be 0 because org directive.
+	mov bx, 0x00		; Handle absolute load address of msg
 loop:				
-	mov al, [msg + bx]	; Ofsset to the message
+	mov al, [msg + LA + bx]	; Ofsset to the message (uses LA)
 	int 0x10		; Call BIOS video interrupt
 	cmp al, 0x0		; Loop while char is not 0x0 
 	je halt			; Jump to halt
@@ -30,4 +30,9 @@ msg:				; C-like NULL terminated string
 
 	;; Notes
 	;;
-	;;  We replaced several db directives with a single one.
+	;;  Directive db outputs a sequence of bytes.
+	;;
+	;;  This code uses instructions access memory positions.
+	;;  We need to take into account that the program will be loaded
+	;;  at some position in RAM, so that msg+bx points to the
+	;;  right place.

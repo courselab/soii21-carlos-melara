@@ -4,33 +4,42 @@
    This function clobbers eax, ebx, ecx and esi.
 */
 
-#define _(...) #__VA_ARGS__ "\n\t"
-
 void __attribute__((fastcall, naked))  write_str(const char* s)
 {
 __asm__ volatile
-(
-/*      movw  %w[str], %%bx            Already done by input operand.     */
-_(	movw  $0x0e00, %%ax         ) /* ah = 0xe, don't care about al.   */
-_(	movw  $0x0, %%si            ) /* We have to use esi as the index. */
-_(loop%=:			    ) /* A compilation-unique symbol.     */
-_(	andw  $0xff00, %%ax         ) /* Zero al.                         */
-_(	movw  (%%bx, %%si), %%dx    ) /* si-th character starting at bx.  */
-_(	andw  $0x00ff, %%dx         ) /* Copy dl                          */
-_(	orw   %%dx, %%ax            ) /* into al.                         */
-_(	int   $0x10	            ) /* Call BIOS.                       */
-_(	cmp   $0x0, %%dx	    ) /* Reiterate if char not null.      */
-_(	je    go%=                  )
-_(	add   $0x1, %%si	    )
-_(	jmp   loop%=	            ) 
-_(go%=:                             )
-_(      ret                         ) /* Return to the caller. */
-
+("\
+	mov   $0x0e, %%ah           \n\t\
+	mov   $0x0, %%si            \n\t\
+loop%=:	          		    \n\t\
+	mov   (%%bx, %%si), %%al    \n\t\
+	int   $0x10	            \n\t\
+	cmp   $0x0, %%al	    \n\t\
+	je    end%=                 \n\t\
+	add   $0x1, %%si	    \n\t\
+	jmp   loop%=	            \n\t\
+end%=:                              \n\t\
+        ret                         \n\t\
+"
 :				      /* No ouptut parameters. */
 : [str] "b" (s)	                      /* Var. s put in bx, referenced as str.*/
-: "ax", "cx", "dx", "si"	      /* Clobbred registers (bx is input).   */
+: "ax", "cx", "si"       	      /* Clobbred registers (bx is input).   */
  );
 }
+
+/* Halt. */
+
+void __attribute__((naked)) halt()
+{
+__asm__					
+("\
+  halt%=:             \n\t\
+	hlt           \n\t\
+	jmp   halt    \n\t\
+"
+ :::
+ );
+}
+
 
 /* Notes.
 
@@ -40,7 +49,7 @@ _(      ret                         ) /* Return to the caller. */
       
    The input parameter specifies that the C variable s should be copied into
    register b, and referenced in the code by str --- we therefore don't need 
-   to mind that s is being received in ecx.
+   to mind that s is being received in ecx via function call.
 
    The line
 

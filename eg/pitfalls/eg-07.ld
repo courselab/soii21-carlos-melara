@@ -15,7 +15,6 @@ SECTIONS
 	    BYTE(0x55)
             BYTE(0xAA)
         }
-	__END_STACK__ = 0x7e10;
 }
 
 
