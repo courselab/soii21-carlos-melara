@@ -8,14 +8,13 @@ void __attribute__((fastcall, naked))  write_str(const char* s)
 {
 __asm__ volatile
 ("\
-        mov   %w[str], %%bx         \n\t\
 	mov   $0x0e, %%ah           \n\t\
 	mov   $0x0, %%si            \n\t\
 loop%=:	          		    \n\t\
 	mov   (%%bx, %%si), %%al    \n\t\
 	int   $0x10	            \n\t\
 	cmp   $0x0, %%al	    \n\t\
-	je    end%=                  \n\t\
+	je    end%=                 \n\t\
 	add   $0x1, %%si	    \n\t\
 	jmp   loop%=	            \n\t\
 end%=:                              \n\t\

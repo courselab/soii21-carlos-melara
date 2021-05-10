@@ -3,13 +3,13 @@
 
 	bits 16			; Set 16-bit mode
 	
-
+	LA equ 0x7c00		; Define a constant (Load Address)
 
 	mov ah, 0xe		; BIOS tty mode
 
-	mov bx, 0x7c00		; Absolute load address of msg
+	mov bx, 0x00		; Handle absolute load address of msg
 loop:				
-	mov al, [msg + bx]	; Ofsset to the message
+	mov al, [msg + LA + bx]	; Ofsset to the message (uses LA)
 	int 0x10		; Call BIOS video interrupt
 	cmp al, 0x0		; Loop while char is not 0x0 
 	je halt			; Jump to halt

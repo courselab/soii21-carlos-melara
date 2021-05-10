@@ -162,7 +162,7 @@
  
 
 
- * eg-01.hex	    Bare-metal hardcore Hello World in machine code.
+ * eg-00.hex	    Bare-metal hardcore Hello World in machine code.
  
    		    This is a tough old-school version of the classical
 		    Hello World program. It writes the string directly to the
@@ -177,21 +177,22 @@
 		    Build with it with a simple hex-to-binary converter. 
 
 
- * eg-02.asm	    The same as eg-01.hex, but now in assembly code.
+ * eg-01.asm        The same as eg-00.hex, but now in assembly code.
 
    		    This program implements literally the same algorithm as
 		    eg-01.hex, but written in assembly code, using Intel
 		    syntax. This is the assembly understood by NASM assembler,
 		    used here to build the binary.
 
-		    Compare eg-01.bin and eg-02.bin, by disassembling them with
+		    Compare eg-01.bin and eg-02-beta.1.bin, by disassembling
+		    them with
 
+		      make eg-00.bin/16i
 		      make eg-01.bin/16i
-		      make eg-02.bin/16i
 
                     or, alternatively, with the graphical tool
 
-		      make diff eg-01.bin eg-02.bin BIT=16 ASM=intel
+		      make diff eg-00.bin eg-01.bin BIT=16 ASM=intel
 
 		    and see that the resulting object codes match.
 
@@ -199,31 +200,33 @@
 		    as code for a i8086 (16-bit) CPU, using intel asm syntax.
 
 
- * eg-03-beta.asm   A variation of eg-02.asm, using a loop.
+ * eg-02-beta.asm   A variation of eg-01.asm, using a loop.
 
   		    Notice that now that we are dealing with offsets, we must
-		    beware of the RAM load address.
+		    beware of the RAM load address. In this example, we handle
+		    this by directly adding the offset into the code where
+		    needed.
 		    
- * eg-03.asm	    Same as eg-03-beta.asm, but using the 'org' directive.
+ * eg-02.asm	    Same as eg-02-beta.2.asm, but using the 'org' directive.
 
    		    The directive 'org' causes all labels to be offset
 		    to match the position where BIOS loads the program.
 
-   		    Now it's time to bear in mind that asm is performing
+		    
+		    Compare eg-02-beta.bin and eg-02.bin with
+
+		      make eg-02-beta.bin/i16 
+		      make eg-02.bin/i16 
+  		    
+		    and see that the resulting object codes match.
+
+		    Now it's opportune to observe that NASM is performing
 		    both the assembling (object code generation) and
 		    linking (build-time address relocation) steps.
 
 
-* eg-04.asm	    A more elegant version of eg-03, just with neater code.
 
-		    Compare eg-03.bin and eg-04.bin with
-
-		      make eg-03.bin/i16 
-		      make eg-04.bin/i16 
-  		    
-		    and see that the resulting object codes match.
-
-* eg-05-beta.1.S    Like eg-05.asm, but translated into AT&T assembly syntax.
+* eg-03-beta.S      Like eg-02.asm, but translated into AT&T assembly syntax.
 
   		    One motivation to convert the assembly source code from
 		    Intel to AT&T dialect is because we intend to rewrite
@@ -269,13 +272,7 @@
 		    we pass this information in yet another command-line option.
 
 
- * eg-05-beta.2.S   Same as before, but using global symbol for entry point.
-
-   		    This example is just to illustrate that the linker can
-		    recognize the entry point as a label, rather than through
-		    the absolute offset.
-
- * eg-05.S	    Same as before, but with standard entry point name.
+ * eg-03.S	    Same as before, but with standard entry point name.
 
    		    This example is to illustrate that the default symbol name
 		    for the entry point is _start. If we stick to it, we do
@@ -290,128 +287,80 @@
 
 		    Disassemble with 
 
-		      make eg-03.bin/i16 
-		      make eg-04.bin/i16
-		      make eg-05.bin/i16 
+		      make eg-02.bin/i16 
+		      make eg-03.bin/i16
 
-		    and see that they all binaries match.
+		      or
 
- * eg-06.S	    Like eg-05.S, but modified to manipulate 16-bit registers.
-
-   		    Here we implement the same algorithm as in eg-05.S, but
-		    with an alternative code to read and write in both 8-bit
-		    registers ah and al by means of manipulating the 16-bit
-		    register ax, rather than accessing its higher and lower
-		    bytes of directly. 
-
-		    The main reason for doing this, despite the need of some
-		    gimmick with bitwise logic operation and an extra register,
-		    is because we intend to port our source code from assembly
-		    to C and use GNU toolchain to build it.
-
-		    See note (3) for a glimpse on how it would look like
-
-		    It so happens that GCC does not do a good job working with
-		    8-bit registers. As we are taking steps to convert our
-		    assembly example into C, limitation will eventually get in
-		    our way when we start to experiment with C inline assembly.
-
-		    See note (4) to better understand the issue.
-		    		    
-		    In order to overcome the limitation, we'd better modify
-		    our code to manipulate only 16-bit registers.		    
-
-		    Build eg-06.bin and inspect it with
-
-		       make diss IMG=eg-06.bin 32
-
-		    Why are we forcing the disassemble to interpret the object
-		    as a 32-bit code? Because GAS assumes this code should
-		    be interpreted as a i8086 (16-bit) binary intended to run
-		    in a i386 (32-bit) machine (see note 3).
+  		      make diff eg-02.bin eg-03.bin ASM=intel BIT=16
+		      
+		    and see that they all binaries match, i.e. the output of
+		    both assemblers (NASM and GAS) are the same.
 
 
-* eg-07-beta.c	    Like eg-06.S, but translated into C.
+ * eg-04-beta.c	    Like eg-03.S but rewritten in C and inline assembly.
 
    		    We use basic inline assembly. GCC should copy the asm code
-		    as is to the output asm.
+                    as is to the output asm.  The two function-like macros
+		    are expaned by the preprocessor in build time.
 
-		    We declared the function with attribute 'naked' to prevent
-		    GCC from generating extra asm code which is not relevant
-		    here and may be omitted for readability. See comments
-		    in the source file.
+		    Caveats:
 
-		    NOTE: There are some weightly concerns about this technique
-		    to be addressed in the following examples.
+                    We declared the function with attribute 'naked' to prevent
+                    GCC from generating extra asm code which is not relevant
+                    here and may be omitted for readability. See comments
+                    in the source file.
 
-		    Observe that the string is now allocated in the read-only
-		    section of the object code --- and also the ad hoc
-		    workaround (aka dirty hack) we used (see comments in
-		    the source file).
-
-		    Alternatives:
-
-		    b) Issuing the build rule with the command-line variable
-		    ALT=1 selects an alternative recipe using a linker
-		    script which stands in for some of the compiler's and
-		    linker's flags, in particular, the instructions to
-		    generate flat binary, set entry point and copy only
-		    the code (.text) section to the output.
-
-		    a) Issuing the build rule with the command-line variable
-		    ALT=2 selects an alternative recipe using a single line
-		    compiler (gcc) invocation. Note that now we need
-		    to use gcc's option -nostdlib.
+                    Observe that the string is now allocated in the read-only
+                    section of the object code --- and also the ad hoc
+                    workaround (aka dirty hack) we used (see comments in
+                    the source file).
 
 
- * eg-07.c	    Like eg-07-beta.c, but handling .rodata with the ld script
+ * eg-04.c	    Like eg-07-beta.c, but using a script
+
+   		    We use a linker script to handle several issues:
+
+   		    - merge .rodata into .text section
+
+		    as well as
+
+   		    - add the the boot signature        
+   		    - covert from elf to binary         
+   		    - set load address                  
+   		    - entry point                       
 
 
-   		    We use a linker script to move .rodata to .text section.
-		    Moreover, we user the linker to add the boot signature.
-
-		    Bearing in mind that there is possibly more than one way
-		    to implement the behavior specified by the C source code
-		    into assembly form, it is not guaranteed that both the
-		    handwritten eg-06.s and the GCC-produced eg-07.s codes
-		    will match --- let alone the resulting machine codes
-		    eg-06.bin and eg-07.bin.
-
-		    One may check it by comparing
-
-		    	make eg-06.bin/diss 16
-			make eg-07.bin/diss 16
+		    The first feature frees our code from the hack on msg,
+		    and the latter four simplify ld command-line options.
 
 
-		    A more similar binary code may be obtained by enabling
-		    some optimization
+		    Compare eg-03.bin and eg-04.bin with
+
+		    	make eg-06.bin/16i
+			make eg-07.bin/16i
+
+
+                    Both object code are amost a perfect match.
+
+		    Bearing in mind that, since there is possibly more than
+		    one way to implement the behavior specified by the C
+		    source code into assembly form, it is not guaranteed
+		    that both the handwritten eg-03.S and the GCC-produced
+		    eg-03.S will match.
 		    
-		    	make eg-06.bin/diss 16
-			make eg-07-O1.bin/diss 16
+		    Indeed if we inspect the disassembled objects, we may see
+		    that GCC added a few extra instructions after the code.
+		    Those are no-operation (NOP) and undefined (UD2)
+		    instructions that are inserted by the compiler as a
+		    security measure to assert that code is not executed
+		    past the end of the legit code.  The appended
+		    instructions however cause the string to be moved some
+		    positions away from its original place in eg-03.S.
+		    This is reflected in some other parts of the code.
+		    
 
-                    An alternative implementation which manipulate only 32-bit
-		    registers may be seen in egx-06.c.
-
-* eg-08.c	    A complete rewrite of eg-07.c with safer code.
-
-   		    Using register variables and basic C inline assembly as
-		    in eg-07.c seems appealing at first glance... but in
-		    a dangerous way. The example did work, but only because
-		    certain rather restrictive conditions hold.
-
-		    To have an intuitive grasp on the potential problem,
-		    refer to note (5).
-
-		    The example, although (hopefully) working, is error prone
-		    and generally not a good idea.
-
-		    This is rewrite of eg-07.c using simple asm encapsulated
-		    as function-like macros.
-
-		    The macro usage has some limitations which are overcome
-		    in the examples which follow.
-
- * eg-09.c	    A rewrite of 08.c replacing macros with functions.
+ * eg-05.c	    A rewrite of 08.c replacing macros with functions.
 
    		    The limitations of eg-08.c's macro usage are overcome, yet with
 		    simple inline assembly.
@@ -419,13 +368,13 @@
 		    One thing to be noticed is that we had to change the
 		    assembly to use register si where we had been using bx.
 
-		    See note (6).
+		    See note (3).
 
 		    We alse had to set the location where the call instruction
 		    should leave the return address for the callee.
 
 
- * eg-10.c	    Like eg-09 but using GCC extended assembly.
+ * eg-06.c	    Like eg-09 but using GCC extended assembly.
 
    		    Extended assembly allow us to
 
@@ -435,17 +384,17 @@
 
 		    Build eg-09.bin and compare
 
-   		       make diff eg-09_utils.s eg-10_utils.s
+   		       make diff eg-05_utils.s eg-06_utils.s
 
-		       make diff eg-09_utils.bin eg-10_utils.bin
+		       make diff eg-05_utils.bin eg-06_utils.bin
 
-		    See how differently GCC handled the asm. In extended asm
-		    GCC is allowed to optmize to modify the output. We
-		    used volatile with extended asm to prevent optimization.
+		    In extended asm GCC is allowed to optmize to modify the
+		    output. We used volatile with extended asm to prevent
+		    optimization. Even though, there are slight differences.
 
 		    We handled the stack pointer in a better way.
 
- * eg-11.c	    A program with a familiar C-like look.
+ * eg-07.c	    Finally our masterpiece C-looking program.
 
    		    We did some changes
 
@@ -453,14 +402,7 @@
 		       used the linker to set the stack location
 		       changed functions name to look like C
 		       jump to main from rt0
-		       add an exit function
 		       fixed writing routine not to output 0x0
-
-   		    See comments in the file.
-
-  * eg-12.c	    Finally our masterpiece C-looking program.
-
-    		    An even more tranditional C-like program.
 
 		    We now return from main, rather than calling exit.
 
@@ -468,6 +410,10 @@
 		    otherwise the compiler removes the 'ret' instruction.
 		    The assembly for eg-11.s is added some extra code that
 		    is not fundamental here, as explained in eg-07.c comments.
+
+
+   		    See comments in the file.
+
 
  Troubleshooting
  ------------------------------
@@ -578,262 +524,7 @@
       proceed therefrom.
 
 
- (3)  The ISO C standard specifies the support for the insertion of
-      assembly code within the body of a C source code, by means
-      of a feature referred to as inline assembly.
-
-      GCC supports inline assembly through the declaration
-
-      __asm__ ("string");
-
-      where "string" is a piece of assembly code. GCC does not
-      interpret the contents of the string and output it as is
-      in the produced assembly.
-
-      See egx-01.c for an example.
-
-      The code illustrates the user of the qualified 'register' to
-      force a variable to allocated in a register rather than in
-      work memory (RAM) as it's normally done.  This allows us
-      to store a value in the register using the regular variable
-      attribution syntax.
-
-      Build it and disassembly with
-
-         make diss IMG=eg-03.bin
-
-
-
- (4) Put short, GCC toolchain is not currently proficient in producing
-      propper object code from C inline assembly source code intended
-      to manipulate 8-bit registers directly, that is
-
-      register char ax __asm__("ax");
-
-      does not work as expected.
-
-      In order to dig into this issue, it's first useful to understand
-      how 8, 16 and 32-bit registers are handled by the x86 architecture.
-
-      Consider either example egx-02-32bit.S, in GAS dialect or, alternatively,
-      exg-04-32bit.asm, an equivalent in NASM dialect. The result of the
-      experiment should be the same.
-
-      The program instructs the assembler to generate code for a 32-bit
-      (x86) CPU. The object code is supposed to store arbitrary values
-      in ah, ax and eax.
-
-      Build it and inspect the output with
-
-         make diss IMG=egx-02-32bit-nasm.bin
-
-         or
-
-         make diss IMG=egx-02-32bit-gas.bin
-
-
-      The output should identical:
-
-         0:	b4 01                	mov    $0x1,%ah
-   	 2:	66 b8 02 00          	mov    $0x2,%ax
-   	 6:	b8 03 00 00 00       	mov    $0x3,%eax
-
-      Line 0 uses opcode 0xb4 to store 1 in ah; the same we've got when
-      we compiled eg-04.asm or eg-05.S. This instruction takes 1 byte
-      as argument.
-
-      Line 6 uses the opcode 0xb8 to store 3 in eax. This instruction takes
-      4 bytes as argument.
-
-      Now look at line 6. It is supposed to store 2 in ax and needs 2 bytes
-      as argument. This would sum up 3 bytes, but the line is 4-bytes long.
-      Staring at the last byte in the line and moving backwards, we can
-      clearly identify the instruction 0xb8, the same as in line 6, and
-      the 2-byte representation of 0x2 in little endian.
-
-      But as we've seen, 0xb8 takes 4-bytes and store in eax. What is
-      happening here? Well, look at the first byte at line 2, the one
-      preceding the 0xb8 instruction. It is a instruction prefix.
-      More specifically, 0x66 is a "Operand size overwrite" prefix.
-      Its effect is to toggle the normal (non-prefixed) length of the
-      next instruction's argument. In this case, from 32-bit to 16-bit.
-
-      This is how the 32-bit x86 architecture stores a value in a 16-bit
-      register in our example. While for ah and eax the assembler uses
-      different opcodes for the respective operations, for ax it uses
-      the same instruction that is used for eax, but with a operand
-      size overwrite prefix.
-
-      Now let's do the same thing with egx-02-16bit.asm.
-
-         make diss IMG=egx-02-32bit-nasm.bin 16
-
-         or
-
-         make diss IMG=egx-02-32bit-gas.bin 16
-
-      The only different from the previous 32bit versions is the directive
-      to select 16 bits, but the disassembly shows
-      
-
-         0:	b4 01                	mov    $0x1,%ah
-   	 2:	b8 02 00             	mov    $0x2,%ax
-   	 5:	66 b8 03 00 00 00    	mov    $0x3,%eax
-
-      Compare to the previous result:
-
-         0:	b4 01                	mov    $0x1,%ah
-   	 2:	66 b8 02 00          	mov    $0x2,%ax
-   	 6:	b8 03 00 00 00       	mov    $0x3,%eax
-
-      Line 0 has not changed.
-
-      Line 2, however, has. It lost the operand size overwrite prefix, which
-      passed to the line 6.
-
-      This time, we told the assembler we were targeting a 16-bit (8080)
-      CPU. Instruction 0xb4 works as usual. But now the normal (non-prefixed)
-      default argument length of 0xb8 is 2-bytes (16 bits). It's the manipulation
-      of eax (32 bits) that need the operand size overwrite prefix.
-
-      Why x86 code reuses the same instruction to move to ax and eax, by means
-      of prefixes, rather than having a specific instruction for each? This is
-      a design decision. But it's not hard to notice that eax and ax are,
-      after all, portions of the same 64-bit register found in x86_64. It may
-      make sense from the hardware design perspective.
-      
-      Well, so far so good.
-
-      But what is the problem with manipulating 8-bit registers with inline
-      assembly anyway?
-
-      Now GCC's own quirks come into play.
-
-      Consider the example egx-07.c.
-
-      We use inline assembly to force the variables to be allocated into
-      registers (see note 3a).
-
-      Now build and inspect with
-
-         make egx-07-16bit.bin/diss 16
-
-         0:	66 bb 01 00 00 00    	mov    $0x1,%ebx
-   	 6:	66 b8 02 00 00 00    	mov    $0x2,%eax
-   	 c:	66 b8 03 00 00 00    	mov    $0x3,%eax
-  	 12:	66 b8 04 00 00 00    	mov    $0x4,%eax
-  	 18:	90                   	nop
-  	 19:	0f 0b                	ud2    
-
-	 
-      Line 0 uses 0x66 prefix to store the next 4 bytes in bx, discarding
-      the remaining two. Line 6 does the same with for ax.
-
-      Now see line c. It should store 1 byte in ah. However it's just another
-      0xb8 move instruction prefixed to store the next two bytes in eax.
-      The same as 'mov $0x3, ax'. Line 12, likewise, will store in eax,
-      overriding anything we had put in ah in the previous step.
-
-      If we had written the assembly manually as in egx-02, we would have used
-      'mov $0x3, %ah' and this would have resulted in a 0xb4 instruction as before.
-
-      But this is not what GCC itself does. Just build both the 16 and 32-bit
-      versions of the same example
-
-      	 make egx-07-32bit.bin
-
-      	 make egx-07-16bit.bin
-
-      And see the generated assembly files
-
-        cat egx-07-32.bit.s
-        cat egx-07-16.bit.s
-	
-      or
-
-        diff egx-07-32.bit.s egx-07-16.bit.s
-     
-
-      and observe that the only different is the directive .cod116gcc.
-
-      As we can notice, GCC always use the 32-bit registers and rely on GAS
-      to honor the 16-bit directive.
-
-      We can see the result by comparing
-
-      	 make egx-07-16bit.bin/diss 16
-      	 make egx-07-32bit.bin/diss 32
-
-
-      The conclusion is that the code is not honoring what the C source says.
-      This is a known issue and not exactly a bug, seen that GCC does not
-      even claim the support to operate with 8-bit register variables. We
-      are pushing it too hard.  There are other C compilers out there
-      which do support this kind of operation, but if we are to explore
-      GCC, we should avoid manipulating 8-bit register variables.
-      
-
-(5)   Consider program egx-05.c.
-
-      If we trust that register variables can be safely manipulated as
-      regular memory-allocated variables, we would expect that by the
-      end of the program we have 0x1 stored in eax and 0x2 stored in ebx.
-      
-      This is 32-bit program. What could possible go wrong.
-
-      To answer the question you may
-
-      	 make egx-05.bin/run
-
-      and then, in qemu, press Ctr-Alt-2 to invoke the debug console.
-      Then type
-
-         print $eax
-	 print $ebx
-
-      to inspect the values stored in the registers: both have 0x2.
-
-      Why is that?  Make
-
-         make eg-05.bin/diss 32
-
-      and go through the diassembly
-
-            0:	b8 01 00 00 00       	mov    $0x1,%eax
-   	    5:	83 c0 01             	add    $0x1,%eax
-   	    8:	89 c3                	mov    %eax,%ebx
-
-
-      Line 0 implements the C source statement
-
-      	   eax = 1;
-
-      In order to implement the next C statement
-
-           ebx = eax + 1;
-
-      line 5 first add 1 to eax, and then move eax to ebx.
-
-      The compiler has absolutely no obligation to fulfill our expectations
-      regarding the assembly it generates. It might well had made
-
-      	   mov $0x01, %eax
-	   mov %eax, %ebx
-	   add $0x1, %ebx
-
-     and we would have 1 in eax, and 2 in ebx. But the compiler is free
-     to choose whatever assembly it feels like, as long as the attributions
-     we specified are correct. The analogy with memory variables is a
-     potentially misleading idea if not reasoned with due care.
-
-     Usually, we use basic inline assembly withing C functions only when
-     assembly is the only code withing the function.
-
-     That said, GCC has support for another form of inline assembly
-     called extended nasm, which allow for mixing C and assembly
-     with the due meticulous care.
-
- (6)  Previously, we would do
+ (3)  Previously, we would do
 		    
       		    AT&T syntax			Intel syntax
 

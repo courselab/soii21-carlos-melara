@@ -21,9 +21,9 @@
 # Main examples and auxiliary examples
 #
 
-bin = eg-01.bin
+bin = eg-00.bin eg-01.bin eg-02-beta.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05.bin eg-06.bin eg-07.bin 
 
-binx =  egx-01.bin egx-02-32bit-gas.bin egx-02-16bit-gas.bin egx-02-32bit-nasm.bin egx-02-16bit-nasm.bin egx-03.bin egx-04.bin egx-04-16bit.s egx-04-32bit.s egx-04-16bit.bin egx-04-32bit.bin 
+binx =  egx-01.bin
 
 AUXDIR =../../tools#
 
@@ -35,7 +35,7 @@ all : $(bin) $(binx)
 ## We use the auxiliary tool hex2bin to convert an ASCII file representing
 ## hexadecimal values in the range [00,FF] into their respective binary values.
 
-eg-01.bin : %.bin : %.hex
+eg-00.bin : %.bin : %.hex
 	@if ! test -f $(AUXDIR)/hex2bin; then \
 	echo "Have you read syseg/README?" ; exit 1; fi
 	$(AUXDIR)/hex2bin $< $@ 
@@ -46,7 +46,7 @@ eg-01.bin : %.bin : %.hex
 ## We build it with NASM assembler, which perform both the assembling
 ## and linking operations.
 
-eg-02-beta.1.bin eg-02-beta.2.bin eg-02.bin : %.bin : %.asm
+eg-02-beta.bin eg-beta.bin eg-02.bin : %.bin : %.asm
 	nasm $< -f bin -o $@
 
 ## GAS assembly code (AT&T syntax).
@@ -265,8 +265,10 @@ eg-06_utils.s  : %.s : %.c
 	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $@
 
 eg-06.o eg-06_utils.o  : %.o : %.s
-	as --32 $*.s -o $@
+	as --32 $< -o $@
 
+eg-06_rt0.o  : %.o : %.S
+	as --32 $< -o $@
 
 eg-06.bin: %.bin : %_rt0.o %.o %_utils.o %.ld
 	ld -melf_i386 -T $*.ld --orphan-handling=discard $(filter %.o, $^) -o $@
@@ -281,6 +283,8 @@ eg-06.bin: %.bin : %_rt0.o %.o %_utils.o %.ld
 #
 #   --freestanding	witch tells gcc we are not using libc.
 
+
+ifndef ALT
 
 eg-07.s : %.s : %.c %.h 
 	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none  --freestanding -S $< -o $@
@@ -298,59 +302,28 @@ eg-07.o eg-07_utils.o  eg-07_rt0.o : %.o : %.s
 eg-07.bin: %.bin : %_rt0.o %.o %_utils.o %.ld
 	ld -melf_i386 -T $*.ld --orphan-handling=discard  $(filter %.o, $^) -o $@
 
+endif
+
+# One line command
+
+ifeq ($(ALT),1)
+
+eg-07.bin : %.bin : %.c %_utils.c %_rt0.c %.h 
+	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none  --freestanding -T $*.ld -Wl,--orphan-handling=discard -S $(filter %.o, $^) -o $@
+endif
+
+
 ##
 ## Auxiliary extra examples
 ##
 ## Refer to ./README
 
-egx-01.bin : %.bin : %.c
-	gcc -m32 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 -T egx-01.ld $*.o -o $@
-
-egx-02-32bit-gas.bin egx-02-16bit-gas.bin : %-gas.bin : %.S
-	as --32 $< -o $*.o
-	ld -melf_i386 -T egx-02.ld $*.o -o $@
-
-egx-02-32bit-nasm.bin egx-02-16bit-nasm.bin : %-nasm.bin : %.asm
-	nasm -f bin $< -o $@
-
 
 # Program eg-04.asm in GAS's intel dialict
 
-egx-03.bin : %.bin : %.S
+egx-01.bin : %.bin : %.S
 	as -32 -msyntax=intel -mnaked-reg $< -o $*.o
 	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e 0x7c00  $*.o -o $@
-
-# Illustration of GCC limitations in handling 8-bit registers
-
-egx-04.bin egx-06.bin : %.bin : %.c
-	gcc -m16 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 -T $*.ld $*.o -o $@
-
-
-egx-04-16bit.s: %-16bit.s : %.c
-	gcc -m16 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $@
-
-egx-04-32bit.s: %-32bit.s : %.c
-	gcc -m32 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $@
-
-egx-04-16bit.bin egx-04-32bit.bin : %.bin : %.s
-	as --32 $< -o $*.o
-	ld -melf_i386 -T egx-04.ld $*.o -o $@
-
-egx-05.bin : %.bin : %.c %.ld
-	gcc -m32 -O0 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 -T $*.ld $*.o -o $@
-
-
-egx-07.bin : %.bin : %.c %.ld
-	gcc -m32 -O0 -S -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 -T $*.ld $*.o -o $@
-
 
 #
 # Test and inspect
