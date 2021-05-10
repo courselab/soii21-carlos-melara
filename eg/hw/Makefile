@@ -46,7 +46,7 @@ eg-00.bin : %.bin : %.hex
 ## We build it with NASM assembler, which perform both the assembling
 ## and linking operations.
 
-eg-02-beta.bin eg-beta.bin eg-02.bin : %.bin : %.asm
+eg-01.bin eg-02-beta.bin eg-02.bin : %.bin : %.asm
 	nasm $< -f bin -o $@
 
 ## GAS assembly code (AT&T syntax).
