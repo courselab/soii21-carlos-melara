@@ -73,14 +73,14 @@ eg-06 : % : %.o %_foo.o %_bar.o
 	gcc -Wall $^ -o $@
 else
 eg-06 : % : %.o lib%.a
-	gcc -Wall $< -o $@ -L. -l$*
+	gcc -Wall $< -o -fno-pie $@ -L. -l$*
 endif
 
 eg-06.o eg-06_foo.o eg-06_main.o eg-06_baz.o: %.o : %.s 
-	gcc -Wall -c $< -o $@
+	gcc -Wall -c -fno-pie $< -o $@
 
 eg-06.s eg-06_foo.s eg-06_bar.s eg-06_baz.s : %.s : %.i
-	gcc -S $< -o $@
+	gcc -S $< -fno-pic -o $@
 
 eg-06.i : %.i : %.c %.h
 	gcc -E -I. -P $< -o $@
