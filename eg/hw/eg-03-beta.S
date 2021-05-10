@@ -1,15 +1,15 @@
-	## Boot, say hello, and loop forever
+	## Boot, say hello, and halt
 	## AT&T assembly, translated from NASM
 	
-	.code16               # Set 16-bit code
-
-	.global begin         # So that symbol may be found by the linker
-
-begin:		              # Needed (GAS has no equivalent to NASM $$)
+	.code16                # Set 16-bit code
 	
-	movb  $0xe, %ah	      # BIOS tty mode
+	.global begin	       # So the linker can find it.
 	
-	movw  $0x0, %bx	      # Using linker's org flag
+begin:		               # Program beginning (no equivalent to NASM $$)
+	
+	movb  $0xe, %ah	       # BIOS tty mode
+	
+	movw  $0x0, %bx	       # Using linker's org flag
 loop:			      
 	movb  msg(%bx), %al    # Offset to the message
 	int   $0x10	       # Call bios
@@ -27,10 +27,13 @@ msg:			       # C-like NULL terminated string
 	.string    "Hello World"
 	
 	.fill 510 - (. - begin), 1, 0       # Pad with zeros
-	.word 0xaa55			    # Boot signature
+	.word 0xaa55			     # Boot signature
 
 
 	# Notes
 	#
-	# We declare begin global so that the linker can find it.
+	# This is a intentionally literal translation of mbr-02.asm
+	# into AT&T Gas assembly.  See extended comments in ./README
+	# for the rationales.
+
 	

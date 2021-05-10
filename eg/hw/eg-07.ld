@@ -1,4 +1,4 @@
-/*  Linker script file. */
+/*  Linker script for MBR. */
 
 OUTPUT_FORMAT(binary)		/* Output flat binary (no structure) */
 SECTIONS
@@ -15,6 +15,7 @@ SECTIONS
 	    BYTE(0x55)
             BYTE(0xAA)
         }
+	__END_STACK__ = 0x7e10;	/* Stack end (used by _start). */
 }
 
 

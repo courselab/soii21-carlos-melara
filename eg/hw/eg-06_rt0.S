@@ -1,5 +1,5 @@
 
-# This register tells the CPU where the call instruction should
+#   This register tells the CPU where the call instruction should
 #   leave the return address. More technically, this is the
 #   stack pointer but we'll go deeper into it opportunely. 
 #

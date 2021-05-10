@@ -21,7 +21,7 @@
 # Main examples and auxiliary examples
 #
 
-bin = eg-01.bin eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin eg-05-beta.1.bin eg-05-beta.2.bin eg-05.bin eg-06.bin eg-07.bin eg-07-beta.bin eg-08.bin eg-09.bin eg-10.bin eg-11.bin
+bin = eg-01.bin
 
 binx =  egx-01.bin egx-02-32bit-gas.bin egx-02-16bit-gas.bin egx-02-32bit-nasm.bin egx-02-16bit-nasm.bin egx-03.bin egx-04.bin egx-04-16bit.s egx-04-32bit.s egx-04-16bit.bin egx-04-32bit.bin 
 
@@ -46,7 +46,7 @@ eg-01.bin : %.bin : %.hex
 ## We build it with NASM assembler, which perform both the assembling
 ## and linking operations.
 
-eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin: %.bin : %.asm
+eg-02-beta.1.bin eg-02-beta.2.bin eg-02.bin : %.bin : %.asm
 	nasm $< -f bin -o $@
 
 ## GAS assembly code (AT&T syntax).
@@ -56,48 +56,58 @@ eg-02.bin eg-03-beta.bin eg-03.bin eg-04.bin: %.bin : %.asm
 ## - the liker 'ld' reads the elf_32 objects and outputs a flat binary.
 ##
 
+
 # Program ld needs to know
 #
-#   -Text     where in the elf file to find the code (.text) section
-#   -e	      where in the elf file is the executable entry point
+#   -Text     where in the elf file to find the code (.text) section;
+#   -e	      where in the elf file is the executable entry point.
+#
+#   For the assembler we use
+#
+#    --32     produce an elf object (default) for 32-bit platform
+#
+#   For the linker we use
+#
+#   -melf_i386        reads the input file as an elf 32-bit object
+#   --oformat=binary  output a flat-binary (only executable code)
+#   
 #
 # Remember, BIOS loads our program at 0x7c00.
+#
+# As for -e, we can use either an absolute address (0x7c00)
+# or a label declared global (begin)
 
-eg-05-beta.1.bin : %.bin : %.S
-	as --32 $< -o $*.o
-	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e 0x7c00  $*.o -o $@
+eg-03-beta.bin : %.bin : %.o
+	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e begin  $< -o $@
 
-# This asm source uses a label to identify the entry point.
-# We can therefore use it in place of plain memory address.
+eg-03-beta.o : %.o : %.S
+	as --32 $< -o $@
 
-eg-05-beta.2.bin : %.bin : %.S
-	as --32 $< -o $*.o
-	ld -melf_i386 --oformat=binary -Ttext=0x7c00 -e begin  $*.o -o $@
-
-# This asm source code has a label _start, which is the default entry point.
-# We can therefore omit.
+# If we use the default label __start, we can omit it in the command line
 
 ifndef ALT
-eg-05.bin : %.bin : %.S
-	as --32 $< -o $*.o
-	ld -melf_i386 --oformat=binary -Ttext=0x7c00  $*.o -o $@
-endif
+eg-03.bin : %.bin : %.o
+	ld -melf_i386 --oformat=binary -Ttext=0x7c00  $< -o $@
 
+eg-03.o : %.o : %.S
+	as --32 $< -o $@
+endif
 
 # This is an example of how we can use a one-line GCC command to
 # indirectly invoke both the assembler and the linker.
+#
+# We use command-line options
+#
+#   -Wl,opt 	tells gcc to pass 'opt' literally to ld;
+#
+#   -nostdlib   to prevent the default gcc behavior of passing ld
+#		command-line options to link the program against
+#               the standard C library (libc);
 
 ifeq ($(ALT), 1)
-eg-05.bin : %.bin : %.S
-	gcc -m16 -Wl,--oformat=binary -march=i386 -nostdlib -Ttext=0x7c00 $< -o $@
+eg-03.bin : %.bin : %.S
+	gcc -Wl,--oformat=binary -nostdlib -Ttext=0x7c00 $< -o $@
 endif
-
-# Invoking both the assembler and linker separately as before.
-
-eg-06.bin: %.bin : %.S
-	as --32 $< -o $*.o
-	ld -melf_i386 --oformat=binary -Ttext 0x7c00 $*.o -o $@
-
 
 ## C source code.
 ##
@@ -143,13 +153,18 @@ eg-06.bin: %.bin : %.S
 #
 #  -Wall	enable warnings for common problems
 
-ifndef ALT
-eg-07-beta.bin : %.bin : %.c 
-	cpp $< -o $*.i
-	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $*.i -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 -Ttext=0x7c00 $*.o --oformat=binary  -o $@
-endif
+
+eg-04-beta.bin : %.bin : %.o
+	ld -melf_i386 -Ttext=0x7c00 $< --oformat=binary  -o $@
+
+eg-04-beta.o : %.o : %.s
+	as --32 $< -o $@
+
+eg-04-beta.s : %.s : %.i
+	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $@
+
+eg-04-beta.i : %.i : %.c
+	cpp $< -I. -o $@
 
 # Here we use a linker script.
 #
@@ -171,52 +186,51 @@ endif
 #				  which we haven't explicitly added
 #				  in the linker script.
 
-ifeq ($(ALT),1)
-eg-07-beta.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables  -fcf-protection=none -S $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
+ifndef ALT
+
+eg-04.bin : %.bin : %.o %.ld
+	ld -melf_i386 -T $*.ld --orphan-handling=discard $<   -o $@
+
+eg-04.o : %.o : %.s
+	as --32 $< -o $@
+
+eg-04.s : %.s : %.i
+	gcc -m16 -O0 -Wall -fno-pic -fno-asynchronous-unwind-tables -fcf-protection=none -S $< -o $@
+
+eg-04.i : %.i : %.c
+	cpp $< -I. -o $@
+
 endif
 
 # This is a one-line gcc command that performs the same operation.
-# The assembler and linker are evoked as needed.
-#
-# Note:
-#
-#   -Wl,<flag> is a gcc option which passes <flag> to ld.
-#
-# Now, we also need to use gcc's option
-#
-#   -nostlib		to prevent it from telling ld to link the program
-#			against the standard C library, as it would by
-#			default.
+# The assembler and linker are evoked as needed. 
 
-ifeq ($(ALT),2)
-eg-07-beta.bin : %.bin : %.c %.ld
-	gcc -m16 -O0 -Wall -fno-pic -fcf-protection=none -nostdlib -T $*.ld -Wl,--orphan-handling=discard   $< -o $@
+ifeq ($(ALT),1)
+eg-04.bin : %.bin : %.c %.ld
+	gcc -m16 -O0 -Wall -fno-pic -fcf-protection=none -I. -nostdlib -T $*.ld -Wl,--orphan-handling=discard  $< -o $@
 endif
 
 # Using linker script to define entry, flat binary and boot signature,
 # and to place the string in the .text section.
 
-eg-07.s : %.s : %.c 
-	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $@
+# eg-07.s : %.s : %.c 
+# 	gcc -m16 -O0 -Wall -fno-pic  -fcf-protection=none -S $< -o $@
 
-eg-07-O1.s : %-O1.s : %.c
-	gcc -m16 -O1 -Wall -fno-pic  -fcf-protection=none -S $< -o $@
-
-
-eg-07.bin eg-07-O1.bin : %.bin : %.s eg-07.ld
-	as --32 $< -o $*.o
-	ld -melf_i386 -T eg-07.ld $*.o --orphan-handling=discard  -o $@
-
-# A better implementation of eg-07.c
+# eg-07-O1.s : %-O1.s : %.c
+# 	gcc -m16 -O1 -Wall -fno-pic  -fcf-protection=none -S $< -o $@
 
 
-eg-08.bin : %.bin : %.c %.ld %.h
-	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
-	as --32 $*.s -o $*.o
-	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
+# eg-07.bin eg-07-O1.bin : %.bin : %.s eg-07.ld
+# 	as --32 $< -o $*.o
+# 	ld -melf_i386 -T eg-07.ld $*.o --orphan-handling=discard  -o $@
+
+# # A better implementation of eg-07.c
+
+
+# eg-08.bin : %.bin : %.c %.ld %.h
+# 	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
+# 	as --32 $*.s -o $*.o
+# 	ld -melf_i386 -T $*.ld $*.o --orphan-handling=discard  -o $@
 
 ## C source using a function to call BIOS int 0x10.
 ##
@@ -226,24 +240,37 @@ eg-08.bin : %.bin : %.c %.ld %.h
 # We have to initialize the stack pointer.
 # Here we do it in an ad hoc way using the header file.
 
-eg-09.o eg-10.o : %.o : %.c %.h 
-	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none  -S $< -o $*.s
+eg-05.s : %.s : %.c %.h 
+	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none  -S $< -o $@
+
+eg-05_utils.s  : %_utils.s : %_utils.c 
+	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $@
+
+eg-05.o eg-05_utils.o  : %.o : %.s
 	as --32 $*.s -o $@
 
-eg-09_utils.o eg-10_utils.o : %_utils.o : %_utils.c %.h
-	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*_utils.s
-	as --32 $*_utils.s -o $@
 
-eg-09.bin: %.bin : %.o %_utils.o %.ld
-	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
+eg-05.bin: %.bin : %.o %_utils.o %.ld
+	ld -melf_i386 -T $*.ld --orphan-handling=discard $(filter %.o, $^) -o $@
 
-# Now we initialize the stack in a start-up file (rt0).
 
-eg-10.bin : %.bin : %_rt0.o %.o %_utils.o  %.ld
-	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
+## C with extended inline assembly
+## 
+## This is a GCC feature.
 
-eg-10_rt0.o : %.o : %.S
-	as --32 $< -o $@
+eg-06.s : %.s : %.c %.h 
+	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none  -S $< -o $@
+
+eg-06_utils.s  : %.s : %.c 
+	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $@
+
+eg-06.o eg-06_utils.o  : %.o : %.s
+	as --32 $*.s -o $@
+
+
+eg-06.bin: %.bin : %_rt0.o %.o %_utils.o %.ld
+	ld -melf_i386 -T $*.ld --orphan-handling=discard $(filter %.o, $^) -o $@
+
 
 ## Our final piece of work:
 ##
@@ -254,24 +281,22 @@ eg-10_rt0.o : %.o : %.S
 #
 #   --freestanding	witch tells gcc we are not using libc.
 
-# Using exit to leave main().
 
-eg-11.o eg-12.o : %.o : %.c %.h 
-	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none -nostdlib --freestanding -S $< -o $*.s
+eg-07.s : %.s : %.c %.h 
+	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none  --freestanding -S $< -o $@
+
+eg-07_utils.s  : %.s : %.c 
+	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none --freestanding -S $< -o $@
+
+eg-07_rt0.s  : %.s : %.c 
+	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $@
+
+eg-07.o eg-07_utils.o  eg-07_rt0.o : %.o : %.s
 	as --32 $*.s -o $@
 
-eg-11_utils.o eg-12_utils.o : %_utils.o : %_utils.c %.h
-	gcc -m16 -O0 -I. -Wall -fno-pic -nostdlib --freestanding -fcf-protection=none -S $< -o $*_utils.s
-	as --32 $*_utils.s -o $@
 
-# Using return to leave main (but we can't use naked attribute).
-
-eg-11_rt0.o eg-12_rt0.o : %.o : %.c
-	gcc -m16 -O0 -I. -Wall -fno-pic  -fcf-protection=none -S $< -o $*.s
-	as --32 $*.s -o $@
-
-eg-11.bin eg-12.bin : %.bin : %_rt0.o %.o %_utils.o  %.ld
-	ld -melf_i386 -T $*.ld $(filter %.o, $^) --orphan-handling=discard  -o $@
+eg-07.bin: %.bin : %_rt0.o %.o %_utils.o %.ld
+	ld -melf_i386 -T $*.ld --orphan-handling=discard  $(filter %.o, $^) -o $@
 
 ##
 ## Auxiliary extra examples
@@ -319,6 +344,13 @@ egx-05.bin : %.bin : %.c %.ld
 	gcc -m32 -O0 -S -masm=att -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $*.s
 	as --32 $*.s -o $*.o
 	ld -melf_i386 -T $*.ld $*.o -o $@
+
+
+egx-07.bin : %.bin : %.c %.ld
+	gcc -m32 -O0 -S -fno-asynchronous-unwind-tables -fno-pic -fcf-protection=none -Wno-unused-but-set-variable $< -o $*.s
+	as --32 $*.s -o $*.o
+	ld -melf_i386 -T $*.ld $*.o -o $@
+
 
 #
 # Test and inspect
