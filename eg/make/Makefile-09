@@ -82,7 +82,7 @@ clean:
 # Install
 
 install: all
-	install -d $(PREFIX)/bin 
+	mkdir -p $(PREFIX)/bin 
 	cp $(BIN) $(PREFIX)/bin/
 
 uninstall:
