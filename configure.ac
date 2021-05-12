@@ -72,6 +72,10 @@ AC_SUBST([CPP_FLAGS],"-ansi -D_POSIX_C_SOURCE=200809L -Wall -Wextra")
 AC_SUBST([C_FLAGS])
 AC_SUBST([LD_FLAGS])
 
+dnl AC_SUBST([DOCM4],$abs_top_builddir/tools/m4)
+
+dnl AC_MSG_ERROR([ooooo value is ${ac_srcdir} done])
+
 dnl Canonical check for POSIX threads.
 
 AX_PTHREAD([AC_DEFINE(HAVE_PTHREAD,1,
@@ -82,7 +86,8 @@ dnl Output files
 
 AC_CONFIG_FILES([Makefile
 		tools/Makefile]
-		eg/Makefile)	
+		eg/Makefile
+		extra/Makefile)	
 
 dnl Do it
 

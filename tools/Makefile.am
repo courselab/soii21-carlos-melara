@@ -51,3 +51,5 @@ EXTRA_DIST = makefile.utils
 # 	rm -f $(DESTDIR)/$(bindir)/main
 #
 # EXTRA_DIST += main.sh
+
+doc:

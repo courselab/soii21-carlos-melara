@@ -17,18 +17,33 @@
 ##   You should have received a copy of the GNU General Public License
 ##   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = tools eg
+SUBDIRS = tools eg extra
 ACLOCAL_AMFLAGS = -I m4
 
 # EXTRA_DIST = examples
+
+# Other directories which have a manually crafted Makefile, where we want
+# to invoke make clean.
 
 other_dirs = eg/hw eg/build
 
 .PHONY: clean-local
 
 clean-local:
-	for i in $(other_dirs) ; do if test -f $$i/Makefile ; then $(MAKE) $(AM_MAKEFLAGS) -C $$i clean; fi; done
+	for i in $(other_dirs) ; do \
+	  if test -f $$i/Makefile ; then \
+	    $(MAKE) $(AM_MAKEFLAGS) -C $$i clean;\
+	  fi;\
+	done
+
+# Build local documentation (e.g. README.m4)
+
+export DOCM4 = $(abs_top_srcdir)/tools/m4
+
+all-local:
+	for i in $(SUBDIRS) ; do make -C $$i doc; done
 
 
 dist-hook:
 	make clean
+
