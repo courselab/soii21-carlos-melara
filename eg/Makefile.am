@@ -29,7 +29,7 @@ docm4dirs = hw/README build/README
 
 doc: $(docm4dirs)
 
-$(docm4dirs) : % : %/doc.m4 
+$(docm4dirs) : %/README : %/readme.m4
 	m4 -D DOCM4=$(DOCM4) $< > $@ && echo $$DOCM4
 
 # Do not clean built documentation

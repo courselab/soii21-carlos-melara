@@ -21,6 +21,12 @@ SUBDIRS =
 
 EXTRA_DIST = make
 
-.PHYONY: doc
-doc:
+# Build local documentation
+
+docm4src =  $(abs_srcdir)/README $(EXTRA_DIST:%=%/README)
+
+docm4: $(docm4src)
+
+$(docm4src) : %/README : %/readme.m4 $(DOCM4_TEMPLATES:%=$(DOCM4_DIR)/%) 
+	m4 -D DOCM4=$(DOCM4_DIR) $< > $@ 
 
