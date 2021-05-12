@@ -52,4 +52,4 @@ EXTRA_DIST = makefile.utils
 #
 # EXTRA_DIST += main.sh
 
-doc:
+#doc:
