@@ -1,6 +1,8 @@
 
-			BARE-METAL HELLO WORLD
+ BUILD PROCESS
+ ==============================
 
+\include(DOCM4_DIR/short-copyright-notice.m4)
 
  Overview
  ------------------------------

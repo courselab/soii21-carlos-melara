@@ -2,7 +2,7 @@
  EXTRA RESOURCES
  ==============================
 
-include(DOCM4/short-copyright-notice.m4)
+include(DOCM4_DIR/short-copyright-notice.m4)
 
  Overview
  ------------------------------

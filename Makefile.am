@@ -43,7 +43,7 @@ export DOCM4_DIR = $(abs_top_srcdir)/tools/m4
 export DOCM4_TEMPLATES = short-copyright-notice.m4
 
 all-local:
-	for i in extra ; do make -C $$i docm4; done
+	for i in $(SUBDIRS) ; do make -C $$i docm4; done
 
 
 dist-hook:

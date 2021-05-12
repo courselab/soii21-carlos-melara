@@ -2,11 +2,12 @@
  BARE-METAL HELLO WORLD
  ==============================
 
- This directory and its contents are part of SYSeg.
+\ This directory and its contents are part of SYSeg.
  Copyright (c) 2021 - Monaco F. J. <monaco@usp.br>
  SYSeg is Free Software distributed under GNU GPL vr3.
  Further information see http://gitlab.com/monaco/syseg
- 
+
+
  Overview
  ------------------------------
 
@@ -46,7 +47,7 @@
  - xorriso	1.5.2-1		(depending on your computer's BIOS)
 
 
- 
+
  
  BUILD INSTRUCTIONS
  
@@ -94,7 +95,8 @@
    make foo/dump			     show raw contents in hexadecimal
 
    make foo/run				     test foo with the emulator
-
+ 
+ 
 
  Some examples allow alternative build recipes which can be selected
  by passing the command-line variable ALT=<number> to 'make'. See bellow. 

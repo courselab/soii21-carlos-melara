@@ -2,11 +2,8 @@
  BARE-METAL HELLO WORLD
  ==============================
 
- This directory and its contents are part of SYSeg.
- Copyright (c) 2021 - Monaco F. J. <monaco@usp.br>
- SYSeg is Free Software distributed under GNU GPL vr3.
- Further information see http://gitlab.com/monaco/syseg
- 
+include(DOCM4_DIR/short-copyright-notice.m4)
+
  Overview
  ------------------------------
 
@@ -46,7 +43,8 @@
  - xorriso	1.5.2-1		(depending on your computer's BIOS)
 
 
- include(DOCM4/make-bintools.m4)
+include(DOCM4_DIR/make-bintools.m4) 
+ 
 
  Some examples allow alternative build recipes which can be selected
  by passing the command-line variable ALT=<number> to 'make'. See bellow. 

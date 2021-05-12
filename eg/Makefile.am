@@ -25,12 +25,12 @@ EXTRA_DIST = hw build
 
 # Build local documentation
 
-docm4dirs = hw/README build/README
+docm4src =  $(abs_srcdir)/README $(EXTRA_DIST:%=%/README)
 
-doc: $(docm4dirs)
+docm4: $(docm4src)
 
-$(docm4dirs) : %/README : %/readme.m4
-	m4 -D DOCM4=$(DOCM4) $< > $@ && echo $$DOCM4
+$(docm4src) : % : %.m4 $(DOCM4_TEMPLATES:%=$(DOCM4_DIR)/%) 
+	m4 -D DOCM4_DIR=$(DOCM4_DIR) $< > $@ 
 
 # Do not clean built documentation
 #
