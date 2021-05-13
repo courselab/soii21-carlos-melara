@@ -1,4 +1,3 @@
-
  USEFUL REFERENCES
  ==============================
 
@@ -9,7 +8,7 @@
  Manuals
  ------------------------------
 
- 
+ [GNU Make](https://www.gnu.org/software/make/manual/)
 
  Tutorials
  ------------------------------
