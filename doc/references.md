@@ -1,8 +1,8 @@
  USEFUL REFERENCES
  ==============================
 
- This is a non-exhaustive list of online references with information of
- interest for system software developers, including manuals, tutorials, 
+ This is a non-exhaustive list of online references with information of  
+ interest for system software developers, including manuals, tutorials,   
  specifications and other useful resources.
 
  Manuals
@@ -14,12 +14,22 @@
  Tutorials
  ------------------------------
 
+
  Specifications
 
  ------------------------------
 
+
  Demonstrations
  ------------------------------
+
+ Personal blogs and websites
+ ------------------------------
+
+ - PC real-mode 
+
+ The Starman's ream https://thestarman.pcministry.com/
+
 
  Lore
  ------------------------------
