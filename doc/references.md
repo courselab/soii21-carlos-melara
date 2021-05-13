@@ -2,13 +2,14 @@
  ==============================
 
  This is a non-exhaustive list of online references with information of
- interest for system software developers. It includes manuals, tutorials,
+ interest for system software developers, including manuals, tutorials, 
  specifications and other useful resources.
 
  Manuals
  ------------------------------
 
- [GNU Make](https://www.gnu.org/software/make/manual/)
+ 
+ GNU Make:          https://www.gnu.org/software/make/manual/
 
  Tutorials
  ------------------------------
