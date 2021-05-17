@@ -1,6 +1,6 @@
 
-#ifndef EG02_H
-#define EG02_H
+#ifndef EG03_H
+#define EG03_H
 
 #define VIDEO_MEMORY 0xb8000
 #define VIDEO_ATTRIBUTE 0X02
