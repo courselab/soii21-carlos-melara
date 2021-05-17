@@ -10,7 +10,7 @@ int main ()
   puts ("Hello World!\n\r");
   puts ("Cool, ain't it?");
 
-  return 10;
+  return 0;
 }
 
 

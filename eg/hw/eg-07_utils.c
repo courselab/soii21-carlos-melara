@@ -32,5 +32,10 @@ end%=:                              \n\t\
 
 /* Notes.
 
+   Function 'int puts(const char *s)' of standard C and POSIX specifications
+   returns the number of printed characters. Our version returns void.
+   We shall address the return value of a fauction opportunely.
+
+   Standard C and POSIX puts() write trailing newline also.
 
  */
