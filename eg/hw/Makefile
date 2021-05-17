@@ -282,6 +282,9 @@ eg-06.bin: %.bin : %_rt0.o %.o %_utils.o %.ld
 # we would clash with the C library. To prevent it, we use
 #
 #   --freestanding	witch tells gcc we are not using libc.
+#
+# We are using the linker script to prepend the startup file rt0, therefore
+# we can omit it in the command line (as we usually do in hosted programs).
 
 
 ifndef ALT
@@ -299,17 +302,22 @@ eg-07.o eg-07_utils.o  eg-07_rt0.o : %.o : %.s
 	as --32 $*.s -o $@
 
 
-eg-07.bin: %.bin : %_rt0.o %.o %_utils.o %.ld
+eg-07.bin: %.bin :  %.o %_utils.o %.ld | %_rt0.o
 	ld -melf_i386 -T $*.ld --orphan-handling=discard  $(filter %.o, $^) -o $@
 
 endif
 
-# One line command
+# One line command (given rt0.o)
 
 ifeq ($(ALT),1)
 
-eg-07.bin : %.bin : %.c %_utils.c %_rt0.c %.h 
-	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none  --freestanding -T $*.ld -Wl,--orphan-handling=discard -S $(filter %.o, $^) -o $@
+eg-07.bin  : %.bin : %.c %_utils.c  %.h | %_rt0.o %.ld
+	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none  --freestanding -nostdlib -T $*.ld -Wl,--orphan-handling=discard $(filter %.c, $^) -o $@
+
+eg-07_rt0.o : %_rt0.o : %_rt0.c 
+	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none -c $(filter %.c, $^) -o $@
+
+
 endif
 
 

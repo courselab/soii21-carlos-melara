@@ -332,7 +332,7 @@
    		    - add the the boot signature        
    		    - covert from elf to binary         
    		    - set load address                  
-   		    - entry point                       
+   		    - set entry point
 
 
 		    The first feature frees our code from the hack on msg,
@@ -404,6 +404,7 @@
 
 		       replaced asm rt0 with a C version
 		       used the linker to set the stack location
+		       used the linker to prepend rt0
 		       changed functions name to look like C
 		       jump to main from rt0
 		       fixed writing routine not to output 0x0
@@ -414,7 +415,6 @@
 		    otherwise the compiler removes the 'ret' instruction.
 		    The assembly for eg-11.s is added some extra code that
 		    is not fundamental here, as explained in eg-07.c comments.
-
 
    		    See comments in the file.
 

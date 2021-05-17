@@ -15,8 +15,9 @@ SECTIONS
 	    BYTE(0x55)
             BYTE(0xAA)
         }
-	__END_STACK__ = 0x7e10;	/* Stack end (used by _start). */
+	__END_STACK__ = 0x7e00 + 0x200;	/* The end of a 64k block. */
 }
+STARTUP(eg-07_rt0.o);
 
 
 
