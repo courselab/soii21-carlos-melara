@@ -1,6 +1,9 @@
 	/* Here we are taking steps to print a string.
 
-	   This code won't work. Can you spot the bug?
+	   Our intention is to read the first charater of the string at msg
+	   and write it onto the video display memory as in eg-00.S
+
+	   This code won't work, though. Can you spot the bug?
 
 	*/	
 	
@@ -56,5 +59,17 @@ halt:
 
 	We're therefore not reaching the string, but something else at position
 	b8000 + msg.
+
+	Let's do the math:
+
+	   If we disassembly eg-01_alpha.bin, we'll see that msg is 0x7c06.
+
+	   cs << 0x10    + 0x7c06
+	=  0xb800 * 0x10 + 0x7c06
+	=  0xb8000       + 0x7c06 = 0xbf06 != 0x7c06
+
+	   This is somewhere within the video memory display area, far away
+	   from msg.
+	
 	
 	*/

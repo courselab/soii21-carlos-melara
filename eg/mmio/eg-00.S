@@ -1,5 +1,5 @@
 
-
+	
   /* Prints one character in video display memory. */
 
 
@@ -41,12 +41,13 @@
 
 */
 
-  .code16			/* 0 + di ;; 1 + di */
+  .code16			   
 
-__start:	
+__start:
+	
         mov $0xb800, %ax           /* Color display memory. */
         mov  %ax, %ds              /* Set data segement.    */
-        movb $'A',   (%di)           /* Write a character.    */
+        movb $'A',   (%di)         /* Write a character.    */
         movb $0x20, 1(%di)	   /* Apply attribute.      */
 
 halt:
@@ -65,12 +66,15 @@ halt:
 
   defaults to
 
-       movb $'A', %cs(%di)
+       movb $'A', %cs:(%di)
 
    which moves the ASCII code of the character 'A' into cs:di, or the 
    effective memory location
    
        cs * 0x10 + di
-      
+
+   Let's do the math:
+
+      0xb800 * 0x10 + 0x0 = 0xb8000
 
  */

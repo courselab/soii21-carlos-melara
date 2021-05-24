@@ -8,12 +8,12 @@
 
 __start:
 	mov $0, %ax
-	mov %ax, %es
+	mov %ax, %es		   /* Extra segment. */
 	
         mov $0xb800, %ax           /* Color display memory. */
         mov  %ax, %ds              /* Set data segement.    */
 	movb %es:msg, %al
-        movb %al, (%di)           /* Write a character.    */
+        movb %al, (%di)            /* Write a character.    */
         movb $0x20, 1(%di)	   /* Apply attribute.      */
 
 msg:

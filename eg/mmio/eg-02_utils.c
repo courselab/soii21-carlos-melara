@@ -7,17 +7,17 @@ void __attribute__((naked, fastcall)) print (const char *str)
   __asm__ volatile
     (
      "           mov %[vid] , %%ax             ;"
-     "           mov %%ax, %%ds                ;"
+     "           mov %%ax, %%es                ;"
      "           mov  $0x0, %%ax               ;"
      "           mov  $0x0, %%di               ;"
      "           mov  $0x0, %%bx               ;"
      " loop%=:                                 ;"
-     "           movb %%es:msg%=(%%di), %%al   ;"
+     "           movb msg%=(%%di), %%al   ;"
      "           cmp $0x0, %%al                ;"
      "           je halt%=                     ;"
-     "           movb %%al,  (%%bx,%%di)       ;"
+     "           movb %%al,  %%es:(%%bx,%%di)  ;"
      "           inc %%bx                      ;"
-     "           movb %[attr], (%%bx,%%di)     ;"
+     "           movb %[attr], %%es:(%%bx,%%di);"
      "           inc %%di                      ;"
      "           mov %%bx, %%di                ;"
      "           jmp loop%=                    ;"
@@ -35,3 +35,10 @@ void __attribute__((naked, fastcall)) print (const char *str)
 
 
 }
+
+/* Notes
+
+   Here we use %%es to acess video memory, while keeping in %ds the
+   value set by rt0 startup code.
+
+ */

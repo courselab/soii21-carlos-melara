@@ -17,7 +17,7 @@ SECTIONS
         }
 	__END_STACK__ = 0x7c00 + 0x200;	 /* End of the 64K block. */
 }
-STARTUP(rt0.o)
+
 
 
 

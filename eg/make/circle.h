@@ -23,3 +23,4 @@
 
 float circle (float);
 
+#include <foo.h>
