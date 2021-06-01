@@ -16,14 +16,14 @@ __asm__ volatile
  "        mov   $0x0e, %%ah           ;" /* Video BIOS service: teletype mode */
  "        mov   $0x0, %%si            ;" 
  "loop%=:                             ;"                                    
- "        mov   (%%bx, %%si), %%al    ;" 
- "        int   $0x10                 ;" /* Call video BIOS service.          */
+ "        mov   (%%bx, %%si), %%al    ;"
  "        cmp   $0x0, %%al            ;" /* Repeat until end of string (0x0). */
  "        je    end%=                 ;"                                    
+ "        int   $0x10                 ;" /* Call video BIOS service.          */
  "        add   $0x1, %%si            ;"                                    
  "        jmp   loop%=                ;"                                    
  "end%=:                              ;"
- "        ret                         ;" /* Return this function.             */
+ "        ret                         ;" /* Return from this function.         */
 
 :                        
 : [str] "b" (buffer)      /* Var. buffer put in bx, referenced as str .*/
@@ -39,7 +39,7 @@ void __attribute__((naked, fastcall)) clear (void)
   __asm__ volatile
     (
      " mov $0x0600, %%ax                 ;" /* Video BIOS service: Scroll up. */
-     " mov $0x02, %%bh                   ;" /* Attribute (back/foreground.    */
+     " mov $0x07, %%bh                   ;" /* Attribute (back/foreground.    */
      " mov $0x0, %%cx                    ;" /* Upper-left corner.             */
      " mov $0x184f, %%dx                 ;" /* Upper-right corner.            */
      " int $0x10                         ;" /* Call video BIOS service.       */
@@ -71,7 +71,6 @@ void __attribute__((fastcall, naked)) read (char *buffer)
      
      "   jne loop%=                   ;"
 
-
      " mov $0x0e, %%ah                ;" /* Echo a newline.                  */
      " mov $0x0a, %%al                ;"
      "   int $0x10                    ;"
@@ -91,7 +90,7 @@ void __attribute__((fastcall, naked)) read (char *buffer)
 
 void __attribute__((naked)) help (void)
 {
-  printnl ("This program is too small to do anything else.");
+  printnl ("I wish... (too small a program for anything else).");
 
   __asm__ ("ret");   	   /* Naked functions lack return. */
 

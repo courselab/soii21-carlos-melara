@@ -33,6 +33,9 @@ void __attribute__((naked)) help (void);
 
 int __attribute__((fastcall, naked)) compare (char *s1, char *s2);
 
+/* Quit. */
+
+#define quit() printnl("Sorry...")
 
 #define PROMPT ">"
 

@@ -35,12 +35,13 @@ all : $(bin)
 tos.bin : $(obj) mbr.ld rt0.o
 	ld -melf_i386 --orphan-handling=discard  -T mbr.ld $(obj) -o $@
 
-tos.o utils.o rt0.o :%.o: %.s
+tos.o utils.o rt0.o :%.o: %.s 
 	as --32 $< -o $@
 
 tos.s utils.s rt0.s :%.s: %.c
 	gcc -m16 -O0 -I. -Wall -Wextra -fno-pic -fcf-protection=none  --freestanding -S $< -o $@
 
+tos.s utils.s : tos.h
 
 
 #

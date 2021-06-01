@@ -16,7 +16,9 @@ int main()
       read (b);
       
       if (compare(b, "help"))
-	  help();
+	help();
+      else if (compare(b, "quit"))
+	quit();
       else
 	{
 	  print (b);
