@@ -18,4 +18,5 @@
  * hw 	      Hello World bare metal (from machine code, to asm, up to C)
  * build      Basics of building a C program, static library
  * make	      Build automation with make, the principles
+ * real	      Real-mode programming (segmented memor)
  
