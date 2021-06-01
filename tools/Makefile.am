@@ -24,11 +24,13 @@ AM_LDFLAGS =  @LD_FLAGS@
 # main_bin_CC = @PTHREAD_CC@
 # main_bin_CFLAGS = @PTHREAD_CFLAGS@ 
 
-bin_PROGRAMS = hex2bin syseg
+bin_PROGRAMS = hex2bin syseg header-notes
 
 hex2bin_SOURCES = hex2bin.c debug.h
 
 syseg_SOUCES = syseg.c debug.h
+
+header_notes_SOURCES = header-notes.c debug.h
 
 EXTRA_DIST = makefile.utils
 

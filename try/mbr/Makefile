@@ -21,32 +21,33 @@
 # Main examples and auxiliary examples
 #
 
-bin = tos.bin
+bin = mbr.bin
 
-objs = main.o tos.o
+objs = main.o mbr.o
+
+AUXDIR =../../tools#
 
 all : $(bin) 
 
 ## C source code.
 ## We build the program using gcc, as and ld.
 
-tos.bin : $(objs) mbr.ld rt0.o
+mbr.bin : $(objs) mbr.ld rt0.o
 	ld -melf_i386 --orphan-handling=discard  -T mbr.ld $(objs) -o $@
 
-main.o tos.o rt0.o :%.o: %.s 
+main.o mbr.o rt0.o :%.o: %.s 
 	as --32 $< -o $@
 
-main.s tos.s rt0.s :%.s: %.c
+main.s mbr.s rt0.s :%.s: %.c
 	gcc -m16 -O0 -I. -Wall -Wextra -fno-pic -fcf-protection=none  --freestanding -S $< -o $@
 
-main.s tos.s : tos.h
+main.s mbr.s : mbr.h
 
 
 #
 # Test and inspect
 #
 
-AUXDIR =../../tools#
 
 include $(AUXDIR)/makefile.utils
 
@@ -82,3 +83,19 @@ stick: $(IMG)
 	echo "*** ATTENTION: make IMG=foo.bin SITCK=/dev/X"; exit 1; fi 
 	dd if=$< of=$(STICK)
 
+#
+# Programming exercise
+#
+
+VERSION=0.1.0
+TARNAME=mbr-$(VERSION)
+
+pack:
+	rm -rf $(TARNAME)
+	mkdir $(TARNAME)
+#	cp main.c mbr.c mbr.h rt0.c $(TARNAME)
+	for i in main.c mbr.c rt0.c mbr.h ; do \
+	  cp $(AUXDIR)/c-head-pack.c $(TARNAME)/$$i ;\
+	  cpp -fpreprocessed -dD -P $$i >> $(TARNAME)/$$i ;\
+	done
+	tar zcvf $(TARNAME).tar.gz $(TARNAME)

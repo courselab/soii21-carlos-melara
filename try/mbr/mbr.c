@@ -1,5 +1,5 @@
 
-#include <tos.h>
+#include <mbr.h>
 
 /* A string consisting of the CRLF sequence.
    Used by the function-like macro printnl. */

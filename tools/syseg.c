@@ -1,6 +1,6 @@
 /* syseg.c - SYSeg information.
  
-   Copyright (c) 2015, Monaco F. J. <monaco@usp.br>
+   Copyright (c) 2021, Monaco F. J. <monaco@usp.br>
 
    This file is part of SYSeg.
 
