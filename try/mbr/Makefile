@@ -1,4 +1,4 @@
-#   Makefike - Handcrafted make script for eg/tinos
+#   Makefike - Handcrafted make script.
 #
 #   Copyright (c) 2021 - Monaco F. J. <monaco@usp.br>
 #
@@ -94,8 +94,11 @@ pack:
 	rm -rf $(TARNAME)
 	mkdir $(TARNAME)
 #	cp main.c mbr.c mbr.h rt0.c $(TARNAME)
-	for i in main.c mbr.c rt0.c mbr.h ; do \
+#	for i in main.c mbr.c rt0.c mbr.h ; do \
 	  cp $(AUXDIR)/c-head-pack.c $(TARNAME)/$$i ;\
-	  cpp -fpreprocessed -dD -P $$i >> $(TARNAME)/$$i ;\
+	  cpp -fpreprocessed -dD -P $$i >> $(TARNAME)/$$i;\
+	done
+	for i in main.c mbr.c rt0.c mbr.h ; do \
+	  cp $$i $(TARNAME);\
 	done
 	tar zcvf $(TARNAME).tar.gz $(TARNAME)
