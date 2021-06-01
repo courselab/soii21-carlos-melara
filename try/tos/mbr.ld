@@ -7,9 +7,9 @@ SECTIONS
         .text :
 	{
 	  *(.text)              /* Copy input section .text to the oputput. */
-	  *(.rodata)		/* Copy input section .rodata to the output. */
 	  *(.data)		/* Copy input section .data to the output. */
 	  *(.bss)		/* Copy input section .bss to the output. */
+	  *(.rodata)		/* Copy input section .rodata to the output. */
 }	
         . = 0x7c00 + 510;	/* Advance 510 bytes. */
         .signature : 		/* Add a signadure section with this content. */

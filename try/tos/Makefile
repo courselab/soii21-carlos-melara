@@ -1,4 +1,4 @@
-#   Makefike - Handcrafted make script for eg/hw.
+#   Makefike - Handcrafted make script for eg/tinos
 #
 #   Copyright (c) 2021 - Monaco F. J. <monaco@usp.br>
 #
@@ -23,35 +23,34 @@
 
 bin = tos.bin
 
-obj = tos.o utils.o
-
-AUXDIR =../../tools#
+objs = main.o tos.o
 
 all : $(bin) 
 
 ## C source code.
 ## We build the program using gcc, as and ld.
 
-tos.bin : $(obj) mbr.ld rt0.o
-	ld -melf_i386 --orphan-handling=discard  -T mbr.ld $(obj) -o $@
+tos.bin : $(objs) mbr.ld rt0.o
+	ld -melf_i386 --orphan-handling=discard  -T mbr.ld $(objs) -o $@
 
-tos.o utils.o rt0.o :%.o: %.s 
+main.o tos.o rt0.o :%.o: %.s 
 	as --32 $< -o $@
 
-tos.s utils.s rt0.s :%.s: %.c
+main.s tos.s rt0.s :%.s: %.c
 	gcc -m16 -O0 -I. -Wall -Wextra -fno-pic -fcf-protection=none  --freestanding -S $< -o $@
 
-tos.s utils.s : tos.h
+main.s tos.s : tos.h
 
 
 #
 # Test and inspect
 #
 
+AUXDIR =../../tools#
+
 include $(AUXDIR)/makefile.utils
 
 .PHONY: clean clean-extra intel att 16 32 diss /diss /i16 /i32 /a16 /a32
-
 
 #
 # Housekeeping
