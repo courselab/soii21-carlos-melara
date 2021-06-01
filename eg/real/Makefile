@@ -45,14 +45,15 @@ eg-00.bin eg-01_alpha.bin eg-01.bin foo.bin: %.bin : %.o mbr-nort0.ld
 
 binc = eg-02 eg-03
 
-$(binc:%=%.bin) : %.bin : %.o %_utils.o | mbr.ld rt0.o
-	ld -melf_i386 --orphan-handling=discard  -T mbr-nort0.ld $(filter %.o, $^) -o $@
+$(binc:%=%.bin) : %.bin : %.o %_utils.o mbr.ld rt0.o
+	ld -melf_i386 --orphan-handling=discard -T mbr.ld $*.o $*_utils.o -o $@
 
 $(binc:%=%.o) $(binc:%=%_utils.o) rt0.o :%.o: %.s
 	as --32 $< -o $@
 
 $(binc:%=%.s) $(binc:%=%_utils.s) rt0.s :%.s: %.c
 	gcc -m16 -O0 -I. -Wall -fno-pic -fcf-protection=none  --freestanding -S $< -o $@
+
 
 
 
@@ -71,9 +72,8 @@ include $(AUXDIR)/makefile.utils
 egx-01.o egx-02.o : %.o : %.S
 	as --32 $< -o $@
 
-egx-01.bin egx-02.bin : %.bin : %.o | mbr-nort0.ld
-	ld -melf_i386 -T mbr-nort0.ld --orphan-handling=discard  $(filter %.o, $^) -o $@
-
+egx-01.bin egx-02.bin : %.bin : %.o mbr-nort0.ld
+	ld -melf_i386 -T mbr-nort0.ld --orphan-handling=discard $(filter %.o, $^) -o $@
 
 #
 # Housekeeping

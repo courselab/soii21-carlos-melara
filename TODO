@@ -1,0 +1,15 @@
+
+ ToDo list
+ ==============================
+
+ * eg/hw/Makefile
+
+   Check rt0 and linker scripts dependencies are correctly handled.
+   It seems they are note.
+
+ * All handcrafted Makefiles
+
+   Move rules to make iso and bootable sticks to toos/makefile.utils
+
+ * Implement README.m4 strategy.
+
