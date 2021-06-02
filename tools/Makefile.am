@@ -24,13 +24,13 @@ AM_LDFLAGS =  @LD_FLAGS@
 # main_bin_CC = @PTHREAD_CC@
 # main_bin_CFLAGS = @PTHREAD_CFLAGS@ 
 
-bin_PROGRAMS = hex2bin syseg header-notes
+bin_PROGRAMS = hex2bin syseg stripcomment
 
 hex2bin_SOURCES = hex2bin.c debug.h
 
 syseg_SOUCES = syseg.c debug.h
 
-header_notes_SOURCES = header-notes.c debug.h
+stripcomment_SOURCES = stripcomment.c stripcomment-funct.c debug.h
 
 EXTRA_DIST = makefile.utils
 
@@ -55,3 +55,17 @@ EXTRA_DIST = makefile.utils
 # EXTRA_DIST += main.sh
 
 #doc:
+
+# Run some tests
+# We may eventually use automake TAP capabilities
+
+test: test_stripcomment
+
+test_stripcomment: stripcomment
+	@echo $(ECHO_N) "Testing $@ with Makefile...            "
+	@./$< -m $(top_srcdir)/test/$</makefile > /tmp/$@_out
+	@if diff $(top_srcdir)/test/$</makefile.stripped /tmp/$@_out > /dev/null; then echo "Ok"; else echo "No"; fi
+	@echo $(ECHO_N) "Testing $@ with C...                   "
+	@./$< -c $(top_srcdir)/test/$</prog.c > /tmp/$@_out
+	@if diff $(top_srcdir)/test/$</prog.c.stripped /tmp/$@_out > /dev/null; then echo "Ok"; else echo "No"; fi
+

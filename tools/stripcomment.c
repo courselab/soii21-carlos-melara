@@ -1,4 +1,4 @@
-/* syseg.c - Replace copyright note.
+/* stripcomment-funct.c - Replace copyright note, auxiliary function.
  
    Copyright (c) 2021, Monaco F. J. <monaco@usp.br>
 
@@ -19,9 +19,6 @@
 */
 
 
-/* This program reads a source file and replace the heading comments
-   with a given copyrigth notice. */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "../config.h"
@@ -36,18 +33,21 @@ void usage()
 {
 #define msg(s)   fprintf (stderr, s "\n");
   msg("");
-  msg("Usage   " PROGRAM " [option] | <input-file> [<output-file>]");
+  msg("Usage   " PROGRAM " [[option] | <input-file> [<output-file>]]");
   msg("");
   msg("          <input-file>             if not given, reads from stdin");
   msg("          <output-file>            if not given, writes to stdout (in ascii)");
   msg("");
   msg("          options:   --help        this help");
   msg("                     --version     software version");
+  msg("                     -c            remove first C-style multine comment");
+  msg("                     -m            remove first consecutive Makefile comments");
   msg("");
 }
 
 
-void multiline (FILE *fpin, FILE *fpout, int global);
+void strip_c (FILE *fpin, FILE *fpout, int global);
+void strip_c (FILE *fpin, FILE *fpout, int global);
 
 /* Main program. */
 
@@ -61,6 +61,14 @@ int main (int argc, char **argv)
   fpout = stdout;
 
   /* Process options. */
+
+
+  if (argc<2)
+    {
+      usage();
+      exit (EXIT_FAILURE);
+    }
+
   
   if (argc > 1)
     {
@@ -75,16 +83,16 @@ int main (int argc, char **argv)
 	  exit(EXIT_SUCCESS);
 	}
 
-
-      if (argc > 1)
-	{
-	  fpin = fopen(argv[1], "r");
-	  sysfatal(!fpin);
-	}
       
       if (argc > 2)
 	{
-	  fpout = fopen(argv[2], "w");
+	  fpin = fopen(argv[2], "r");
+	  sysfatal(!fpin);
+	}
+      
+      if (argc > 3)
+	{
+	  fpout = fopen(argv[3], "w");
 	  sysfatal(!fpout);
 	}
     }
@@ -92,20 +100,18 @@ int main (int argc, char **argv)
 
   /* Do the actual job. */
 
-  multiline (fpin, fpout, 1);
+  if (!strcmp (argv[1],"-c"))
+    strip_c (fpin, fpout, 0);
+  else if (!strcmp (argv[1], "-m"))
+    strip_Makefile (fpin, fpout, 0);
+  else
+    fprintf (stderr, "Unkown file type\n");
+  
   
   return EXIT_SUCCESS;
 
 }
 
-enum state_t
-  {
-      body,	     /* Body of the program. */
-      start_1,	     /* Start of comment. */
-      start_2,
-      end,	     /* End of comment. */
-      done	     /* Finished. */
-  };
 
 /* enum {open_1, open_2, open_3, close_3, close_2, close_1}; */
 /* int marks[][6] = */
@@ -114,81 +120,3 @@ enum state_t
 /*   }; */
 
 
-void multiline (FILE *fpin, FILE *fpout, int global)
-{
-  int c, i=0;
-  enum state_t state = body;
-  char buffer[2048];
-  
-  while ( ((c = fgetc (fpin)) != EOF ) )
-    {
-      
-      switch (state)
-	{
-
-	case body:
-	  switch (c)
-	    {
-	    case '/':
-	      state = start_1;
-	      buffer[i++] = c;
-	      break;
-	    default:
-	      fputc (c, fpout);
-	      break;
-	    }
-	  break;
-
-	case start_1:
-	  switch (c)
-	    {
-	    case '*':
-	      state = start_2;
-	      i=0;
-	      break;
-	    default:
-	      buffer[i]=c;
-	      fputs (buffer, fpout);
-	      i=0;
-	      state = body;
-	      break;
-	    }
-	  break;
-
-	case start_2:
-	  switch (c)
-	    {
-	    case '*':
-	      state = end;
-	      break;
-	    default:
-	      break;
-	    }
-	  break;
-
-	case end:
-	  switch (c)
-	    {
-	    case '/':
-	      state = global ? body : done;
-	      break;
-	    default:
-	      state = start_2;
-	      break;
-	    }
-	  break;
-
-	case done:
-	  fputc (c, fpout);
-	  break;
-	  
-
-	default:
-	  printf ("*** ops\n");
-	  state = done;
-	  break;
-	}
-
-    }
-
-}

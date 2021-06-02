@@ -82,6 +82,11 @@ AX_PTHREAD([AC_DEFINE(HAVE_PTHREAD,1,
             [Define to 1 if POSIX threads libraries and headers are found.]) ], 
 	    AC_MSG_ERROR([POSIX threads support not detected.]))
 
+dnl Portable shell 
+
+dnl AC_SUBST([echo_n], ECHO_N)
+dnl AC_SUBST([echo],[echo])
+
 dnl Output files
 
 AC_CONFIG_FILES([Makefile

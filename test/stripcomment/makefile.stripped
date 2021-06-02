@@ -1,0 +1,10 @@
+
+# This line should not be removed
+
+variable = value		# This comment should be kept
+
+target : prerequisite		# And this one also.
+	recipe
+
+# No other line should be removed
+
