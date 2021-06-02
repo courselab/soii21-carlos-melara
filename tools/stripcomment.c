@@ -31,34 +31,37 @@
 
 void usage()
 {
-#define msg(s)   fprintf (stderr, s "\n");
+#define msg(s)   fprintf (stdout, s "\n");
   msg("");
   msg("Usage   " PROGRAM " [[option] | <input-file> [<output-file>]]");
   msg("");
+  msg("          Remove comments from source file");
+  msg("");
   msg("          <input-file>             if not given, reads from stdin");
-  msg("          <output-file>            if not given, writes to stdout (in ascii)");
+  msg("          <output-file>            if not given, writes to stdout");
   msg("");
   msg("          options:   --help        this help");
   msg("                     --version     software version");
-  msg("                     -c            remove first C-style multine comment");
-  msg("                     -m            remove first consecutive Makefile comments");
+  msg("                     -c            first C-style multine comment");
+  msg("                     -m            first consecutive Makefile comments");
+/*msg("                     -g            global (remove all); requires -m|-c)"); */
   msg("");
 }
 
 
 void strip_c (FILE *fpin, FILE *fpout, int global);
-void strip_c (FILE *fpin, FILE *fpout, int global);
+void strip_Makefile (FILE *fpin, FILE *fpout, int global);
 
 /* Main program. */
 
   
 int main (int argc, char **argv)
 {
-  
   FILE *fpin, *fpout;
   
   fpin = stdin;
   fpout = stdout;
+
 
   /* Process options. */
 
@@ -98,14 +101,18 @@ int main (int argc, char **argv)
     }
   
 
-  /* Do the actual job. */
+  /* Do the actual job. 
+
+     Implemented but not tested option to remove globally (all coments)
+     is currently disabled. 
+*/
 
   if (!strcmp (argv[1],"-c"))
     strip_c (fpin, fpout, 0);
   else if (!strcmp (argv[1], "-m"))
     strip_Makefile (fpin, fpout, 0);
   else
-    fprintf (stderr, "Unkown file type\n");
+    fprintf (stderr, "Unkown option\n");
   
   
   return EXIT_SUCCESS;
@@ -113,10 +120,5 @@ int main (int argc, char **argv)
 }
 
 
-/* enum {open_1, open_2, open_3, close_3, close_2, close_1}; */
-/* int marks[][6] = */
-/*   { */
-/*    {'/', '*', 0 , 0 , '*','/'} */
-/*   }; */
 
 

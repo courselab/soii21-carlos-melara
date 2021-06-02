@@ -39,7 +39,6 @@ void strip_c (FILE *fpin, FILE *fpout, int global)
   int c, i=0;
   enum state_t state = body;
   char buffer[2048];
-  int count=0;
   
   while ( ((c = fgetc (fpin)) != EOF ) )
     {
@@ -116,10 +115,8 @@ void strip_c (FILE *fpin, FILE *fpout, int global)
 
 void strip_Makefile (FILE *fpin, FILE *fpout, int global)
 {
-  int c, i=0;
+  int c;
   enum state_t state = body;
-  char buffer[2048];
-  int count=0;
   
   while ( ((c = fgetc (fpin)) != EOF ) )
     {
