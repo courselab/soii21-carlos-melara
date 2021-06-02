@@ -90,15 +90,12 @@ stick: $(IMG)
 VERSION=0.1.0
 TARNAME=mbr-$(VERSION)
 
-pack:
+pack: 
 	rm -rf $(TARNAME)
 	mkdir $(TARNAME)
-#	cp main.c mbr.c mbr.h rt0.c $(TARNAME)
-#	for i in main.c mbr.c rt0.c mbr.h ; do \
-	  cp $(AUXDIR)/c-head-pack.c $(TARNAME)/$$i ;\
-	  cpp -fpreprocessed -dD -P $$i >> $(TARNAME)/$$i;\
-	done
+	cp README $(TARNAME)
 	for i in main.c mbr.c rt0.c mbr.h ; do \
-	  cp $$i $(TARNAME);\
+	  cp $(AUXDIR)/c-head-pack.c $(TARNAME)/$$i ;\
+	  $(AUXDIR)/stripcomment -c $$i>> $(TARNAME)/$$i;\
 	done
 	tar zcvf $(TARNAME).tar.gz $(TARNAME)

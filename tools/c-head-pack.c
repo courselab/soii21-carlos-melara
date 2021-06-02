@@ -1,8 +1,10 @@
 /* <file> - <One-line note about this file>
  
    Copyright (c) <YEAR>, <AUTHOR> 
-   This work, <NAME>, is a derivative work of SYSeg, by Monaco F. J.,
-   under GNU GPL v3, available at https://www.gitlab.com/monaco/syseg.
+
+   This piece of software is a derivative work of SYSeg, by Monaco F. J.
+   SYSeg is distributed under the license GNU GPL v3, and is avaialbe
+   at the official repository https://www.gitlab.com/monaco/syseg.
 
    This file is part of <PROJECT>.
 
