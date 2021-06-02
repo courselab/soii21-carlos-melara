@@ -17,42 +17,14 @@
 ##   You should have received a copy of the GNU General Public License
 ##   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AM_CPPFLAGS = @CPP_FLAGS@ -DDATADIR=\"${datarootdir}\"
-AM_CFLAGS =   @C_FLAGS@ 
-AM_LDFLAGS =  @LD_FLAGS@   
+all-local: test
 
-# main_bin_CC = @PTHREAD_CC@
-# main_bin_CFLAGS = @PTHREAD_CFLAGS@ 
+test: stripcomment
 
-bin_PROGRAMS = hex2bin syseg stripcomment
-
-hex2bin_SOURCES = hex2bin.c debug.h
-
-syseg_SOUCES = syseg.c debug.h
-
-stripcomment_SOURCES = stripcomment.c stripcomment-funct.c debug.h
-
-EXTRA_DIST = makefile.utils
-
-# Wrapper execution script
-#
-# bin_PROGRAMS += main.bin 
-# main_bin_SOURCES = main.c 
-# bin_SCRIPTS += main
-#
-# main: main.sh
-# 	cp $< $@
-#
-# clean-local:
-# 	rm -f main
-#
-# install-exec-hook: 
-# 	cd $(DESTDIR)/$(bindir) && mv main.bin main
-#
-# uninstall-hook:
-# 	rm -f $(DESTDIR)/$(bindir)/main
-#
-# EXTRA_DIST += main.sh
-
-#doc:
-
+stripcomment: %: $(top_srcdir)/tools/%
+	@echo $(ECHO_N) "Testing $@ with Makefile...            "
+	@./$< -m $@/makefile > /tmp/$@_out
+	@if diff $@/makefile.stripped /tmp/$@_out > /dev/null; then echo "Ok"; else echo "No"; fi
+	@echo $(ECHO_N) "Testing $@ with C...                   "
+	@./$< -c $@/prog.c > /tmp/$@_out
+	@if diff $@/prog.c.stripped /tmp/$@_out > /dev/null; then echo "Ok"; else echo "No"; fi

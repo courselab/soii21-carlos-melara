@@ -1,5 +1,5 @@
 
-/* prog.c - Coverage test for stripcomment.
+/* prog.c - Test case for stripcomment.
 
    Said program is supposed to remove the entire first multi-line
    comment from this file.

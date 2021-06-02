@@ -1,5 +1,5 @@
 
-# Makefile - coverage test for syseg/tools/stripcomment
+# Makefile - test case for syseg/tools/stripcomment
 # 
 # Said program is supposed to remove all the first consecutive comment lines
 # from this file.

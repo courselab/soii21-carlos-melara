@@ -90,9 +90,11 @@ dnl AC_SUBST([echo],[echo])
 dnl Output files
 
 AC_CONFIG_FILES([Makefile
-		tools/Makefile]
+		tools/Makefile
 		eg/Makefile
-		extra/Makefile)	
+		extra/Makefile
+		test/Makefile
+		])	
 
 dnl Do it
 
