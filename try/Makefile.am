@@ -19,43 +19,20 @@
 
 ##### Change to docm4, makefilem4 etc.
 
+extra_subdirs = mbr 
+
+EXTRA_DIST = $(extra_subdirs) 
+
 doc_m4 = README mbr/README
 
 makefile_m4 = mbr/Makefile
 
-filesm4 = $(doc_m4) $(makefile_m4) 
+include $(top_srcdir)/tools/m4pp.makefile
 
-extra_subdirs = mbr 
-
-EXTRA_DIST = $(extra_subdirs) $(filesm4)
-
-all: $(filesm4)
-
-# Build source and documentation files from m4 sources.
-
-SUFFIXES = .m4
-
-.m4: 
-	m4 --include=$(top_srcdir)/tools $< > $@
-
-$(doc_m4) : $(top_srcdir)/tools/doc.m4
-
-$(makefile_m4) : $(top_srcdir)/tools/makefile.m4
-
-##
-## Housekeeping
-##
-
-# Invoking clean from this directory will clean up m4-generated files.
-
-clean-local:
+clean-local: 
 	for i in $(extra_subdirs); do\
 	  (cd $$i && $(MAKE) clean;)\
 	done
-	rm -f $(filesm4)
-# 
+	rm -f $(files_m4)
 
-dist-hook: 
-	for i in $(EXTRA_DIST); do\
-	  $(MAKE) clean;\
-	done
+dist-hook: clean-local

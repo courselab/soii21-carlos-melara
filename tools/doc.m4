@@ -83,5 +83,26 @@ define(DOCM4_SHELL_HEAD_NOTICE,
 [DOCM4_HASH_HEAD_NOTICE($2,$3)]
 )
 
+define(DOCM4_FILE_NOTICE,
+[
+ This file is a derivative part of DOCM4_PROJECT,
+ copyright (c) DOCM4_YEAR DOCM4_AUTHOR DOCM4_AUTHOR
+ DOCM4_PROJECT is Free Software distributed under GNU GPL vr3.
+ Further information: DOCM4_REPOSITORY
+])
+
+define(DOCM4_HASH_FILE_NOTICE,
+[changecom(,)dnl
+## This file is a derivative part of DOCM4_PROJECT,
+## copyright (c) DOCM4_YEAR DOCM4_AUTHOR DOCM4_AUTHOR
+## DOCM4_PROJECT is Free Software distributed under GNU GPL vr3.
+## Further information: DOCM4_REPOSITORY
+changecom([#],)
+])
+
+define([DOCM4_MAKE_BINTOOLS],
+[include(makefile.utils)]
+)
+
 
 divert(0)dnl

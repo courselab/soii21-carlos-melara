@@ -1,4 +1,6 @@
-include(makefile.m4)
+include(doc.m4)dnl
+DOCM4_HASH_HEAD_NOTICE([Makefile],[Makefile script.])
+
 #
 # Main examples and auxiliary examples
 #
@@ -30,8 +32,7 @@ main.s mbr.s : mbr.h
 # Test and inspect
 #
 
-
-# include(top_dir/tools/makefile.utils)
+DOCM4_MAKE_BINTOOLS
 
 .PHONY: clean clean-extra intel att 16 32 diss /diss /i16 /i32 /a16 /a32
 
