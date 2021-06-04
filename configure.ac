@@ -94,6 +94,7 @@ AC_CONFIG_FILES([Makefile
 		eg/Makefile
 		extra/Makefile
 		test/Makefile
+		try/Makefile
 		])	
 
 dnl Do it

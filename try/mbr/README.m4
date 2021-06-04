@@ -2,11 +2,7 @@
  MbrCmd - Mater Book Record Command interpreter
  ==============================================
 
- This directory and its contents are part of SYSeg.
- Copyright (c) 2021 - Monaco F. J. <monaco@usp.br>
- SYSeg is Free Software distributed under GNU GPL vr3.
- Further information see http://gitlab.com/monaco/syseg
-
+include(top_dir/tools/m4/short-copyright-notice.m4)
 
  Overview
  ------------------------------
