@@ -32,7 +32,7 @@ syseg_SOUCES = syseg.c debug.h
 
 stripcomment_SOURCES = stripcomment.c stripcomment-funct.c debug.h
 
-EXTRA_DIST = makefile.utils
+EXTRA_DIST = makefile.utils doc.m4
 
 # Wrapper execution script
 #

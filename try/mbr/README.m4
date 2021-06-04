@@ -1,8 +1,7 @@
-
+include(doc.m4)
  MbrCmd - Mater Book Record Command interpreter
  ==============================================
-
-include(top_dir/tools/m4/short-copyright-notice.m4)
+DOCM4_DIR_NOTICE
 
  Overview
  ------------------------------

@@ -17,20 +17,37 @@
 ##   You should have received a copy of the GNU General Public License
 ##   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-EXTRA_DIST = mbr
+filesm4 = README mbr/README
 
+extra_subdirs = mbr 
 
-filesm4 = mbr/README mbr/Makefile
+EXTRA_DIST = $(extra_subdirs) $(filesm4)
 
 all: $(filesm4)
 
-# Subidr mbr.
+# Build source and documentation files from m4 sources.
 
-mbr/README: mbr/README.m4 $(top_srcdir)/tools/m4/short-copyright-notice.m4 $(top_srcdir)/tools/m4/make-binutils.m4
-	m4 -Dtop_dir=$(top_srcdir) $< > $@
+SUFFIXES = .m4
 
-mbr/Makefile: mbr/Makefile.m4 $(top_srcdir)/tools/
-	m4 -Dtop_dir=$(top_srcdir) $< > $@
+.m4: 
+	m4 --include=$(top_srcdir)/tools $< > $@
+
+$(filesm4) : $(top_srcdir)/tools/doc.m4
+
+##
+## Housekeeping
+##
+
+# Invoking clean from this directory will clean up m4-generated files.
 
 clean-local:
 	rm -f $(filesm4)
+	for i in $(extra_subdirs); do\
+	  (cd $$i && $(MAKE) clean;)\
+	done
+# 
+
+dist-hook: 
+	for i in $(EXTRA_DIST); do\
+	  $(MAKE) clean;\
+	done
