@@ -1,4 +1,4 @@
-include(top_dir/tools/m4/Makefile-head-notice.m4)
+include(makefile.m4)
 #
 # Main examples and auxiliary examples
 #
@@ -31,7 +31,7 @@ main.s mbr.s : mbr.h
 #
 
 
-include(top_dir/tools/makefile.utils)
+# include(top_dir/tools/makefile.utils)
 
 .PHONY: clean clean-extra intel att 16 32 diss /diss /i16 /i32 /a16 /a32
 

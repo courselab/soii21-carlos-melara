@@ -17,7 +17,13 @@
 ##   You should have received a copy of the GNU General Public License
 ##   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-filesm4 = README mbr/README
+##### Change to docm4, makefilem4 etc.
+
+doc_m4 = README mbr/README
+
+makefile_m4 = mbr/Makefile
+
+filesm4 = $(doc_m4) $(makefile_m4) 
 
 extra_subdirs = mbr 
 
@@ -32,7 +38,9 @@ SUFFIXES = .m4
 .m4: 
 	m4 --include=$(top_srcdir)/tools $< > $@
 
-$(filesm4) : $(top_srcdir)/tools/doc.m4
+$(doc_m4) : $(top_srcdir)/tools/doc.m4
+
+$(makefile_m4) : $(top_srcdir)/tools/makefile.m4
 
 ##
 ## Housekeeping
@@ -41,10 +49,10 @@ $(filesm4) : $(top_srcdir)/tools/doc.m4
 # Invoking clean from this directory will clean up m4-generated files.
 
 clean-local:
-	rm -f $(filesm4)
 	for i in $(extra_subdirs); do\
 	  (cd $$i && $(MAKE) clean;)\
 	done
+	rm -f $(filesm4)
 # 
 
 dist-hook: 
