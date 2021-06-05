@@ -1,4 +1,4 @@
-include(doc.m4)dnl
+include(docm4.m4)dnl
 DOCM4_HASH_HEAD_NOTICE([Makefile],[Makefile script.])
 
 #

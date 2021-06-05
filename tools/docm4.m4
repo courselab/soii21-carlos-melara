@@ -1,21 +1,21 @@
-dnl doc.m4 - Macros for document source files
+dnl  doc.m4 - Macros for document source files
 dnl    
-dnl    Copyright (c) 2021 - Monaco F. J. <monaco@usp.br>
+dnl  Copyright (c) 2021 - Monaco F. J. <monaco@usp.br>
 dnl
-dnl    This file is part of SYSeg. 
+dnl  This file is part of SYSeg. 
 dnl
-dnl    SYSeg is free software: you can redistribute it and/or modify
-dnl    it under the terms of the GNU General Public License as published by
-dnl    the Free Software Foundation, either version 3 of the License, or
-dnl    (at your option) any later version.
+dnl  SYSeg is free software: you can redistribute it and/or modify
+dnl  it under the terms of the GNU General Public License as published by
+dnl  the Free Software Foundation, either version 3 of the License, or
+dnl  (at your option) any later version.
 dnl
-dnl    SYSeg is distributed in the hope that it will be useful,
-dnl    but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-dnl    GNU General Public License for more details.
+dnl  SYSeg is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl  GNU General Public License for more details.
 dnl
-dnl    You should have received a copy of the GNU General Public License
-dnl    along with .  If not, see <http://www.gnu.org/licenses/>.
+dnl  You should have received a copy of the GNU General Public License
+dnl  along with .  If not, see <http://www.gnu.org/licenses/>.
 dnl
 dnl
 divert(-1)
@@ -28,8 +28,8 @@ define([DOCM4_YEAR],[2001])
 define([DOCM4_AUTHOR],[Monaco F. J.])
 define([DOCM4_EMAIL]),[<monaco@usp.br>])
 
-## A short head notice that can be used in the README file
-## describing the contents of a directory.
+dnl A short head notice that can be used in the README file
+dnl describing the contents of a directory.
 
 define(DOCM4_DIR_NOTICE,
 [
@@ -39,12 +39,12 @@ define(DOCM4_DIR_NOTICE,
  Further information: DOCM4_REPOSITORY
 ])
 
-## Copyright notice for Makefiles
-##
-## Arguments:
-##
-##  $1  file name
-##  $2  one-line brief description
+dnl Copyright notice for Makefiles
+dnl
+dnl Arguments:
+dnl
+dnl  $1  file name
+dnl  $2  one-line brief description
 
 define(DOCM4_HASH_HEAD_NOTICE,
 [changecom(,)dnl
@@ -69,13 +69,13 @@ define(DOCM4_HASH_HEAD_NOTICE,
 changecom([#],[])
 ])
 
-## Copyright notice for shell scripts that use # as comment mark.
-##
-## Arguments:
-##
-##  $1  full path to the shell
-##  $2  file name
-##  $3  one-line brief description
+dnl Copyright notice for shell scripts that use # as comment mark.
+dnl
+dnl Arguments:
+dnl
+dnl  $1  full path to the shell
+dnl  $2  file name
+dnl  $3  one-line brief description
 
 define(DOCM4_SHELL_HEAD_NOTICE,
 #!$1
@@ -93,15 +93,15 @@ define(DOCM4_FILE_NOTICE,
 
 define(DOCM4_HASH_FILE_NOTICE,
 [changecom(,)dnl
-## This file is a derivative part of DOCM4_PROJECT,
-## copyright (c) DOCM4_YEAR DOCM4_AUTHOR DOCM4_AUTHOR
+## This file is a derivative worl of DOCM4_PROJECT,
+## copyright (c) DOCM4_YEAR DOCM4_AUTHOR DOCM4_AUTHOR.
 ## DOCM4_PROJECT is Free Software distributed under GNU GPL vr3.
 ## Further information: DOCM4_REPOSITORY
 changecom([#],)
 ])
 
 define([DOCM4_MAKE_BINTOOLS],
-[include(makefile.utils)]
+[include(bintools.makefile)]
 )
 
 

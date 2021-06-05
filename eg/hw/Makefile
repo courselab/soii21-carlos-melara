@@ -337,7 +337,7 @@ egx-01.bin : %.bin : %.S
 # Test and inspect
 #
 
-include $(AUXDIR)/makefile.utils
+include $(AUXDIR)/bintools.makefile
 
 .PHONY: clean clean-extra intel att 16 32 diss /diss /i16 /i32 /a16 /a32
 
@@ -356,18 +356,18 @@ clean-extra:
 ## Create bootable USP stick if BIOS needs it
 ##
 
-%.iso : %.img
-	xorriso -as mkisofs -b $< -o $@ -isohybrid-mbr $< -no-emul-boot -boot-load-size 4 ./
+# %.iso : %.img
+# 	xorriso -as mkisofs -b $< -o $@ -isohybrid-mbr $< -no-emul-boot -boot-load-size 4 ./
 
-%.img : %.bin
-	dd if=/dev/zero of=$@ bs=1024 count=1440
-	dd if=$< of=$@ seek=0 conv=notrunc
+# %.img : %.bin
+# 	dd if=/dev/zero of=$@ bs=1024 count=1440
+# 	dd if=$< of=$@ seek=0 conv=notrunc
 
-run-iso: $(IMG)
-	qemu-system-i386 -drive format=raw,file=$(IMG) -net none
+# run-iso: $(IMG)
+# 	qemu-system-i386 -drive format=raw,file=$(IMG) -net none
 
-stick: $(IMG)
-	@if test -z "$(STICK)"; then \
-	echo "*** ATTENTION: make IMG=foo.bin SITCK=/dev/X"; exit 1; fi 
-	dd if=$< of=$(STICK)
+# stick: $(IMG)
+# 	@if test -z "$(STICK)"; then \
+# 	echo "*** ATTENTION: make IMG=foo.bin SITCK=/dev/X"; exit 1; fi 
+# 	dd if=$< of=$(STICK)
 

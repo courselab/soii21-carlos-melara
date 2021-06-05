@@ -28,11 +28,11 @@ dnl 	   because you have missed the build steps described in the
 dnl	   README file in the top project's source directory.
 dnl        
 dnl
-include(doc.m4)dnl
+include(docm4.m4)dnl
 
  Programming exercises
  ==============================
- DOCM4_DIR_NOTICE
+DOCM4_DIR_NOTICE
  
 DOCM4_HASH_HEAD_NOTICE(Makefile, Make script)
 

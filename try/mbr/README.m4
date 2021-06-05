@@ -1,4 +1,4 @@
-include(doc.m4)
+include(docm4.m4)
  MbrCmd - Mater Book Record Command interpreter
  ==============================================
 DOCM4_DIR_NOTICE

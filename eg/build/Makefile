@@ -133,7 +133,7 @@ eg-08_foo.o eg-08_bar.o: %.o : %.c
 # diss:  $(IMG)
 # 	objdump -M intel -m i386 -d $< ; \
 
-include $(AUXDIR)/makefile.utils
+include $(AUXDIR)/bintools.makefile
  
 
 

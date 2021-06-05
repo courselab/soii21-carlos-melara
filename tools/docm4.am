@@ -1,4 +1,4 @@
-##   Automake.am - Automake script.
+##   m4pp.makefile - Makefilescript to handle handcrafted Makefiles
 ##
 ##   Copyright (c) 2021 - Monaco F. J. <monaco@usp.br>
 ##
@@ -17,22 +17,18 @@
 ##   You should have received a copy of the GNU General Public License
 ##   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-##### Change to docm4, makefilem4 etc.
+EXTRA_DIST += $(docm4_files)
 
-extra_subdirs = mbr 
+all-local: $(docm4_files)
 
-EXTRA_DIST = $(extra_subdirs) 
+SUFFIXES = .m4
 
-docm4_files = README mbr/README mbr/Makefile
+.m4: 
+	m4 --include=$(top_srcdir)/tools $< > $@
 
-docm4_deps = $(top_srcdir)/tools/bintools.makefile
+$(doc_m4) : $(top_srcdir)/tools/docm4.m4 $(docm4_deps)
 
-include $(top_srcdir)/tools/docm4.am
+clean-local:  $(docm4_files)
 
-clean-local: 
-	for i in $(extra_subdirs); do\
-	  (cd $$i && $(MAKE) clean;)\
-	done
-	rm -f $(docm4_files)
+#### end of makefile.pp script.
 
-dist-hook: clean-local

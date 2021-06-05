@@ -26,7 +26,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])                      
 AC_CONFIG_HEADERS([config.h])                  
 
-AM_INIT_AUTOMAKE([-Wall 1.14.1 subdir-objects])	dnl Init Automake options
+AM_INIT_AUTOMAKE([-Wall 1.14.1 subdir-objects -Werror])	dnl Init Automake options
 
 
 dnl Define language and tools
