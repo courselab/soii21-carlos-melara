@@ -101,8 +101,19 @@ changecom([#],)
 ])
 
 define([DOCM4_MAKE_BINTOOLS],
-[include(bintools.makefile)]
-)
+[changecom(,)dnl
+# ------------------------------------------------------------
+# The following excerpt of code was copied from Make Bintools,
+# part of DOCM4_PROJECT. Make-bintools is a collection of handy
+# 'make' rules for disassembling object files, inspecting and
+# comparing source and binary files.
+
+include(bintools.makefile)
+changecom([#],)dnl
+
+# End of Make Bintools.
+# -------------------------------------------------------------
+])
 
 
 divert(0)dnl

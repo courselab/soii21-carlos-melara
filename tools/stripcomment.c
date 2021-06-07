@@ -43,14 +43,16 @@ void usage()
   msg("          options:   --help        this help");
   msg("                     --version     software version");
   msg("                     -c            first C-style multine comment");
-  msg("                     -m            first consecutive Makefile comments");
-/*msg("                     -g            global (remove all); requires -m|-c)"); */
+  msg("                     -h            first consecutive hash-comments");
+  msg("                     -m            first consecutive m4 comments");
   msg("");
 }
 
 
 void strip_c (FILE *fpin, FILE *fpout, int global);
 void strip_Makefile (FILE *fpin, FILE *fpout, int global);
+void strip_m4 (FILE *fpin, FILE *fpout, int global);
+
 
 /* Main program. */
 
@@ -62,7 +64,7 @@ int main (int argc, char **argv)
   fpin = stdin;
   fpout = stdout;
 
-
+  
   /* Process options. */
 
 
@@ -109,8 +111,10 @@ int main (int argc, char **argv)
 
   if (!strcmp (argv[1],"-c"))
     strip_c (fpin, fpout, 0);
-  else if (!strcmp (argv[1], "-m"))
+  else if (!strcmp (argv[1], "-h"))
     strip_Makefile (fpin, fpout, 0);
+  else if (!strcmp (argv[1], "-m"))
+    strip_m4 (fpin, fpout, 0);
   else
     fprintf (stderr, "Unkown option\n");
   

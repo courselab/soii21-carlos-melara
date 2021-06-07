@@ -11,8 +11,10 @@
    Not this ***** /*, nor these //* /**
 
  */
-
+#define This line stays
 /* This is the second comment and should not be removed. */
+
+/* Neither this. */
 
 void foo()			/* This comment should remain. */
 {

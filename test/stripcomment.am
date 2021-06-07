@@ -21,13 +21,16 @@ all-local: test
 
 test: stripcomment
 
-stripcomment: %: $(top_srcdir)/tools/%
-	@echo $(ECHO_N) "Testing $@ with Makefile...            "
-	@./$< -m $@/makefile > /tmp/$@_out
-	@if diff $@/makefile.stripped /tmp/$@_out > /dev/null; then echo "Ok"; else echo "No"; fi
-	@echo $(ECHO_N) "Testing $@ with C...                   "
-	@./$< -c $@/prog.c > /tmp/$@_out
-	@if diff $@/prog.c.stripped /tmp/$@_out > /dev/null; then echo "Ok"; else echo "No"; fi
+stripcomment: $(top_srcdir)/tools/stripcomment
+	@echo $(ECHO_N) "Testing $@ with one-line hash comments...             "
+	@./$< -h $@-test/makefile > /tmp/$@_out
+	@if diff $@-test/makefile.stripped /tmp/$@_out > /dev/null; then echo "Ok"; else echo "No"; fi
+	@echo $(ECHO_N) "Testing $@ with multi-line C comments...              "
+	@./$< -c $@-test/prog.c > /tmp/$@_out
+	@if diff $@-test/prog.c.stripped /tmp/$@_out > /dev/null; then echo "Ok"; else echo "No"; fi
+	@echo $(ECHO_N) "Testing $@ with m4 one line (dnl) comments ...        "
+	@./$< -m $@-test/file.m4 > /tmp/$@_out
+	@if diff $@-test/file.m4.stripped /tmp/$@_out > /dev/null; then echo "Ok"; else echo "No"; fi
 
 $(top_srcdir)/tools/stripcomment:
 	cd $(@D) && make $(@F)

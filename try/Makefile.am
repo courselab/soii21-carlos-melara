@@ -25,8 +25,6 @@ EXTRA_DIST = $(extra_subdirs)
 
 docm4_files = README mbr/README mbr/Makefile
 
-docm4_deps = $(top_srcdir)/tools/bintools.makefile
-
 include $(top_srcdir)/tools/docm4.am
 
 clean-local: 

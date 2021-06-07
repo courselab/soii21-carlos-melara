@@ -148,3 +148,4 @@ stick: $(IMG)
 	echo "*** ATTENTION: make IMG=foo.bin SITCK=/dev/X"; exit 1; fi 
 	dd if=$< of=$(STICK)
 
+.PHONY: clean clean-extra intel att 16 32 diss /diss /i16 /i32 /a16 /a32

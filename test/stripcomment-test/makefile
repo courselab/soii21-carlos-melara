@@ -9,8 +9,10 @@
 #  as well as a #  in the middle of a line.
 #
 # Everything up to this line should be removed.
-
+this : line stays
 # This line should not be removed
+
+# Neither this
 
 variable = value		# This comment should be kept
 

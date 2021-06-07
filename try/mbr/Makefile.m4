@@ -27,15 +27,6 @@ main.s mbr.s rt0.s :%.s: %.c
 
 main.s mbr.s : mbr.h
 
-
-#
-# Test and inspect
-#
-
-DOCM4_MAKE_BINTOOLS
-
-.PHONY: clean clean-extra intel att 16 32 diss /diss /i16 /i32 /a16 /a32
-
 #
 # Housekeeping
 #
@@ -47,24 +38,6 @@ clean:
 clean-extra:
 	rm -f *~ \#*
 
-##
-## Create bootable USP stick if BIOS needs it
-##
-
-%.iso : %.img
-	xorriso -as mkisofs -b $< -o $@ -isohybrid-mbr $< -no-emul-boot -boot-load-size 4 ./
-
-%.img : %.bin
-	dd if=/dev/zero of=$@ bs=1024 count=1440
-	dd if=$< of=$@ seek=0 conv=notrunc
-
-run-iso: $(IMG)
-	qemu-system-i386 -drive format=raw,file=$(IMG) -net none
-
-stick: $(IMG)
-	@if test -z "$(STICK)"; then \
-	echo "*** ATTENTION: make IMG=foo.bin SITCK=/dev/X"; exit 1; fi 
-	dd if=$< of=$(STICK)
 
 #
 # Programming exercise
@@ -73,12 +46,23 @@ stick: $(IMG)
 VERSION=0.1.0
 TARNAME=mbr-$(VERSION)
 
-pack: 
+pack:
 	rm -rf $(TARNAME)
 	mkdir $(TARNAME)
-	cp README $(TARNAME)
-	for i in main.c mbr.c rt0.c mbr.h ; do \
+	(cd .. && make clean && make)
+	for i in main.c mbr.c rt0.c mbr.h; do\
 	  cp $(AUXDIR)/c-head-pack.c $(TARNAME)/$$i ;\
 	  $(AUXDIR)/stripcomment -c $$i>> $(TARNAME)/$$i;\
 	done
+	for i in Makefile; do\
+	  cp $(AUXDIR)/Makefile-head-pack $(TARNAME)/$$i ;\
+	  $(AUXDIR)/stripcomment -m $$i>> $(TARNAME)/$$i;\
+	done
 	tar zcvf $(TARNAME).tar.gz $(TARNAME)
+
+# Include Make Bintools
+
+DOCM4_MAKE_BINTOOLS
+
+foo:
+	echo $(srcdir)
