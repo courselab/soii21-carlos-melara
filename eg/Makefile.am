@@ -17,22 +17,19 @@
 ##   You should have received a copy of the GNU General Public License
 ##   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = 
+extra_subdirs = hw abi build make
 
-EXTRA_DIST = hw build
+EXTRA_DIST = $(extra_subdirs)
 
-.PHYONY: doc
+docm4_files = abi/README abi/Makefile
 
-# Build local documentation
-#
-#docm4src =  $(abs_srcdir)/README $(EXTRA_DIST:%=%/README)
-#
-#docm4: $(docm4src)
-#
-#$(docm4src) : % : %.m4 $(DOCM4_TEMPLATES:%=$(DOCM4_DIR)/%) 
-#	m4 -D DOCM4_DIR=$(DOCM4_DIR) $< > $@ 
+include $(top_srcdir)/tools/docm4.am
 
-# Do not clean built documentation
-#
-#clean-local:
-#	rm hw/README build/README
+clean-local:
+	for i in $(extra_subdirs); do\
+	  (cd $$i && $(MAKE) clean;)\
+	done
+	rm -f $(docm4_files)
+
+dist-hook: clean-local
+

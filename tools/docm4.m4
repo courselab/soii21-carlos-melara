@@ -109,7 +109,7 @@ define([DOCM4_MAKE_BINTOOLS],
 # inspecting and comparing the contents of source and object files.
 # Further information: DOCM4_REPOSITORY
 
-include(bintools.makefile)
+include(bintools.m4)
 changecom([#],)dnl
 
 # End of Make Bintools.
@@ -135,11 +135,10 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
  BUILD INSTRUCTIONS
  
 
- Use
+ * For buiding and inspecting, use
+ 
 
    make foo				     Build foo.
-
-   make run IMG=foo	             	     Test foo with the emulator.
 
    make diss IMG=foo 			     Disassemble foo.
 
@@ -154,13 +153,20 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
 
    make clean			             undo make all
 
-   make stick IMG=foo STICK=/dev/sdX         make a bootable USB stick
-
-   make iso IMG=foo	             	     build an iso9660 image with foo
-
    make diff foo bar baz		     Show graphical diff between files
 
    	     	     			     ASM and BIT variables apply
+
+
+  * If any example involves the manipulation of a bootable image, use
+  
+
+   make run IMG=foo	             	     Test foo with the emulator.
+
+   make iso IMG=foo	             	     build an iso9660 image with foo
+
+   make stick IMG=foo STICK=/dev/sdX         make a bootable USB stick
+
 
    SHORTCUTS
 
@@ -178,8 +184,9 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
    make foo/dump			     show raw contents in hexadecimal
 
    make foo/run				     test foo with the emulator
- 
- 
+
+
+ FILE NAMES
 
  Some examples allow alternative build recipes which can be selected
  by passing the command-line variable ALT=<number> to 'make'. See bellow. 
@@ -214,6 +221,8 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
 
  NOTE ON BOOTING THE REAL HARDWARE
 
+    If any example involves booting from a USB stick, mind following note.
+
     Unfortunately, not all BIOSes  handle USB boot devices in the same
     way (welcome to system level). Some are likely to emulate it as a floppy
     disk and rely on the original IBM PC boot method we are exploring here.
@@ -239,9 +248,8 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
     If you misspell your stick as /dev/hda, you may end up grieving in
     pitiful misery and hopeless regrets... do not lower your guard.
 
-    Note: in some systems, storage device may also appear as
-    /dev/mmcblk; e.g. /dev/mmcblk0p1 is the first partition of the
-    device mmcklk0.
+    Note: in some systems, storage device may also appear as /dev/mmcblk;
+    e.g. /dev/mmcblk0p1 is the first partition of the device mmcklk0.
 ])
 
 ##
@@ -249,7 +257,7 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
 ##
 define([DOCM4_CLOSING_WORDS],
 [
- Happy coding!
+ Happy hacking! 
  
                                   
 ])
