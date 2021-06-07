@@ -34,6 +34,16 @@ include(docm4.m4)dnl
  ==============================
 DOCM4_DIR_NOTICE
  
-DOCM4_HASH_HEAD_NOTICE(Makefile, Make script)
+ This directory contains illustration projects and programming exercises.
 
-DOCM4_SHELL_HEAD_NOTICE(/bin/foo,bar,baz)
+ Plese, refer to the file README in each subdirectory for furthe information.
+
+
+ Contents
+ ------------------------------
+
+  Do, or do not. There is no “try”  (Yoda) 
+
+
+  - mbr		a real-mode command line interpreter witch fits the MBR
+

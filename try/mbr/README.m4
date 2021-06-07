@@ -21,18 +21,28 @@ DOCM4_DIR_NOTICE
 
  3) Implement a new command exploring other BIOS services.
 
-    You may get rid of built in commands if you run out of space.
+    You may get rid of built in commands implemented in the example
+    code if you run out of space for your own commands.
 
  Directions
  ------------------------------
 
- Under your project tree, create a directory mbr.
+ Under this directory, invoke the make rule
 
- Copy the files
+   make pack
 
-     main.c
-     tos.c
-     tos.h
-     rt0.c
+ This should create a tarball containing the project files.
+ Copy it to your own project tree and uncompress the file.
 
+DOCM4_UPDATE_AUTHOR_INFO
+
+DOCM4_CLOSING_WORDS
+
+
+ APPENDIX A
+ ------------------------------
  
+ Conveniency rules from Make bintool
+
+
+DOCM4_MAKE_BINTOOLS_DOC

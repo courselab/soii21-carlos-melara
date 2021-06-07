@@ -50,19 +50,18 @@ pack:
 	rm -rf $(TARNAME)
 	mkdir $(TARNAME)
 	(cd .. && make clean && make)
-	for i in main.c mbr.c rt0.c mbr.h; do\
+	for i in main.c mbr.c rt0.c mbr.h mbr.ld; do\
 	  cp $(AUXDIR)/c-head-pack.c $(TARNAME)/$$i ;\
 	  $(AUXDIR)/stripcomment -c $$i>> $(TARNAME)/$$i;\
 	done
 	for i in Makefile; do\
 	  cp $(AUXDIR)/Makefile-head-pack $(TARNAME)/$$i ;\
-	  $(AUXDIR)/stripcomment -m $$i>> $(TARNAME)/$$i;\
+	  $(AUXDIR)/stripcomment -h $$i>> $(TARNAME)/$$i;\
 	done
+	cp README $(TARNAME)
 	tar zcvf $(TARNAME).tar.gz $(TARNAME)
 
 # Include Make Bintools
 
 DOCM4_MAKE_BINTOOLS
 
-foo:
-	echo $(srcdir)

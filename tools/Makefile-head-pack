@@ -1,7 +1,7 @@
 #  Makefile - Make script.
 # 
 #   Copyright (c) <YEAR>, <AUTHOR> 
-$
+#
 #   This piece of software is a derivative work of SYSeg, by Monaco F. J.
 #   SYSeg is distributed under the license GNU GPL v3, and is avaialbe
 #   at the official repository https://www.gitlab.com/monaco/syseg.

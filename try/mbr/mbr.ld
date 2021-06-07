@@ -1,4 +1,4 @@
-/*  Linker script for MBR. */
+/*  Linker script. */
 
 OUTPUT_FORMAT(binary)		/* Output flat binary (no structure) */
 SECTIONS
