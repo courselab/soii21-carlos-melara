@@ -28,3 +28,6 @@ stripcomment: %: $(top_srcdir)/tools/%
 	@echo $(ECHO_N) "Testing $@ with C...                   "
 	@./$< -c $@/prog.c > /tmp/$@_out
 	@if diff $@/prog.c.stripped /tmp/$@_out > /dev/null; then echo "Ok"; else echo "No"; fi
+
+$(top_srcdir)/tools/stripcomment:
+	cd $(@D) && make $(@F)
