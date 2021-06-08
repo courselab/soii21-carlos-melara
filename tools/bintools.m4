@@ -31,6 +31,8 @@ DIFF_TOOL=meld
 ## You probably don't need to change beyond this line
 ##
 
+# Disassemble
+
 ifndef ASM
 ifeq (,$(findstring intel, $(MAKECMDGOALS)))
 ASM_SYNTAX = att
@@ -80,9 +82,15 @@ diss:  $(IMG)
 %/a32 %/32: %
 	make --quiet $</diss att 32
 
+# Run on the emulator
+
 %/run : %
 	make run IMG=$<
 
+run: $(IMG)
+	qemu-system-i386 -drive format=raw,file=$< -net none
+
+# Dump contents in hexadecimal
 
 dump: $(IMG)
 	hexdump -C $<
@@ -90,6 +98,9 @@ dump: $(IMG)
 
 %/dump : %
 	make --quiet dump IMG=$< 
+
+
+# Diff-compare
 
 
 MISSING_DIFF_TOOL="Can't find $(DIFF_TOOL); please edit syseg/tools/makefile.utils"
@@ -125,8 +136,6 @@ diff : $(word 2, $(MAKECMDGOALS))
 		;;\
 	esac
 
-run: $(IMG)
-	qemu-system-i386 -drive format=raw,file=$< -net none
 
 
 ##
