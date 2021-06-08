@@ -21,20 +21,18 @@ DOCM4_DIR_NOTICE
 
  3) Implement a new command exploring other BIOS services.
 
-    You may get rid of built in commands implemented in the example
-    code if you run out of space for your own commands.
+    E.g. use BIOS interrupt service 0x12 to report the computer's memory size,
+    of 0x1a to read the system time, or any other cool feature you can
+    think of.
 
- Directions
- ------------------------------
+    Consult reference (1) by the end of this file and related online sources.
 
- Under this directory, invoke the make rule
+    Tip: you may get rid of built in commands implemented in the example
+    code if you run out of space for your own commands. Rememer, your binary
+    must fit in 512 bytes (not kbytes!) --- actually, 510 bytes if we count
+    out the boot signature (so, hands on bit twiddling.) 
 
-   make pack
-
- This should create a tarball containing the project files.
- Copy it to your own project tree and uncompress the file.
-
-DOCM4_UPDATE_AUTHOR_INFO
+DOCM4_PACK_DIRECTIONS
 
 DOCM4_CLOSING_WORDS
 
@@ -42,7 +40,12 @@ DOCM4_CLOSING_WORDS
  APPENDIX A
  ------------------------------
  
- Conveniency rules from Make bintool
-
-
 DOCM4_MAKE_BINTOOLS_DOC
+
+
+
+ NOTES
+ ------------------------------
+
+ (1) BIOS interrupt calls, https://en.wikipedia.org/wiki/BIOS_interrupt_call
+ 

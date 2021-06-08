@@ -27,6 +27,8 @@ define([DOCM4_REPOSITORY],[http://gitlab.com/monaco/syseg])
 define([DOCM4_YEAR],[2001])
 define([DOCM4_AUTHOR],[Monaco F. J.])
 define([DOCM4_EMAIL]),[<monaco@usp.br>])
+define([DOCM4_LICENSE],[GNU General Public License vr.3])
+define([DOCM4_LICENSE_SHORT],[GNU GPL vr.3])
 
 dnl A short head notice that can be used in the README file
 dnl describing the contents of a directory.
@@ -103,16 +105,16 @@ changecom([#],)
 define([DOCM4_MAKE_BINTOOLS],
 [changecom(,)dnl
 # ------------------------------------------------------------
-# The following excerpt of code was copied from Make Bintools,
+# The following excerpt of code was copied from MakeBintools,
 # part of DOCM4_PROJECT, Copyright DOCM4_YEAR DOCM4_AUTHOR.
-# Make-bintools is a collection of handy 'make' rules for
+# MakeBintools is a collection of handy 'GNU make' rules for
 # inspecting and comparing the contents of source and object files.
 # Further information: DOCM4_REPOSITORY
 
 include(bintools.m4)
 changecom([#],)dnl
 
-# End of Make Bintools.
+# End of MakeBintools.
 # -------------------------------------------------------------
 ])
 
@@ -122,6 +124,42 @@ define([DOCM4_UPDATE_AUTHOR_INFO],
 
     - fill in file AUTHORS with the pertinent information
     - edit heading comments in all source files with your data
+
+  Open Source literacy time:
+
+  Remember: authorship and copyright of your source code should be
+  assigned to you, the author, not to DOCM4_PROJECT. Nevertheless,
+  being it a derivative work, credits are due to DOCM4_PROJECT
+  author --- therefore, make sure the proper attribution is
+  included along with the copyright notice. Also, bear in mind
+  that the DOCM4_PROJECT's licence requires that your derivative
+  work to be distributed under not-less restrictive terms --- if
+  in doubt, conserve the same license.
+
+  One way to claim copyright and attribute credits is adding the
+  following notice at the top of every source file of your work
+  (e.g. if keeping the original DOCM4_PROJECT license):
+
+     Copyright (c) <CURRENT-YEAR>, <YOUR-NAME> 
+
+     This piece of software is a derivative work of DOCM4_PROJECT,
+     by DOCM4_AUTHOR. DOCM4_PROJECT is distributed under the license
+     <DOCM4_LICENSE_SHORT>, and is available at <DOCM4_REPOSITORY>.
+
+    This file is part of <YOUR-WORK>.
+
+    <YOUR-WORK> is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+   
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+   
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ])
 
 
@@ -131,7 +169,15 @@ define([DOCM4_UPDATE_AUTHOR_INFO],
 ##
 define([DOCM4_MAKE_BINTOOLS_DOC],
 [
- 
+ Conveniency rules from MakeBintools
+
+ The following excerpt of code was copied from MakeBintools,
+ part of DOCM4_PROJECT, Copyright DOCM4_YEAR DOCM4_AUTHOR.
+ MakeBintools is a collection of handy 'GNU make' rules for
+ inspecting and comparing the contents of source and object files.
+ Further information: DOCM4_REPOSITORY
+
+
  BUILD INSTRUCTIONS
  
 
@@ -256,6 +302,8 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
 
     Note: in some systems, storage device may also appear as /dev/mmcblk;
     e.g. /dev/mmcblk0p1 is the first partition of the device mmcklk0.
+
+  --- End of MakeBintools
 ])
 
 ##
@@ -274,18 +322,44 @@ define([DOCM4_CLOSING_WORDS],
 define([UPDATE_MAKEFILE],
 [
 # Update Makefile from Makefile.m4 if needed, and then invoke make again.
-# If the source is from a pack-distribution, the presence of file .dist
+# If the source is from a pack-distribution, the lack of Makefile.m4
 # inhibits the updating. 
 
 ifndef UPDATED
 $(MAKECMDGOALS) : Makefile
 
-Makefile : Makefile.m4
+Makefile : $(shell if test -f Makefile.m4; then echo Makefile.m4; fi);
 	@if ! test -f .dist; then\
 	  cd .. && make;\
+	  make -f Makefile clean;\
 	  make -f Makefile UPDATED=1 $(MAKECMDGOAL);\
 	fi
+
 endif
+])
+
+##
+## Programing exercise directions with pack
+##
+define([DOCM4_PACK_DIRECTIONS],
+[
+ Directions for the exercise
+ ------------------------------
+
+ Under this directory, invoke the make rule
+
+   make pack
+
+ This should create a tarball containing the project files.
+ Copy it to your own project tree and uncompress the tarball.
+
+ To complete the programming exercise, proceed as indicated
+ in both this file and in the example source code.
+
+ If applicable, please edit either the supplied build scripts.
+
+DOCM4_UPDATE_AUTHOR_INFO
+
 ])
 
 divert(0)dnl
