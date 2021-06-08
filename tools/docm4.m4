@@ -170,16 +170,22 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
 
    SHORTCUTS
 
-   make foo/diss			     disassembly as 32-bit AT&T
-   make foo/diss intel|att		     disassembly as 32-bit Intel or AT&T
-   make foo/diss 16|32			     disassembly as 16-bit or 32-bit
-   make foo/diss intel\att 16|32	     disassembly as Intel|AT&T 16|32 bit
-   make foo/diss 16|32 intel|att	     disassembly as Intel|AT&T 16|32 bit
+   make foo/diss			     disassemble .text as 32-bit AT&T
+   make foo/d				     same as foo/diss  (also bellow)
 
-   make foo/i16	       			     disassembly as Intel 16-bit
-   make foo/i32	       			     disassembly as Intel 32-bit
-   make foo/a16 or foo/16 		     disassembly as AT&T  16-bit
-   make foo/a32	of foo/32       	     disassembly as AT&T  32-bit
+   make foo/diss intel|att		     disassemble as 32-bit Intel or AT&T
+   make foo/diss 16|32			     disassemble as 16-bit or 32-bit
+   make foo/diss intel|att 16|32	     disassemble as Intel|AT&T 16|32 bit
+   make foo/diss 16|32 intel|att	     disassemble as Intel|AT&T 16|32 bit
+
+   make foo/i16	       			     disassemble as Intel 16-bit
+   make foo/i32	       			     disassemble as Intel 32-bit
+   make foo/a16 or foo/16 		     disassemble as AT&T  16-bit
+   make foo/a32	of foo/32       	     disassemble as AT&T  32-bit
+
+   		   			     In all disassembly rules, a
+					     trailing '*' means disassemble all
+					     sections, e.g. foo/d* foo/16* ...
 
    make foo/dump			     show raw contents in hexadecimal
 

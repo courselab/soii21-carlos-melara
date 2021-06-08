@@ -62,25 +62,38 @@ endif
 intel att 16 32: 
 	@echo > /dev/null
 
-diss:  $(IMG)
+diss d diss* d*:  $(IMG)
 	@objdump -f $< > /dev/null 2>&1; \
 	if test $$? -eq 1   ; then \
 	  objdump -M $(ASM_SYNTAX) -b binary -m $(ASM_MACHINE) -D $< ; \
 	else \
-	  objdump -M $(ASM_SYNTAX) -m $(ASM_MACHINE) -d $< ; \
+	  if test $@ = "diss" || test $@ = "d" ; then\
+	    objdump -M $(ASM_SYNTAX) -m $(ASM_MACHINE) -d $< ; \
+	  else\
+	    objdump -M $(ASM_SYNTAX) -m $(ASM_MACHINE) -D $< ; \
+	 fi;\
 	fi
 
-%/diss : %
-	make --quiet diss IMG=$< $(filter 16 32 intel att, $(MAKECMDGOALS))
+%/diss %/d %/diss* %/d*: %
+	make --quiet $(@F) IMG=$< $(filter 16 32 intel att, $(MAKECMDGOALS))
 
 %/i16 %/16i : %
 	make --quiet $</diss intel 16
 %/i32 %/32i : %
 	make --quiet $</diss intel 32
-%/a16 %/16 : %
+%/a16 %/16a %/16 : %
 	make --quiet $</diss att 16
-%/a32 %/32: %
+%/a32 %/32a %/32: %
 	make --quiet $</diss att 32
+
+%/i16* %/16i* : %
+	make --quiet $</DISS intel 16
+%/i32* %/32i* : %
+	make --quiet $</DISS intel 32
+%/a16* %/16a* %/16* : %
+	make --quiet $</DISS att 16
+%/a32* %/32a* %/32*: %
+	make --quiet $</DISS att 32
 
 # Run on the emulator
 
