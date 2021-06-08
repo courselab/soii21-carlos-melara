@@ -1,19 +1,11 @@
 include(docm4.m4)dnl
 DOCM4_HASH_HEAD_NOTICE([Makefile],[Makefile script.])
 
+UPDATE_MAKEFILE
 
 targets = eg-01.o
 
 all : $(targets) 
-
-ifndef UPDATE
-$(MAKECMDGOALS) : Makefile
-
-Makefile : Makefile.m4
-	cd .. && make
-	make -f Makefile UPDATE=1 $(MAKECMDGOAL)
-endif
-
 
 ###########################################################
 ##

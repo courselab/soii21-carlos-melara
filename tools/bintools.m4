@@ -87,13 +87,13 @@ diss d diss* d*:  $(IMG)
 	make --quiet $</diss att 32
 
 %/i16* %/16i* : %
-	make --quiet $</DISS intel 16
+	make --quiet $</diss* intel 16
 %/i32* %/32i* : %
-	make --quiet $</DISS intel 32
+	make --quiet $</diss* intel 32
 %/a16* %/16a* %/16* : %
-	make --quiet $</DISS att 16
+	make --quiet $</diss* att 16
 %/a32* %/32a* %/32*: %
-	make --quiet $</DISS att 32
+	make --quiet $</diss* att 32
 
 # Run on the emulator
 

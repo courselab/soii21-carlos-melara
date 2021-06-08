@@ -268,4 +268,24 @@ define([DOCM4_CLOSING_WORDS],
                                   
 ])
 
+##
+## Update Makefile from Makefile.m4
+##
+define([UPDATE_MAKEFILE],
+[
+# Update Makefile from Makefile.m4 if needed, and then invoke make again.
+# If the source is from a pack-distribution, the presence of file .dist
+# inhibits the updating. 
+
+ifndef UPDATED
+$(MAKECMDGOALS) : Makefile
+
+Makefile : Makefile.m4
+	@if ! test -f .dist; then\
+	  cd .. && make;\
+	  make -f Makefile UPDATED=1 $(MAKECMDGOAL);\
+	fi
+endif
+])
+
 divert(0)dnl
