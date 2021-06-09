@@ -18,11 +18,11 @@
 ##   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-extra_subdirs = mbr 
+extra_subdirs = mbr tyos
 
 EXTRA_DIST = $(extra_subdirs) 
 
-docm4_files = README mbr/README mbr/Makefile
+docm4_files = README mbr/README mbr/Makefile tyos/Makefile
 
 include $(top_srcdir)/tools/docm4.am
 

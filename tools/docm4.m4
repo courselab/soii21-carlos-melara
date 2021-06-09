@@ -362,4 +362,16 @@ DOCM4_UPDATE_AUTHOR_INFO
 
 ])
 
+##
+##
+##
+define([DOCM4_RELEVANT_RULES],
+[changecom(,)
+###########################################################
+##
+## These are the rules of interest in this set of examples.
+##
+changecom([#],)
+])
+
 divert(0)dnl

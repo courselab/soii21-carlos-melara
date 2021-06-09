@@ -38,13 +38,17 @@ AM_PROG_AR                      dnl Archiver for static lib
 
 AX_CHECK_COMPILE_FLAG(
 	[-fcf-protection],,
-	[AC_MSG_ERROR([-fcf-protection not supported by compiler (gcc too old?)])]
+	[AC_MSG_ERROR([*** -fcf-protection not supported by compiler (gcc too old?)])]
 	)
 
 AX_GCC_FUNC_ATTRIBUTE([naked])
 if test $ax_cv_have_func_attribute_naked = "no"; then
-AC_MSG_ERROR([function attribute 'naked' not supported (gcc too old?)])
+AC_MSG_ERROR([*** function attribute 'naked' not supported (gcc too old?)])
 fi
+
+AC_CHECK_PROG([has_xorriso],[xorriso],[yes])
+AS_IF([test x"$has_xorriso" != x"yes"],
+AC_MSG_ERROR([*** Program xorriso not found.]))
 
 dnl AM_CONDITIONAL ([NAKED], [test x$ax_cv_have_func_attribute = "no"]
 dnl AM_CONDITIONALO ([NAKED],foo, bar) 
