@@ -22,7 +22,7 @@ extra_subdirs = mbr tyos
 
 EXTRA_DIST = $(extra_subdirs) 
 
-docm4_files = README mbr/README mbr/Makefile tyos/Makefile
+docm4_files = README mbr/README mbr/Makefile tyos/Makefile tyos/README
 
 include $(top_srcdir)/tools/docm4.am
 

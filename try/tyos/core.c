@@ -87,7 +87,6 @@ void __attribute__((naked, fastcall)) clear (void)
 
 void __attribute__((naked)) load_stage2_block()
 {
-
   
   
   __asm__  volatile
@@ -110,7 +109,7 @@ void __attribute__((naked)) load_stage2_block()
      
      " load%=:                    ;"
      "   mov $0x2, %%ah           ;" /* Means read sector. */
-     "   mov $0x1, %%al           ;" /* Number of sectors to read */
+     "   mov %[size], %%al           ;" /* Number of sectors to read */
      "   mov $0x0, %%dl           ;" /* Drive    (floppy is 0)*/
      "   mov $0x0, %%ch           ;" /* Cylinder (starts at 0) */
      "   mov $0x0, %%dh           ;" /* Head     (starts at 0) */
@@ -123,7 +122,7 @@ void __attribute__((naked)) load_stage2_block()
 
      "   ret                      ;"
      :
-     : 
+     : [size] "n" (STAGE2_SIZE)	/* Defined in Makefile. */
      : "ax"
      );
 }

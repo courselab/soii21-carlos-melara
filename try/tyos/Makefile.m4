@@ -46,6 +46,10 @@ stage1_obj = stage1.o core.o
 
 stage2_obj = stage2.o core.o tyos.o
 
+# Size of stage2 in 512-byte sectors
+
+STAGE2_SIZE=1
+
 # Auxiliary variables to simplify this Makefile
 
 all_obj = $(sort $(stage1_obj) $(stage2_obj)) rt0.o
@@ -72,7 +76,7 @@ $(all_obj) :%.o: %.s
 	as --32 $< -o $@
 
 $(all_obj:%.o=%.s) :%.s: %.c
-	gcc -m16 -O0 -I. -Wall -Wextra -fno-pic -fcf-protection=none  --freestanding -S $< -o $@
+	gcc -m16 -O0 -I. -Wall -Wextra -fno-pic -fcf-protection=none  --freestanding -S $< -DSTAGE2_SIZE=$(STAGE2_SIZE) -o $@
 
 $(stage1_obj:%.o=%.s) $(stage2_obj:%.o=%.s) : tyos.h
 
@@ -84,7 +88,7 @@ tyos.img: stage1.bin stage2.bin
 	rm -f $@
 	dd              bs=1440 count=1024               if=/dev/zero of=$@
 	dd conv=notrunc bs=512  count=1 obs=512 seek=0 if=stage1.bin of=$@
-	dd conv=notrunc bs=512  count=1 obs=512 seek=1 if=stage2.bin of=$@
+	dd conv=notrunc bs=512  count=$(STAGE2_SIZE) obs=512 seek=1 if=stage2.bin of=$@
 
 
 #
