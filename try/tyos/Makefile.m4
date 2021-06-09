@@ -31,9 +31,9 @@ dnl
 include(docm4.m4)dnl
 DOCM4_HASH_HEAD_NOTICE([Makefile],[Makefile script.])
 
-bin = tyos.bin tyos2.bin
+bin = stage1.bin tyos2.bin
 
-tyos_obj = main.o tyos.o
+stage1_obj = stage1.o tyos.o
 
 tyos2_obj = tyos2.o tyos.o
 
@@ -48,25 +48,25 @@ DOCM4_RELEVANT_RULES
 ## C source code.
 ## We build the program using gcc, as and ld.
 
-tyos.bin : $(tyos_obj) tyos.ld rt0.o
-	ld -melf_i386 --orphan-handling=discard  -T tyos.ld $(tyos_obj) -o $@
+stage1.bin : $(stage1_obj) tyos.ld rt0.o
+	ld -melf_i386 --orphan-handling=discard  -T tyos.ld $(stage1_obj) -o $@
 
 tyos2.bin : $(tyos2_obj) tyos.ld
 	ld -melf_i386 --orphan-handling=discard  -T tyos2.ld $(tyos2_obj) -o $@
 
-$(tyos_obj) $(tyos2_obj) rt0.o :%.o: %.s 
+$(stage1_obj) $(tyos2_obj) rt0.o :%.o: %.s 
 	as --32 $< -o $@
 
-$(tyos_obj:%.o=%.s) $(tyos2_obj:%.o=%.s) rt0.s :%.s: %.c
+$(stage1_obj:%.o=%.s) $(tyos2_obj:%.o=%.s) rt0.s :%.s: %.c
 	gcc -m16 -O0 -I. -Wall -Wextra -fno-pic -fcf-protection=none  --freestanding -S $< -o $@
 
-$(tyos_obj:%.o=%.s) $(tyos2_obj:%.o=%.s) : tyos.h
+$(stage1_obj:%.o=%.s) $(tyos2_obj:%.o=%.s) : tyos.h
 
 
-floppy.img: tyos.bin tyos2.bin
+floppy.img: stage1.bin tyos2.bin
 	rm -f $@
 	dd              bs=1440 count=1024               if=/dev/zero of=$@
-	dd conv=notrunc bs=512  count=1 obs=512 seek=0 if=tyos.bin of=$@
+	dd conv=notrunc bs=512  count=1 obs=512 seek=0 if=stage1.bin of=$@
 	dd conv=notrunc bs=512  count=1 obs=512 seek=1 if=tyos2.bin of=$@
 
 test : floppy.img
