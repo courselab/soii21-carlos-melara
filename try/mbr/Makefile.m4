@@ -80,6 +80,13 @@ VERSION=0.1.0
 TARNAME=mbr-$(VERSION)
 
 pack:
+	@if ! test -f .dist; then\
+	  make do_pack;\
+	 else\
+	  echo "This is a distribution pack already. Nothing to be done.";\
+	fi
+
+do_pack:
 	rm -rf $(TARNAME)
 	mkdir $(TARNAME)
 	(cd .. && make clean && make)
@@ -91,8 +98,9 @@ pack:
 	  cp $(AUXDIR)/Makefile-head-pack $(TARNAME)/$$i ;\
 	  $(AUXDIR)/stripcomment -h $$i>> $(TARNAME)/$$i;\
 	done
-	cp README $(top_srcdir)/tools/COPYING $(TARNAME)
+	cp README $(AUXDIR)/COPYING $(TARNAME)
 	tar zcvf $(TARNAME).tar.gz $(TARNAME)
+
 
 # Include Make Bintools
 
