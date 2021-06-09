@@ -207,7 +207,9 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
   * If any example involves the manipulation of a bootable image, use
   
 
-   make run IMG=foo	             	     Test foo with the emulator.
+   make run IMG=foo	             	     Test foo (MBR) in the emulator
+
+   make run-fd IMG=foo  		     Test foo (floppy) in the emulator
 
    make iso IMG=foo	             	     build an iso9660 image with foo
 
@@ -235,8 +237,8 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
 
    make foo/dump			     show raw contents in hexadecimal
 
-   make foo/run				     test foo with the emulator
-
+   make foo/run				     test foo (mbr) with the emulator
+   make foo/fd				     test foo (floppy) with the emulator
 
  FILE NAMES
 

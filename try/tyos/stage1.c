@@ -1,4 +1,4 @@
-/* tyos.c - The tyOS function library.
+/* main.c - Main program of MbrCmd
  
    Copyright (c) 2021, Monaco F. J. <monaco@usp.br>
 
@@ -18,6 +18,19 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-void foo()
+
+#include <tyos.h>
+
+extern void* init;
+
+int main()
 {
+  clear();
+  printnl ("TyOS - A really tiny OS.");
+
+  load_stage2_block();
+
+  __asm__("jp 0x7e00");
+  
+  return 0;
 }

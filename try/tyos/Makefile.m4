@@ -31,11 +31,24 @@ dnl
 include(docm4.m4)dnl
 DOCM4_HASH_HEAD_NOTICE([Makefile],[Makefile script.])
 
-bin = stage1.bin tyos2.bin
+## 
+## Stage 1: boot loader
+## Stage 2: kernel
+##
 
-stage1_obj = stage1.o tyos.o
+bin = stage1.bin stage2.bin
 
-tyos2_obj = tyos2.o tyos.o
+# Stage 1 uses some basic functions implemented in core.c
+
+stage1_obj = stage1.o core.o
+
+# Stage 2 also uses core.c, but includes a lot more implemented in tyos.c
+
+stage2_obj = stage2.o core.o tyos.o
+
+# Auxiliary variables to simplify this Makefile
+
+all_obj = $(sort $(stage1_obj) $(stage2_obj)) rt0.o
 
 AUXDIR =../../tools#
 
@@ -46,31 +59,33 @@ UPDATE_MAKEFILE
 DOCM4_RELEVANT_RULES
 
 ## C source code.
-## We build the program using gcc, as and ld.
+## We build the program step by step so that we can inspect the intrmediate
+## assembly, object and binaries if we want to.
 
-stage1.bin : $(stage1_obj) tyos.ld rt0.o
-	ld -melf_i386 --orphan-handling=discard  -T tyos.ld $(stage1_obj) -o $@
+stage1.bin : $(stage1_obj) stage1.ld rt0.o
+	ld -melf_i386 --orphan-handling=discard  -T stage1.ld $(stage1_obj) -o $@
 
-tyos2.bin : $(tyos2_obj) tyos.ld
-	ld -melf_i386 --orphan-handling=discard  -T tyos2.ld $(tyos2_obj) -o $@
+stage2.bin : $(stage2_obj) stage2.ld
+	ld -melf_i386 --orphan-handling=discard  -T stage2.ld $(stage2_obj) -o $@
 
-$(stage1_obj) $(tyos2_obj) rt0.o :%.o: %.s 
+$(all_obj) :%.o: %.s 
 	as --32 $< -o $@
 
-$(stage1_obj:%.o=%.s) $(tyos2_obj:%.o=%.s) rt0.s :%.s: %.c
+$(all_obj:%.o=%.s) :%.s: %.c
 	gcc -m16 -O0 -I. -Wall -Wextra -fno-pic -fcf-protection=none  --freestanding -S $< -o $@
 
-$(stage1_obj:%.o=%.s) $(tyos2_obj:%.o=%.s) : tyos.h
+$(stage1_obj:%.o=%.s) $(stage2_obj:%.o=%.s) : tyos.h
 
+## Here we create a 1.44M floppy disk image.
+## We store stage1.bin at the MBR area (first 512 bytes), and
+## stage1.bin right after it. 
 
-floppy.img: stage1.bin tyos2.bin
+tyos.img: stage1.bin stage2.bin
 	rm -f $@
 	dd              bs=1440 count=1024               if=/dev/zero of=$@
 	dd conv=notrunc bs=512  count=1 obs=512 seek=0 if=stage1.bin of=$@
-	dd conv=notrunc bs=512  count=1 obs=512 seek=1 if=tyos2.bin of=$@
+	dd conv=notrunc bs=512  count=1 obs=512 seek=1 if=stage2.bin of=$@
 
-test : floppy.img
-	qemu-system-i386 -drive if=floppy,format=raw,file=$<
 
 #
 # Housekeeping

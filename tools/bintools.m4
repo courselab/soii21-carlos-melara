@@ -100,8 +100,12 @@ diss d diss* d*:  $(IMG)
 %/run : %
 	make run IMG=$<
 
+%/fd : %
+	make run-fd IMG=$<
+
 run: $(IMG)
 	qemu-system-i386 -drive format=raw,file=$< -net none
+#	qemu-system-i386 -drive if=floppy,format=raw,file=$<
 
 # Dump contents in hexadecimal
 
@@ -164,6 +168,10 @@ diff : $(word 2, $(MAKECMDGOALS))
 
 run-iso: $(IMG)
 	qemu-system-i386 -drive format=raw,file=$(IMG) -net none
+
+run-fd : $(IMG)
+	qemu-system-i386 -drive if=floppy,format=raw,file=$<
+
 
 stick: $(IMG)
 	@if test -z "$(STICK)"; then \
