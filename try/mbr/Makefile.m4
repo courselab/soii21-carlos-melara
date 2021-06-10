@@ -99,6 +99,7 @@ do_pack:
 	  $(AUXDIR)/stripcomment -h $$i>> $(TARNAME)/$$i;\
 	done
 	cp README $(AUXDIR)/COPYING $(TARNAME)
+	touch $(TARNAME)/.dist
 	tar zcvf $(TARNAME).tar.gz $(TARNAME)
 
 

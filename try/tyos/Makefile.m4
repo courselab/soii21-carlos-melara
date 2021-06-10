@@ -121,15 +121,15 @@ do_pack:
 	rm -rf $(TARNAME)
 	mkdir $(TARNAME)
 	(cd .. && make clean && make)
-	for i in utils.c; do\
-	  cp $(AUXDIR)/c-head-pack.c $(TARNAME)/$$i ;\
-	  $(AUXDIR)/stripcomment -c $$i>> $(TARNAME)/$$i;\
+	for i in core.c  rt0.c  stage1.c  stage2.c  tyos.c stage1.ld stage2.ld tyos.h; do\
+	  cp TOOL_PATH/c-head-pack.c $(TARNAME)/$$i ;\
+	  TOOL_PATH/stripcomment -c $$i >> $(TARNAME)/$$i;\
 	done
 	for i in Makefile; do\
-	  cp $(AUXDIR)/Makefile-head-pack $(TARNAME)/$$i ;\
-	  $(AUXDIR)/stripcomment -h $$i>> $(TARNAME)/$$i;\
+	  cp $(TOOL_PATH)/Makefile-head-pack $(TARNAME)/$$i ;\
+	  TOOL_PATH/stripcomment -h $$i >> $(TARNAME)/$$i;\
 	done
-	cp README $(AUXDIR)/COPYING $(TARNAME)
+	cp README TOOL_PATH/COPYING $(TARNAME)
 	touch $(TARNAME)/.dist
 	tar zcvf $(TARNAME).tar.gz $(TARNAME)
 

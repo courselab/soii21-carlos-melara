@@ -50,6 +50,11 @@ AC_CHECK_PROG([has_xorriso],[xorriso],[yes])
 AS_IF([test x"$has_xorriso" != x"yes"],
 AC_MSG_ERROR([*** Program xorriso not found.]))
 
+AC_CHECK_PROG([has_qemu],[qemu-system-i386],[yes])
+AS_IF([test x"$has_xorriso" != x"yes"],
+AC_MSG_ERROR([*** Program qemu not found.]))
+
+
 dnl AM_CONDITIONAL ([NAKED], [test x$ax_cv_have_func_attribute = "no"]
 dnl AM_CONDITIONALO ([NAKED],foo, bar) 
 dnl AM_COND_IF ([NAKED], AC_MSG_ERROR([Dammit]))
@@ -75,10 +80,6 @@ dnl Define variables to be used by Automake
 AC_SUBST([CPP_FLAGS],"-ansi -D_POSIX_C_SOURCE=200809L -Wall -Wextra")
 AC_SUBST([C_FLAGS])
 AC_SUBST([LD_FLAGS])
-
-dnl AC_SUBST([DOCM4],$abs_top_builddir/tools/m4)
-
-dnl AC_MSG_ERROR([ooooo value is ${ac_srcdir} done])
 
 dnl Canonical check for POSIX threads.
 

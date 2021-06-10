@@ -30,6 +30,8 @@ define([DOCM4_EMAIL]),[<monaco@usp.br>])
 define([DOCM4_LICENSE],[GNU General Public License vr.3])
 define([DOCM4_LICENSE_SHORT],[GNU GPL vr.3])
 
+define([DOCM4_DEPS],TOOL_PATH/docm4.m4 TOOL_PATH/bintools.m4)]
+
 dnl A short head notice that can be used in the README file
 dnl describing the contents of a directory.
 
@@ -330,7 +332,9 @@ define([UPDATE_MAKEFILE],
 ifndef UPDATED
 $(MAKECMDGOALS) : Makefile
 
-Makefile : $(shell if test -f Makefile.m4; then echo Makefile.m4; fi);
+Makefile_deps = Makefile.m4 DOCM4_DEPS
+
+Makefile : $(shell if test -f Makefile.m4; then echo $(Makefile_deps); fi);
 	@if ! test -f .dist; then\
 	  cd .. && make;\
 	  make -f Makefile clean;\
