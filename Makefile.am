@@ -23,7 +23,7 @@ ACLOCAL_AMFLAGS = -I m4
 # Other directories which have a manually crafted Makefile, where we want
 # to invoke make clean.
 
-other_dirs = eg/hw eg/build eg/real try/tos
+other_dirs = eg/hw eg/build eg/real try/tos try/mbr
 
 .PHONY: clean-local
 
