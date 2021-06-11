@@ -5,9 +5,7 @@ resource to illustrate general concepts and techniques of system software design
 
 ## Quick start
 
-Refer to `doc/README.
-
-(please, as the file name suggests, __do__ read it; it will save yout time)
+If you came a file called README, please, as the file name suggests, __do__ read it; it will save yout time.
 
 Some examples need auxiliary artifacts which must be built beforehand.
 
@@ -61,11 +59,14 @@ detailed information.
 
 - Directory `eg` contains source code examples.
 - Directory `try` contains programming exercises.
+- Directory `extra` contains non-standard features, advanced topics, hacker lore.
 - Directory `tools` contains auxiliary tools used by examples and exercises.
 
+
 Each subdirectory contains a README file with detailed information about its
-contents and specific instructions on how to proceed.  **Tip**: if the file name
-reads README, please, do as it advices.
+contents and specific instructions on how to proceed.  
+
+**Tip**: if the file name reads README, please, do as it advices.
 
 
 
