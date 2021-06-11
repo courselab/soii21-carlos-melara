@@ -380,4 +380,62 @@ define([DOCM4_RELEVANT_RULES],
 changecom([#],)
 ])
 
+##
+## Create pack-distribution (subprojects).
+##
+define([DOCM4_PACK],
+[changecom(,)
+# Self-contained pack distribution.
+#
+# make pack     creates a tarball with the essential files, which can be
+#      		distributed independently of the rest of this project.
+#
+# A pack distribution contain all the items necessary to build and run the
+# relevant piece of software. It's useful,a for instance, to bundle
+# self-contained subsections of DOCM4_PROJECT meant to be delivered as
+# programming exercise assignments or illustrative source code examples.
+#		
+# In order to select which files should be included in the pack, list them
+# in the appropriate variables
+# 
+# PACK_FILES_C    = C files (source, headers, linker scripts)
+# PACK_FILES_MAKE = Makefiles
+# PACK_FILES_TEXT = Text files (e.g. README)
+# PACK_FILES_SH   = Shell scripts (standard /bin/sh)
+#
+# Except by text files, all other files will have their heading comment
+# (the very first comment found in the file) replaced by a corresponding
+# standard comments containing boilerplate copyright notice and licensing
+# information, with blank fields to be filled in by the pack user.
+# Attribution to DOCM4_PROJECT is also included for convenience.
+
+TARNAME=$1-$2
+
+changecom([#],)
+
+pack:
+	@if ! test -f .dist; then\
+	  make do_pack;\
+	 else\
+	  echo "This is a distribution pack already. Nothing to be done.";\
+	fi
+
+do_pack:
+	rm -rf $(TARNAME)
+	mkdir $(TARNAME)
+	(cd .. && make clean && make)
+	for i in $(PACK_FILES_C); do\
+	  cp TOOL_PATH/c-head-pack.c $(TARNAME)/$$i ;\
+	  TOOL_PATH/stripcomment -c $$i >> $(TARNAME)/$$i;\
+	done
+	for i in $(PACK_FILES_MAKE); do\
+	  cp TOOL_PATH/Makefile-head-pack $(TARNAME)/$$i ;\
+	  TOOL_PATH/stripcomment -h $$i >> $(TARNAME)/$$i;\
+	done
+	cp $(PACK_FILES_TEXT) $(TARNAME)
+	touch $(TARNAME)/.dist
+	tar zcvf $(TARNAME).tar.gz $(TARNAME)
+])
+
+
 divert(0)dnl

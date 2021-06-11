@@ -19,13 +19,13 @@ dnl  along with .  If not, see <http://www.gnu.org/licenses/>.
 dnl
 dnl  ------------------------------------------------------------------
 dnl
-dnl  Note: this is a source file used to produce either a documentation, item,
-dnl        item, script or another source file by m4 macro processor. If you've
-dnl	   come across a file named, say foo.m4, while looking for one of the
+dnl  Note: this is a source file used to produce either a documentation item,
+dnl        script or another source file by m4 macro processor. If you've come
+dnl	   across a file named, say foo.m4, while looking for one of the
 dnl	   aforementioned items, changes are you've been looking for file foo,
 dnl	   instead. If you can't find foo, perhaps it is because you've missed
-dnl 	   missed the build steps described in the file README, found in the
-dnl	   top source directory of this project.
+dnl 	   the build steps described in the file README, found in the top 
+dnl	   source directory of this project.
 dnl        
 dnl
 include(docm4.m4)dnl
@@ -107,32 +107,12 @@ clean-extra:
 # Programming exercise
 #
 
-VERSION=0.1.0
-TARNAME=tyos-$(VERSION)
+PACK_FILES_C = core.c  rt0.c  stage1.c  stage2.c  tyos.c stage1.ld stage2.ld tyos.h
+PACK_FILES_MAKE = Makefile
+PACK_FILES_TEXT = README TOOL_PATH/COPYING 
+PACK_FILES_SH =
 
-pack:
-	@if ! test -f .dist; then\
-	  make do_pack;\
-	 else\
-	  echo "This is a distribution pack already. Nothing to be done.";\
-	fi
-
-do_pack:
-	rm -rf $(TARNAME)
-	mkdir $(TARNAME)
-	(cd .. && make clean && make)
-	for i in core.c  rt0.c  stage1.c  stage2.c  tyos.c stage1.ld stage2.ld tyos.h; do\
-	  cp TOOL_PATH/c-head-pack.c $(TARNAME)/$$i ;\
-	  TOOL_PATH/stripcomment -c $$i >> $(TARNAME)/$$i;\
-	done
-	for i in Makefile; do\
-	  cp $(TOOL_PATH)/Makefile-head-pack $(TARNAME)/$$i ;\
-	  TOOL_PATH/stripcomment -h $$i >> $(TARNAME)/$$i;\
-	done
-	cp README TOOL_PATH/COPYING $(TARNAME)
-	touch $(TARNAME)/.dist
-	tar zcvf $(TARNAME).tar.gz $(TARNAME)
-
+DOCM4_PACK(tyos,0.1.0)
 
 # Include Make Bintools
 

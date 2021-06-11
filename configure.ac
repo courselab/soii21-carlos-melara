@@ -89,8 +89,7 @@ AC_SUBST([short_name],[syseg])
 
 dnl Replace missing functions (see also GNUlib)
 
-AC_CONFIG_LIBOBJ_DIR([replace])
-
+dnl AC_CONFIG_LIBOBJ_DIR([replace])
 dnl AC_SEARCH_LIBS([qux], [xpto], [], AC_MSG_WARN([*** Symbol xpto not found in libxpto]),[])
 dnl AC_SEARCH_LIBS([baz], [xpto], [], [AC_LIBOBJ(mybaz)],[])
 
