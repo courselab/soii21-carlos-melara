@@ -34,7 +34,29 @@ dnl Define language and tools
 AC_PROG_CC 		        dnl Defines CC
 AM_PROG_AR                      dnl Archiver for static lib                     
 
+dnl
+dnl Check for programs and libraries
+dnl
 
+m4_define([build_notes],
+[
+ $1 not found in your system.
+
+ As a consequence, examples which require this resource may be affected.
+ Depending on which component of this project you are interested in, this may
+ or may not limit the acess to the avilable functionality. If you know that
+ the referred resource is relevant, or if you are unsure, please install $1
+ and re-run this script.
+ 
+ e.g. in Ubuntu GNU/Linux, run: apt install $2
+ ])
+
+rm -f syseg.log
+
+dnl We currently required the compiler to support some specific functionality
+dnl and cause build to fail if they are not present. Eventually, we should
+dnl enhance portability and gracefully proceed the build with limited
+dnl functionality.
 
 AX_CHECK_COMPILE_FLAG(
 	[-fcf-protection],,
@@ -48,16 +70,13 @@ fi
 
 AC_CHECK_PROG([has_xorriso],[xorriso],[yes])
 AS_IF([test x"$has_xorriso" != x"yes"],
-AC_MSG_ERROR([*** Program xorriso not found.]))
+AC_MSG_WARN([*** Program xorriso not found.])
+echo "[build_notes([xorriso],[xorriso])]" >> syseg.log)
 
 AC_CHECK_PROG([has_qemu],[qemu-system-i386],[yes])
-AS_IF([test x"$has_xorriso" != x"yes"],
-AC_MSG_ERROR([*** Program qemu not found.]))
-
-
-dnl AM_CONDITIONAL ([NAKED], [test x$ax_cv_have_func_attribute = "no"]
-dnl AM_CONDITIONALO ([NAKED],foo, bar) 
-dnl AM_COND_IF ([NAKED], AC_MSG_ERROR([Dammit]))
+AS_IF([test x"$has_qemu" != x"yes"],
+AC_MSG_WARN([*** Program qemu not found.])
+echo "[build_notes([qemu],[qemu-system-i386])]" >> syseg.log)
 
 dnl Initialize libtool
 
@@ -106,3 +125,5 @@ dnl Do it
 
 AC_OUTPUT
 
+AS_IF([test -f syseg.log],
+[echo "Build notes"; cat syseg.log])
