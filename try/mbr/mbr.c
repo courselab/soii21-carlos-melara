@@ -26,7 +26,7 @@
 char nl[] = {'\r', '\n', 0x0};
 
 
-/* Prints string in buffer.  */
+/* Prints the null-terminated string buffer.  */
 
 void __attribute__((fastcall, naked))  print (const char* buffer)
 {
@@ -45,7 +45,7 @@ __asm__ volatile
  "        ret                         ;" /* Return from this function.         */
 
 :                        
-: [str] "b" (buffer)      /* Var. buffer put in bx, referenced as str .*/
+: "b" (buffer)      /* Var. buffer put in bx, referenced as str .*/
 : "ax", "cx", "si"        /* Additional clobbered registers         .  */
  );
 }
@@ -69,7 +69,13 @@ void __attribute__((naked, fastcall)) clear (void)
 }
 
 /* Read string from terminal into buffer. 
-   This function does not check for buffer overrun.*/
+
+   Note: this function does not check for buffer overrun.
+         Buffer size is BUFFER_MAX_LENGTH.
+
+	 Good opportunity for contributing.
+
+*/
 
 void __attribute__((fastcall, naked)) read (char *buffer)
 {
@@ -98,14 +104,14 @@ void __attribute__((fastcall, naked)) read (char *buffer)
      "   ret                           " /* Return from function             */
      
      :
-     : [buffer] "b" (buffer) 	  /* Here cx is copied into bx.              */
+     : "b" (buffer) 	          /* Ask gcc to store buffer in %bx          */
      : "ax",  "cx", "si" 	  /* Aditional clobbered registers.          */
      );
 
   
 }
 
-/* Output a help (-less) message. */
+/* Output a help(-less) message. */
 
 void __attribute__((naked)) help (void)
 {
@@ -115,14 +121,12 @@ void __attribute__((naked)) help (void)
 
 }
 
-/* Compare two strings. */
+/* Compare two strings up to position BUFFER_MAX_LENGTH-1. */
 
 int __attribute__((fastcall, naked)) compare (char *s1, char *s2)
 {
   __asm__ volatile
     (
-    //"    mov %%cx, %%si     ;"    /* On bug, check this.  */
-    //"    mov %%dx, %%di     ;"
       "    mov %[len], %%cx   ;"
       "    mov $0x1, %%ax     ;"
       "    cld                ;"
@@ -132,9 +136,10 @@ int __attribute__((fastcall, naked)) compare (char *s1, char *s2)
       "equal:                 ;"
       "    ret                ;"
       :
-      : [len] "n" (BUFFER_MAX_LENGTH),
-	"S" (s1), "D" (s2)
-      : "ax", "cx", "dx"
+      : [len] "n" (BUFFER_MAX_LENGTH-1), /* [len] is a constant.   */
+	"S" (s1),		/* Ask gcc to store s1 in %si      */
+	"D" (s2)		/* Ask gcc to store s2 is %di      */
+      : "ax", "cx", "dx"	/* Additional clobbered registers. */
      );
 
   return 0;                /* Bogus return to fulfill funtion's prototype.*/
@@ -146,20 +151,20 @@ int __attribute__((fastcall, naked)) compare (char *s1, char *s2)
 
    The 'naked' attribute prevents gcc from outputing asm code beyound
    what is strictly necessary for the particular example to execute.
-   In particular, the otherwise extra code would be relevant if we 
+   In this case, the otherwise extra code would be relevant if we 
    wanted our functions to exchange data using the stack; its omission
    leave us with the burden of taking care of stack integrity ourselves.
-   Since this is not our case, we can play with the bare minimal
-   for simplicity.
+   Since we don't use the stack ourselves, we can play with the bare 
+   minimal for simplicity.
 
    One side effect of the 'naked' attribute is that the compiler does not
    output a 'ret' instruction by the end of the function. We have to 
    manually include it via inline asm when applicable.
 
-   Note, for instance, that we've done that in the void function help().
+   Note, for instance, that we've done that in the function void help().
 
    Note also that in function compare(), we needed to issue 'ret' from within
-   the inline asm (since the function is naked), but had to add a 'return'
+   the inline asm (since the function is naked), but had to add a C 'return'
    statement as well, so that the preprocessor does not complain based on
    the function prototype. This last return is read by the preprocessor
    but is not converted to a 'ret' instruction by the compiler.
@@ -168,10 +173,18 @@ int __attribute__((fastcall, naked)) compare (char *s1, char *s2)
    to pass parameter among functions. With that, the first argument is
    passed in register %cx and the second in %dx. Further parameters would
    be passed via stack --- and since we opted for naked function, that
-   would mean extra work.
+   would mean extra work if we had more than three arguments.
 
-   Note that when we needed the function argument to be copied into another
-   register, say %bx, we used GNU extended asm to accomplish this. 
+   Note that, with fastcall, when we needed the function argument to be 
+   copied into another register, say %bx, we could manually do it in asm
+
+       mov %cx, %bx
+
+   or else use GNU extended asm to accomplish this, using the input operands.
+   For instance, that's what we did in read() by writing
+
+      : "c" (buffer)
+
    
    Values are returned by fastcall functions in register %ax.
 

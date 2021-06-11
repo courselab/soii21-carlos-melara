@@ -72,25 +72,21 @@ clean-extra:
 	rm -f *~ \#*
 
 
-#
-# Programming exercise
-#
 
-#
-# Programming exercise
-#
+## ----------------------------------------------------------------------
+##
+## Programming exercise
+##
 
 PACK_FILES_C = main.c mbr.c rt0.c mbr.h mbr.ld
 PACK_FILES_MAKE = Makefile
 PACK_FILES_TEXT = README $(AUXDIR)/COPYING 
 PACK_FILES_SH =
 
-DOCM4_PACK(mbr,0.1.0)
+DOCM4_PACK([mbr],[0.1.1])
 
 
-
-
-# Include Make Bintools
+dnl Include Make Bintools
 
 DOCM4_MAKE_BINTOOLS
 

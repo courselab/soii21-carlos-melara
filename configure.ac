@@ -78,6 +78,11 @@ AS_IF([test x"$has_qemu" != x"yes"],
 AC_MSG_WARN([*** Program qemu not found.])
 echo "[build_notes([qemu],[qemu-system-i386])]" >> syseg.log)
 
+AC_CHECK_PROG([has_meld],[meld],[yes])
+AS_IF([test x"$has_meld" != x"yes"],
+AC_MSG_WARN([*** Program meld not found.])
+echo "[build_notes([meld],[meld])]" >> syseg.log)
+
 dnl Initialize libtool
 
 LT_INIT                         

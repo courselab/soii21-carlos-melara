@@ -184,7 +184,8 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
  
 
  * For buiding and inspecting, use
- 
+
+   make					     Build the default target.
 
    make foo				     Build foo.
 
@@ -197,9 +198,9 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
 
    make dump IMG=foo			     Show the raw contents of foo.
    
-   make      			             build everything (or make all)
+   make      			             Build everything (or make all)
 
-   make clean			             undo make all
+   make clean			             Undo make all
 
    make diff foo bar baz		     Show graphical diff between files
 
@@ -285,7 +286,7 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
     If so, you should be able to prepare your stick using 'make stick'
     with the command line variable IMG=foo.bin. Otherwise, if your computer's
     BIOS emulates your USP stick as a CD-ROM, you should be better served
-    by passing it the variable IMG=foo.iso.  See note (1) by the end.
+    by passing it the variable IMG=foo.iso.  
 
 
  WORDS OF WISDOM

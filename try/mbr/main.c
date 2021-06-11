@@ -19,31 +19,35 @@
 */
 
 
-
 #include <mbr.h>
-
 
 int main()
 {
-  char b[10];
+  char cmd[BUFFER_MAX_LENGTH];
+
+  /* Clear screen. */
   
   clear();
 
+  /* Main loop. */
+  
   while (1)
     {
   
-      print (PROMPT);
+      print (PROMPT);		        /* Show prompt. */
 
-      read (b);
+      read (cmd);		        /* Read user command. */
+
+      /* Process user command. */
       
-      if (compare(b, "help"))
+      if (compare(cmd, HELP_CMD))       /* Command help. */
 	help();
-      else if (compare(b, "quit"))
+      else if (compare(cmd, QUIT_CMD))  /* Command quit. */
 	quit();
       else
 	{
-	  print (b);
-	  printnl (": command not found.");
+	  print (cmd);		        /* Unkown command. */
+	  printnl (NOT_FOUND);
 	}
     }
   
