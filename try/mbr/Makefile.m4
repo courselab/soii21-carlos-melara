@@ -76,31 +76,18 @@ clean-extra:
 # Programming exercise
 #
 
-VERSION=0.1.0
-TARNAME=mbr-$(VERSION)
+#
+# Programming exercise
+#
 
-pack:
-	@if ! test -f .dist; then\
-	  make do_pack;\
-	 else\
-	  echo "This is a distribution pack already. Nothing to be done.";\
-	fi
+PACK_FILES_C = main.c mbr.c rt0.c mbr.h mbr.ld
+PACK_FILES_MAKE = Makefile
+PACK_FILES_TEXT = README $(AUXDIR)/COPYING 
+PACK_FILES_SH =
 
-do_pack:
-	rm -rf $(TARNAME)
-	mkdir $(TARNAME)
-	(cd .. && make clean && make)
-	for i in main.c mbr.c rt0.c mbr.h mbr.ld; do\
-	  cp $(AUXDIR)/c-head-pack.c $(TARNAME)/$$i ;\
-	  $(AUXDIR)/stripcomment -c $$i>> $(TARNAME)/$$i;\
-	done
-	for i in Makefile; do\
-	  cp $(AUXDIR)/Makefile-head-pack $(TARNAME)/$$i ;\
-	  $(AUXDIR)/stripcomment -h $$i>> $(TARNAME)/$$i;\
-	done
-	cp README $(AUXDIR)/COPYING $(TARNAME)
-	touch $(TARNAME)/.dist
-	tar zcvf $(TARNAME).tar.gz $(TARNAME)
+DOCM4_PACK(mbr,0.1.0)
+
+
 
 
 # Include Make Bintools

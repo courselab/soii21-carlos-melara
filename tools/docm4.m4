@@ -39,7 +39,7 @@ define(DOCM4_DIR_NOTICE,
 [
  The contents of this directory are part of DOCM4_PROJECT,
  copyright (c) DOCM4_YEAR DOCM4_AUTHOR DOCM4_AUTHOR
- DOCM4_PROJECT is Free Software distributed under GNU GPL vr3.
+ DOCM4_PROJECT is Free Software distributed under DOCM4_LICENSE_SHORT.
  Further information: DOCM4_REPOSITORY
 ])
 
@@ -122,7 +122,7 @@ changecom([#],)dnl
 
 define([DOCM4_UPDATE_AUTHOR_INFO],
 [
-  Please, do not forget to
+  Please, *do not* forget to
 
     - fill in file AUTHORS with the pertinent information
     - edit heading comments in all source files with your data
@@ -435,6 +435,13 @@ do_pack:
 	cp $(PACK_FILES_TEXT) $(TARNAME)
 	touch $(TARNAME)/.dist
 	tar zcvf $(TARNAME).tar.gz $(TARNAME)
+
+clean-pack:
+	rm -f $(TARNAME).tar.gz
+	rm -rf $(TARNAME)
+
+.PHONY: pack do_pack clean-pack
+
 ])
 
 
