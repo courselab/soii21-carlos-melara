@@ -15,7 +15,9 @@ DOCM4_DIR_NOTICE
  Contents
  ------------------------------
 
- * eg-01.c		Simple program to exemplify program sections.
+ * eg-01.c		Simple source code to exemplify program sections.
+
+   			   make eg-01.o/d*
 
 
  APPENDEX I

@@ -1,4 +1,4 @@
-/* eg-01.c - Example code.
+/* eg-00.c - Example code.
  
    Copyright (c) 2021, Monaco F. J. <monaco@usp.br>
 
@@ -18,24 +18,19 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#include <stdio.h>
+#include <stdlib.h>
 
 int b=1;
 int a;
 
-int main(void)
+int main()
 {
   int c;
-  int d=2;
+  char* d;
 
-  a = 3;
-  b = 4;
-  c = 5;
-  d = 6;
-
-  printf ("%d %d %d %d\n",a,b,c,d);
-
+  c = 1;
+  d = malloc(16);
+  
   return 0;
 }
 

@@ -1,11 +1,17 @@
 include(docm4.m4)dnl
 DOCM4_HASH_HEAD_NOTICE([Makefile],[Makefile script.])
 
-UPDATE_MAKEFILE
+bins_c32 = eg-00 eg-01 eg-02 eg-04
+bins_c64 = eg-04_64_buggy eg-04_64
+bins_asm32 = eg-03
 
-targets = eg-01.o
+targets = $(bins_c32) $(bins_c64) $(bins_asm32)
 
 all : $(targets) 
+
+UPDATE_MAKEFILE
+
+
 
 ###########################################################
 ##
@@ -33,15 +39,37 @@ all : $(targets)
 #  -Qn		prevents gcc from outputing compiler metainformation e.g.
 #		the section .comment, which is not relevant in this context.
 
-eg-01.o : eg-01.c
-	gcc -m32 -Qn -Wall -O0 -fno-pic -fcf-protection=none -fno-asynchronous-unwind-tables $< -c -o $@
+CFLAGS_00 = -m32 -Qn -Wall -Wno-unused-but-set-variable -O0 -fno-pic -fno-pie -fcf-protection=none -fno-asynchronous-unwind-tables
+LDFLAGS_00 = -m32 -Wall
 
-eg-01 : eg-01.o
-	gcc -m32 -Wall $< -o $@
+# C, x86
+
+$(bins_c32:%=%.o) : %.o : %.c
+	gcc  $(CFLAGS_00) -c $< -o $@
+
+$(bins_c32) : % : %.o
+	gcc  $(LDFLAGS_00) $< -o $@
+
+# C, x86_64
+
+$(bins_c64:%=%.o) : %.o : %.c
+	gcc  $(CFLAGS_00) -c $< -o $@
+
+$(bins_c64) : % : %.o
+	gcc  $(LDFLAGS_00) $< -o $@
+
+# NASM, x86
+
+$(bins_asm32:%=%.o) : %.o : %.asm
+	nasm -f elf32 $< -o $@
+
+$(bins_asm32) : % : %.o
+	ld -m elf_i386 $< -o $@
+
 
 .PHONY: clean
 clean:
-	rm -f $(targets)
+	rm -f $(targets) *.o
 
 
 DOCM4_MAKE_BINTOOLS
