@@ -79,20 +79,20 @@ diss d diss* d*:  $(IMG)
 
 %/i16 %/16i : %
 	make --quiet $</diss intel 16
-%/i32 %/32i : %
+%/i32 %/32i %/i: %
 	make --quiet $</diss intel 32
 %/a16 %/16a %/16 : %
 	make --quiet $</diss att 16
-%/a32 %/32a %/32: %
+%/a32 %/32a %/32 %/a: %
 	make --quiet $</diss att 32
 
 %/i16* %/16i* : %
 	make --quiet $</diss* intel 16
-%/i32* %/32i* : %
+%/i32* %/32i* %/i*: %
 	make --quiet $</diss* intel 32
 %/a16* %/16a* %/16* : %
 	make --quiet $</diss* att 16
-%/a32* %/32a* %/32*: %
+%/a32* %/32a* %/32* %/a*: %
 	make --quiet $</diss* att 32
 
 # Run on the emulator

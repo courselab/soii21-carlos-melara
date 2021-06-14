@@ -230,9 +230,9 @@ define([DOCM4_MAKE_BINTOOLS_DOC],
    make foo/diss 16|32 intel|att	     disassemble as Intel|AT&T 16|32 bit
 
    make foo/i16	       			     disassemble as Intel 16-bit
-   make foo/i32	       			     disassemble as Intel 32-bit
-   make foo/a16 or foo/16 		     disassemble as AT&T  16-bit
-   make foo/a32	of foo/32       	     disassemble as AT&T  32-bit
+   make foo/a16 or foo/16  		     disassemble as AT&T  16-bit
+   make foo/a32	of foo/32 or foo/a     	     disassemble as AT&T  32-bit
+   make foo/i32	          or foo/i	     disassemble as Intel 32-bit
 
    		   			     In all disassembly rules, a
 					     trailing '*' means disassemble all
