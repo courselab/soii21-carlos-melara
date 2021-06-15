@@ -3,9 +3,10 @@ DOCM4_HASH_HEAD_NOTICE([Makefile],[Makefile script.])
 
 bins_c32 = eg-00 eg-01 eg-02 eg-04
 bins_c64 = eg-04_64_buggy eg-04_64
-bins_asm32 = eg-03
+bins_nasm32 = eg-03
+bins_as32 = eg-03_as
 
-targets = $(bins_c32) $(bins_c64) $(bins_asm32)
+targets = $(bins_c32) $(bins_c64) $(bins_nasm32) $(bins_gas32)
 
 all : $(targets) 
 
@@ -60,11 +61,15 @@ $(bins_c64) : % : %.o
 
 # NASM, x86
 
-$(bins_asm32:%=%.o) : %.o : %.asm
+$(bins_nasm32:%=%.o) : %.o : %.asm
 	nasm -f elf32 $< -o $@
 
-$(bins_asm32) : % : %.o
+$(bins_nasm32) : % : %.o
 	ld -m elf_i386 $< -o $@
+
+$(bins_as32) : % : %.S
+	gcc -m32 $< -nostartfiles -nostdlib -o $@
+
 
 
 .PHONY: clean
