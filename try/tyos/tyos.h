@@ -21,6 +21,8 @@
 #ifndef TOS_H
 #define TOS_H
 
+#define STAGE2_ADDR 0x7e00
+
 #define VIDEO_MEMORY 0xb8000
 #define VIDEO_ATTRIBUTE 0X02
 
@@ -56,38 +58,7 @@ int __attribute__((fastcall, naked)) compare (char *s1, char *s2);
 
 void load_stage2_block();
 
-
 #define PROMPT ">"
 
-/* Handy macros for (extended) inline assembly. */
-
-#define PUSH_AX " push %%ax ;"
-#define PUSH_BX " push %%bx ;"
-#define PUSH_CX " push %%cx ;"
-#define PUSH_DX " push %%dx ;"
-
-#define PUSH_ES " push %%es ;"
-#define PUSH_DS " push %%ds ;"
-
-#define PUSH_DI " push %%di ;"
-#define PUSH_SI " push %%si ;"
-
-#define PUSH_REGS PUSH_AX PUSH_BX PUSH_CX PUSH_DX PUSH_DI PUSH_SI
-#define PUSH_SEG_REGS PUSH_DI PUSH_SI 
-
-
-#define POP_AX " pop %%ax ;"
-#define POP_BX " pop %%bx ;"
-#define POP_CX " pop %%cx ;"
-#define POP_DX " pop %%dx ;"
-
-#define POP_ES " pop %%es ;"
-#define POP_DS " pop %%ds ;"
-
-#define POP_DI " pop %%di ;"
-#define POP_SI " pop %%si ;"
-
-#define POP_REGS POP_SI POP_DI POP_DX POP_CX POP_BX POP_AX
-#define POP_SEG_SEGS POP_SI POP_DI
 
 #endif
