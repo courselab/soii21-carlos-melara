@@ -18,6 +18,17 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-void foo()
+#include <tyos.h>
+
+void halt()
 {
+
+  printnl ("System halted");
+  __asm__ volatile
+    (
+     "loop%=:           ;"
+     "        hlt       ;"
+     "        jmp loop%=;"
+     :::
+     );
 }

@@ -60,5 +60,9 @@ void load_stage2_block();
 
 #define PROMPT ">"
 
+/* Halt. */
+
+void halt();
+
 
 #endif

@@ -98,14 +98,24 @@ diss d diss* d*:  $(IMG)
 # Run on the emulator
 
 %/run : %
-	make run IMG=$<
+	@i=$< &&\
+	if test $${i##*.} = "img"; then\
+	    make run-fd IMG=$<;\
+	 else\
+	   if test $${i##*.} = "bin"; then\
+	     make run-bin IMG=$<;\
+	    fi;\
+	fi
+
+%/bin : %
+	make run-bin IMG=$<
 
 %/fd : %
 	make run-fd IMG=$<
 
-run: $(IMG)
-	qemu-system-i386 -drive format=raw,file=$< -net none
-#	qemu-system-i386 -drive if=floppy,format=raw,file=$<
+# run: $(IMG)
+# 	qemu-system-i386 -drive format=raw,file=$< -net none
+
 
 # Dump contents in hexadecimal
 
@@ -166,11 +176,14 @@ diff : $(word 2, $(MAKECMDGOALS))
 	dd if=/dev/zero of=$@ bs=1024 count=1440
 	dd if=$< of=$@ seek=0 conv=notrunc
 
+run-bin: $(IMG)
+	qemu-system-i386 -drive format=raw,file=$< -net none
+
 run-iso: $(IMG)
 	qemu-system-i386 -drive format=raw,file=$(IMG) -net none
 
 run-fd : $(IMG)
-	qemu-system-i386 -drive if=floppy,format=raw,file=$<
+	qemu-system-i386 -drive if=floppy,format=raw,file=$< -net none
 
 
 stick: $(IMG)

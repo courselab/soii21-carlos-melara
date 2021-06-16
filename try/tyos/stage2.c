@@ -3,11 +3,10 @@
 
 void __attribute__((naked)) init()
 {
-  print ("Inited");
-
+  printnl ("Second stage loaded sucessuflly.");
 
   /* Here we may call functions from tyos.c. */
   
-  __asm__("hlt");
+  halt();			/* Halt the system. */
 }
 

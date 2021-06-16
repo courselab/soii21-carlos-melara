@@ -21,7 +21,7 @@
 
 #include <tyos.h>
 
-extern void* init;
+void(* init)(void) = ((void *) STAGE2_ADDR);
 
 int main()
 {
@@ -30,7 +30,7 @@ int main()
 
   load_stage2_block();
 
-  __asm__("jp 0x7e00");
+  init(); 			/* This is a call to stage2 adddress */
   
   return 0;
 }
