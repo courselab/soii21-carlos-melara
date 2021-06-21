@@ -104,12 +104,13 @@ void __attribute__((naked)) load_stage2_block()
 
      /* Load stage 2.   */
 
-     "   mov $0x0, %%cx           ;"
-     "   mov %%cx, %%es           ;"
-     
      " load%=:                    ;"
+
+     "   mov $0x0, %%cx           ;" /* Just to be sure we're in */
+     "   mov %%cx, %%ds           ;" /* segment zero. */
+     
      "   mov $0x2, %%ah           ;" /* Means read sector. */
-     "   mov %[size], %%al           ;" /* Number of sectors to read */
+     "   mov %[size], %%al        ;" /* Number of sectors to read */
      "   mov $0x0, %%dl           ;" /* Drive    (floppy is 0)*/
      "   mov $0x0, %%ch           ;" /* Cylinder (starts at 0) */
      "   mov $0x0, %%dh           ;" /* Head     (starts at 0) */
