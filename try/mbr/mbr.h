@@ -59,6 +59,12 @@ int __attribute__((fastcall, naked)) compare (char *s1, char *s2);
 
 void __attribute__((naked)) help (void);
 
+/* Prints current RTC date */
+
+#define DATE_CMD "date"
+
+void __attribute__((naked)) date (void);
+
 /* Quit. */
 
 #define QUIT_CMD "quit"

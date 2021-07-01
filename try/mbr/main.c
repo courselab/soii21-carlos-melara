@@ -40,8 +40,8 @@ int main()
 
       /* Process user command. */
       
-      if (compare(cmd, HELP_CMD))       /* Command help. */
-	help();
+      if (compare(cmd, DATE_CMD))       /* Command date. */
+        date();
       else if (compare(cmd, QUIT_CMD))  /* Command quit. */
 	quit();
       else
