@@ -50,7 +50,7 @@ void __attribute__((naked)) help (void);
 
 /* Compare to strings up to BUFFER_MAX_LENGTH-1. */
 
-#define BUFFER_MAX_LENGTH 5
+#define BUFFER_MAX_LENGTH 32
 
 int __attribute__((fastcall, naked)) compare (char *s1, char *s2);
 
