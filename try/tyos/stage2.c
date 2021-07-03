@@ -7,6 +7,6 @@ void __attribute__((naked)) init()
 
   /* Here we may call functions from tyos.c. */
   
-  halt();			/* Halt the system. */
+  shell();			/* Halt the system. */
 }
 

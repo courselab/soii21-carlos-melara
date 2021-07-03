@@ -45,11 +45,11 @@ stage1_obj = stage1.o core.o
 
 # Stage 2 also uses core.c, but includes a lot more implemented in tyos.c
 
-stage2_obj = stage2.o core.o tyos.o
+stage2_obj = stage2.o core.o tyos.o ext_func.o
 
 # Size of stage2 in 512-byte sectors
 
-STAGE2_SIZE=1
+STAGE2_SIZE=3
 
 # Auxiliary variables to simplify this Makefile
 
@@ -108,7 +108,7 @@ clean-extra:
 # Programming exercise
 #
 
-PACK_FILES_C = core.c  rt0.c  stage1.c  stage2.c  tyos.c stage1.ld stage2.ld tyos.h
+PACK_FILES_C = core.c  rt0.c  stage1.c  stage2.c  tyos.c stage1.ld stage2.ld tyos.h ext_func.c ext_func.h
 PACK_FILES_MAKE = Makefile
 PACK_FILES_TEXT = README TOOL_PATH/COPYING 
 PACK_FILES_SH =
