@@ -55,14 +55,45 @@ void date (void)
 	data[2] = (a2 >> 4) + 48;
 	data[3] = (a2 & 15) + 48;
 	data[4] = '-';
-	data[5] = (m >> 240) + 48;
+	data[5] = (m >> 4) + 48;
 	data[6] = (m & 15) + 48;
 	data[7] = '-';
-	data[8] = (d >> 240) + 48;
+	data[8] = (d >> 4) + 48;
 	data[9] = (d & 15) + 48;
 	data[10] = 0;
 
 	print(data);
+	print(nl);
+}
+
+void time (void)
+{
+	char s, m, h;
+	char time[9];
+
+  __asm__ volatile
+  (
+    "		mov	$0x04, %%ah                 ;" /* Read Real Time Clock Date */
+    "		int 	$0x1a                       ;" /* Real Time Clock bios service      */
+    "		mov	%%ch, %[h0]                 ;"
+    "		mov	%%cl, %[m0]                 ;"
+    "		mov	%%dh, %[s0]                 ;" /* get higher nibble bcd number      */
+   : [s0] "+m" (s), [m0] "+m" (m), [h0] "+m" (h)
+   :
+   : "ax", "cx", "dx"
+  );
+
+	time[0] = (h >> 4) + 48;
+	time[1] = (h & 15) + 48;
+	time[2] = ':';
+	time[3] = (m >> 4) + 48;
+	time[4] = (m & 15) + 48;
+	time[5] = ':';
+	time[6] = (s >> 4) + 48;
+	time[7] = (s & 15) + 48;
+	time[8] = 0;
+
+	print(time);
 	print(nl);
 }
 

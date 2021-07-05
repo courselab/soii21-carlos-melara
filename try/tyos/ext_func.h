@@ -30,6 +30,8 @@
 
 void date();
 
+void time();
+
 /* 
  * Commands.
  */
@@ -38,9 +40,13 @@ void date();
 
 #define HELP_CMD "help"
 
-/* Prints a date. */
+/* Prints date. */
 
 #define DATE_CMD "date"
+
+/* Prints time. */
+
+#define TIME_CMD "time"
 
 /* Quit. */
 

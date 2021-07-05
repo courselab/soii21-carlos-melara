@@ -44,6 +44,8 @@ int shell()
 	help();
       else if (compare(cmd, DATE_CMD))  /* Command quit. */
 	date();
+      else if (compare(cmd, TIME_CMD))  /* Command quit. */
+	time();
       else if (compare(cmd, QUIT_CMD))  /* Command quit. */
 	quit();
       else
