@@ -28,7 +28,7 @@
 
 /* Print the null-terminated buffer on standard output. */
 
-
+void date();
 
 /* 
  * Commands.

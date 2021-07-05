@@ -32,56 +32,38 @@ void __attribute__((naked)) help (void)
 
 }
 
-void __attribute__((naked)) date (void)
+void date (void)
 {
+	char d, m, a0, a2;
+	char data[11];
+
   __asm__ volatile
   (
     "		mov	$0x04, %%ah                 ;" /* Read Real Time Clock Date */
     "		int 	$0x1a                       ;" /* Real Time Clock bios service      */
-    "		mov	$0x0e, %%ah                 ;" /* Video BIOS service: teletype mode */
-    "		mov	%%ch, %%al                  ;"
-    "		shr	$4, %%al                    ;" /* get higher nibble bcd number      */
-    "		add	$48, %%al                   ;" /* convert to ascii                  */
-    "		int	$0x10                       ;" /* Call video BIOS service.          */
-    "		mov	%%ch, %%al                  ;"
-    "		and	$15, %%al                   ;" /* get lower nibble bcd number       */
-    "		add	$48, %%al                   ;" /* convert to ascii                  */
-    "		int	$0x10                       ;" /* Call video BIOS service.          */
-    "		mov	%%cl, %%al                  ;"
-    "		shr	$4, %%al                    ;" /* get higher nibble bcd number      */
-    "		add	$48, %%al                   ;" /* convert to ascii                  */
-    "		int	$0x10                       ;" /* Call video BIOS service.          */
-    "		mov	%%cl, %%al                  ;"
-    "		and	$15, %%al                   ;" /* get lower nibble bcd number       */
-    "		add	$48, %%al                   ;" /* convert to ascii                  */
-    "		int	$0x10                       ;" /* Call video BIOS service.          */
-    "		mov	$45, %%al                   ;" /* print the '-' char                */
-    "		int	$0x10                       ;" /* Call video BIOS service.          */
-    "		mov	%%dh, %%al                  ;" /* get higher nibble bcd number      */
-    "		shr	$4, %%al                    ;" /* convert to ascii                  */
-    "		add	$48, %%al                   ;"
-    "		int	$0x10                       ;" /* Call video BIOS service.          */
-    "		mov	%%dh, %%al                  ;"
-    "		and	$15, %%al                   ;" /* get lower nibble bcd number       */
-    "		add	$48, %%al                   ;" /* convert to ascii                  */
-    "		int	$0x10                       ;" /* Call video BIOS service.          */
-    "		mov	$45, %%al                   ;" /* print the '-' char                */
-    "		int	$0x10                       ;" /* Call video BIOS service.          */
-    "		mov	%%cl, %%al                  ;" /* get higher nibble bcd number      */
-    "		shr	$4, %%al                    ;" /* convert to ascii                  */
-    "		add	$48, %%al                   ;"
-    "		int	$0x10                       ;" /* Call video BIOS service.          */
-    "		mov	%%cl, %%al                  ;"
-    "		and	$15, %%al                   ;" /* get lower nibble bcd number       */
-    "		add	$48, %%al                   ;" /* convert to ascii                  */
-    "		int	$0x10                       ;" /* Call video BIOS service.          */
-  :
-  :
-  : "ax", "cx", "dx"
+    "		mov	%%ch, %[a0]                 ;"
+    "		mov	%%cl, %[a2]                 ;"
+    "		mov	%%dh, %[m0]                 ;" /* get higher nibble bcd number      */
+    "		mov	%%dl, %[d0]                 ;" /* get higher nibble bcd number      */
+   : [d0] "+m" (d), [m0] "+m" (m), [a0] "+m" (a0), [a2] "+m" (a2)
+   :
+   : "ax", "cx", "dx"
   );
 
-  print(nl);
-  __asm__ ("ret");   	   /* Naked functions lack return. */
+	data[0] = (a0 >> 4) + 48;
+	data[1] = (a0 & 15) + 48;
+	data[2] = (a2 >> 4) + 48;
+	data[3] = (a2 & 15) + 48;
+	data[4] = '-';
+	data[5] = (m >> 240) + 48;
+	data[6] = (m & 15) + 48;
+	data[7] = '-';
+	data[8] = (d >> 240) + 48;
+	data[9] = (d & 15) + 48;
+	data[10] = 0;
+
+	print(data);
+	print(nl);
 }
 
 /* Read string from terminal into buffer.
