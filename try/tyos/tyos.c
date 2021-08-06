@@ -19,6 +19,45 @@
 */
 
 #include <tyos.h>
+#include <ext_func.h>
+
+int shell()
+{
+  char cmd[BUFFER_MAX_LENGTH];
+
+  /* Clear screen. */
+
+  clear();
+
+  /* Main loop. */
+
+  while (1)
+    {
+
+      print (PROMPT);		        /* Show prompt. */
+
+      read (cmd);		        /* Read user command. */
+
+      /* Process user command. */
+
+      if (compare(cmd, HELP_CMD))       /* Command help. */
+	help();
+      else if (compare(cmd, DATE_CMD))  /* Command quit. */
+	date();
+      else if (compare(cmd, TIME_CMD))  /* Command quit. */
+	time();
+      else if (compare(cmd, QUIT_CMD))  /* Command quit. */
+	quit();
+      else
+	{
+	  print (cmd);		        /* Unkown command. */
+	  printnl (NOT_FOUND);
+	}
+    }
+
+  return 0;
+
+}
 
 void halt()
 {
