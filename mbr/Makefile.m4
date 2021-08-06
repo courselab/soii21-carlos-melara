@@ -40,7 +40,7 @@ bin = mbr.bin
 
 objs = main.o mbr.o
 
-AUXDIR =../../tools#
+AUXDIR =./../tools#
 
 all : $(bin) 
 
