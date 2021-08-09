@@ -1,6 +1,7 @@
 /* mbr.h -  MbrCmd command
  
    Copyright (c) 2021, Monaco F. J. <monaco@usp.br>
+   Copyright (c) 2021, Carlos Henrique Lima Melara <charlesmelara@outlook.com>
 
    This file is part of SYSeg.
 
