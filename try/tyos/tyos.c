@@ -1,6 +1,7 @@
 /* tyos.c - The tyOS function library.
  
    Copyright (c) 2021, Monaco F. J. <monaco@usp.br>
+   Copyright (c) 2021, Carlos H. L. Melara <charlesmelara@outlook.com>
 
    This file is part of SYSeg.
 
