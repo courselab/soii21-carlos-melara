@@ -1,0 +1,19 @@
+Carlos Melara 9805380 - Exercício 1
+
+- Instalação
+    Tudo correu bem, só tive um problema na montagem porque não tinha
+    instalado o NASM. Um apt install nasm resolveu.
+
+- Diretivas make
+    Na verdade, esse problema da falta do nasm ocorreu aqui, o make
+    eg-02.bin falhou e indicou a falta do nasm. Depois que instalei,
+    funcionou.
+    Também instalei o pacote qemu-system-x86 para emular o x86 com o
+    make run, funcionou como esperado.
+    Por fim, usei o dd para escrever o arquivo binário no usb.
+
+- Teste no HW
+    Depois de usar o dd, reiniciei o computador, entrei na bios e
+    alterei a ordem de boot e selecionei o modo legacy only para
+    testar. Depois de salvar e reiniciar, o Hello World apareceu
+    na tela.
