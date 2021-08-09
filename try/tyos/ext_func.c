@@ -73,7 +73,7 @@ void time (void)
 
   __asm__ volatile
   (
-    "		mov	$0x04, %%ah                 ;" /* Read Real Time Clock Date */
+    "		mov	$0x02, %%ah                 ;" /* Read Real Time Clock time */
     "		int 	$0x1a                       ;" /* Real Time Clock bios service      */
     "		mov	%%ch, %[h0]                 ;"
     "		mov	%%cl, %[m0]                 ;"
