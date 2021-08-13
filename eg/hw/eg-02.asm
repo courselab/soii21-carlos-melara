@@ -10,9 +10,9 @@
 	mov bx, 0		; Offsets now handled via org directive
 loop:				
 	mov al, [msg + bx]	; Ofsset to the message
-	int 0x10		; Call BIOS video interrupt
 	cmp al, 0x0		; Loop while char is not 0x0 
 	je halt			; Jump to halt
+	int 0x10		; Call BIOS video interrupt
 	add bx, 0x1		; Point to the next character
 	jmp loop		; Repeat until we find a 0x0
 

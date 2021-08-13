@@ -21,9 +21,9 @@
         mov   $0x0, %bx            \n\t \
 loop:                              \n\t \
         mov   " # str "(%bx), %al  \n\t \
-        int   $0x10                \n\t \
         cmp   $0x0, %al            \n\t \
         je    end                  \n\t \
+        int   $0x10                \n\t \
         add   $0x1, %bx            \n\t \
         jmp   loop                 \n\t \
 end:                               \n\t \

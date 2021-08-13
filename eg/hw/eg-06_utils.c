@@ -12,9 +12,9 @@ __asm__ volatile
 	mov   $0x0, %%si            \n\t\
 loop%=:	          		    \n\t\
 	mov   (%%bx, %%si), %%al    \n\t\
-	int   $0x10	            \n\t\
 	cmp   $0x0, %%al	    \n\t\
 	je    end%=                 \n\t\
+	int   $0x10	            \n\t\
 	add   $0x1, %%si	    \n\t\
 	jmp   loop%=	            \n\t\
 end%=:                              \n\t\

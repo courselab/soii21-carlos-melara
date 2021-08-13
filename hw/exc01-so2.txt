@@ -17,3 +17,11 @@ Carlos Melara 9805380 - Exercício 1
     alterei a ordem de boot e selecionei o modo legacy only para
     testar. Depois de salvar e reiniciar, o Hello World apareceu
     na tela.
+
+- Complemento do exercício 1
+    Como foi pedido pelo professor, foi necessária uma alteração no
+    ponto de comparação com '\0' no assembly para evitar a impressão
+    desse caracter. Após essa alteração, só é impressa a string na tela.
+
+    Obs.: como não há um make pack para o diretório eg/hw/, fiz as
+          alterações lá mesmo e commitei junto com essa mensagem.
